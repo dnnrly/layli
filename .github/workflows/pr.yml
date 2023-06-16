@@ -18,6 +18,8 @@ jobs:
         run: make deps
       - name: Unit test
         run: make ci-test
+      - name: Install odog
+        run: go install -v github.com/cucumber/godog/cmd/godog@v0.12.6
       - name: Acceptance test
         run: make acceptance-test
       - name: Collate coverage data
