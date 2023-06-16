@@ -1,4 +1,4 @@
-BIN=./goclitem
+BIN=./layli
 
 @test "Can run the application" {
     run ${BIN}
