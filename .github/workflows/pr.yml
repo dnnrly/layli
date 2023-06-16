@@ -1,0 +1,42 @@
+name: Validate for PR
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-go@v1
+        with:
+          go-version: '1.19'
+      - name: Install dependencies
+        run: make deps
+      - name: Unit test
+        run: make ci-test
+      - name: Linting
+        run: make lint
+      - name: Acceptance test
+        run: make build acceptance-test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  check-release:
+    name: Check release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '1.19'
+    - name: Check release build
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        distribution: goreleaser
+        version: latest
+        args: build --rm-dist --skip-validate --snapshot
