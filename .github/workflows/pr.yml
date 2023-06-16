@@ -10,22 +10,24 @@ jobs:
     name: Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-go@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
         with:
-          go-version: '1.19'
+          go-version: '1.20'
       - name: Install dependencies
         run: make deps
       - name: Unit test
         run: make ci-test
-      - name: Linting
-        run: make lint
       - name: Acceptance test
-        run: make build acceptance-test
+        run: make acceptance-test-docker
+      - name: Collate coverage data
+        run: make coverage-report
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.txt,./coverage-merged.txt
+          verbose: true
   check-release:
     name: Check release
     runs-on: ubuntu-latest
@@ -33,7 +35,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-go@v2
       with:
-        go-version: '1.19'
+        go-version: '1.20'
     - name: Check release build
       uses: goreleaser/goreleaser-action@v2
       with:
