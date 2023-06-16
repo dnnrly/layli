@@ -19,7 +19,7 @@ jobs:
       - name: Unit test
         run: make ci-test
       - name: Acceptance test
-        run: make acceptance-test-docker
+        run: make acceptance-test
       - name: Collate coverage data
         run: make coverage-report
       - name: Upload coverage to Codecov
