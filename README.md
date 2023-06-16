@@ -25,7 +25,7 @@ Use the `-d` option to see what will be modified without changing any files.
 One Paragraph of project description goes here
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/dnnrly/layli)](https://github.com/dnnrly/layli/releases/latest)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dnnrly/layli/Release%20workflow)](https://github.com/dnnrly/layli/actions?query=workflow%3A%22Release+workflow%22)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dnnrly/layli/release.yml?branch=master)](https://github.com/dnnrly/layli/actions?query=workflow%3A%22Release+workflow%22)
 [![report card](https://goreportcard.com/badge/github.com/dnnrly/layli)](https://goreportcard.com/report/github.com/dnnrly/layli)
 [![godoc](https://godoc.org/github.com/dnnrly/layli?status.svg)](http://godoc.org/github.com/dnnrly/layli)
 
