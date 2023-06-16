@@ -67,15 +67,17 @@ test: ## run unit tests
 
 .PHONY: ci-test
 ci-test: ## ci target - run tests to generate coverage data
-	go test -coverprofile=coverage.txt -covermode=set ./...
+	rm -rf ./tmp/coverage/ci-test.txt
+	mkdir -p ./tmp/coverage
+	go test -coverprofile=./tmp/coverage/ci-test.txt -covermode=set ./...
 
 .PHONY: acceptance-test
 acceptance-test: build ## run acceptance tests
-	rm -rf tmp/coverage
+	rm -rf ./test/tmp/coverage
 	go build -cover -o layli ./cmd/layli
-	mkdir -p tmp/coverage
-	cd test && GOCOVERDIR=../tmp/coverage godog run
-
+	mkdir -p ./test/tmp/coverage
+	cd test && GOCOVERDIR=tmp/coverage godog run
+	
 .PHONY: coverage-report
 coverage-report: ## collate the coverage data
 	mkdir -p tmp/merged
