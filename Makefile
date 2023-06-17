@@ -73,7 +73,7 @@ ci-test: ## ci target - run tests to generate coverage data
 
 .PHONY: acceptance-test
 acceptance-test: build ## run acceptance tests
-	rm -rf ./test/tmp/coverage
+	rm -rf ./test/tmp
 	go build -cover -o layli ./cmd/layli
 	mkdir -p ./test/tmp/coverage
 	cd test && GOCOVERDIR=tmp/coverage godog run

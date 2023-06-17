@@ -2,6 +2,7 @@ package test_test
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -25,6 +26,15 @@ type testContext struct {
 // make testify assertions work
 func (c *testContext) Errorf(format string, args ...interface{}) {
 	c.err = fmt.Errorf(format, args...)
+}
+
+func (c *testContext) theAppRunsWithoutArgs() error {
+	cmd := exec.Command("../layli")
+	output, err := cmd.CombinedOutput()
+	c.cmdResult.Output = string(output)
+	c.cmdResult.Err = err
+
+	return nil
 }
 
 func (c *testContext) theAppRunsWithParameters(args string) error {
@@ -60,6 +70,12 @@ func (c *testContext) theAppOutputDoesNotContain(unexpected string) error {
 	return c.err
 }
 
+func (c *testContext) aFileExists(file string) error {
+	_, err := os.Stat(file)
+	assert.NoError(c, err)
+	return c.err
+}
+
 // nolint: unused
 func InitializeTestSuite(ctx *godog.TestSuiteContext) {
 	ctx.BeforeSuite(func() {})
@@ -79,9 +95,12 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			)
 		}
 	})
+	ctx.Step(`^the app runs without args$`, tc.theAppRunsWithoutArgs)
 	ctx.Step(`^the app runs with parameters "(.*)"$`, tc.theAppRunsWithParameters)
 	ctx.Step(`^the app exits without error$`, tc.theAppExitsWithoutError)
 	ctx.Step(`^the app exits with an error$`, tc.theAppExitsWithAnError)
 	ctx.Step(`^the app output contains "(.*)"$`, tc.theAppOutputContains)
 	ctx.Step(`^the app output does not contain "(.*)"$`, tc.theAppOutputDoesNotContain)
+	ctx.Step(`^a file "([^"]*)" exists$`, tc.aFileExists)
+
 }
