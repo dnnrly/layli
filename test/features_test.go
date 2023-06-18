@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/cucumber/godog"
+	"github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,6 +27,20 @@ type testContext struct {
 // make testify assertions work
 func (c *testContext) Errorf(format string, args ...interface{}) {
 	c.err = fmt.Errorf(format, args...)
+}
+
+func (c *testContext) theTestFixuresHaveBeenReset() error {
+	err := os.RemoveAll("tmp/fixtures")
+	if err != nil {
+		return fmt.Errorf("deleting old fixtures: %w", err)
+	}
+
+	err = copy.Copy("fixtures/", "tmp/fixtures")
+	if err != nil {
+		return fmt.Errorf("copying new fixtures: %w", err)
+	}
+
+	return nil
 }
 
 func (c *testContext) theAppRunsWithoutArgs() error {
@@ -95,6 +110,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			)
 		}
 	})
+	ctx.Step(`^the test fixures have been reset$`, tc.theTestFixuresHaveBeenReset)
 	ctx.Step(`^the app runs without args$`, tc.theAppRunsWithoutArgs)
 	ctx.Step(`^the app runs with parameters "(.*)"$`, tc.theAppRunsWithParameters)
 	ctx.Step(`^the app exits without error$`, tc.theAppExitsWithoutError)

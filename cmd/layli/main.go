@@ -35,7 +35,7 @@ func Execute() error {
 				f,
 				func(output string) error {
 					name := fmt.Sprintf("%s.svg", args[0])
-					return os.WriteFile(name, []byte(output), os.ModeExclusive)
+					return os.WriteFile(name, []byte(output), 0644)
 				},
 			)
 			if err != nil {

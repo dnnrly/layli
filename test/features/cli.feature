@@ -1,5 +1,8 @@
 Feature: Simple CLI commands
 
+    Background: Reset test data
+        Given the test fixures have been reset
+
     @Acceptance
     Scenario: Prints help correctly
         When the app runs with parameters "-h"
@@ -20,6 +23,6 @@ Feature: Simple CLI commands
 
     @Acceptance
     Scenario: Generates a single node diagram
-        When the app runs with parameters "-o tmp/outputs/ fixtures/inputs/hello-world.layli"
+        When the app runs with parameters "-o tmp/outputs/ tmp/fixtures/inputs/hello-world.layli"
         Then the app exits without error
         And a file "tmp/outputs/hello-world.svg" exists
