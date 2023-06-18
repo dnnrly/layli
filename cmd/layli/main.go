@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/dnnrly/layli"
 	"github.com/spf13/cobra"
@@ -34,7 +35,8 @@ func Execute() error {
 			d, err := layli.NewDiagram(
 				f,
 				func(output string) error {
-					name := fmt.Sprintf("%s.svg", args[0])
+					name := strings.ReplaceAll(args[0], ".layli", "")
+					name = fmt.Sprintf("%s.svg", name)
 					return os.WriteFile(name, []byte(output), 0644)
 				},
 			)

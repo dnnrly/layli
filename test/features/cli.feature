@@ -23,6 +23,6 @@ Feature: Simple CLI commands
 
     @Acceptance
     Scenario: Generates a single node diagram
-        When the app runs with parameters "-o tmp/outputs/ tmp/fixtures/inputs/hello-world.layli"
+        When the app runs with parameters "tmp/fixtures/inputs/hello-world.layli"
         Then the app exits without error
-        And a file "tmp/outputs/hello-world.svg" exists
+        And a file "tmp/fixtures/inputs/hello-world.svg" exists
