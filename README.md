@@ -58,23 +58,19 @@ Here are some principles that hope to tackle this problem head on:
 
 Specifying a simple node:
 
-```yml
-node: "The node name
-```
-
 Complex nodes:
 ```yml
-node:
-  id: node-1
-  contents: "A\nwith formatting"
+nodes:
+  - id: node-1
+    contents: "A\nwith formatting"
 ```
 
 Connecting nodes:
 
 ```yml
-edge:
-  from: node-1
-  to: "The node name"
+edges:
+  - from: node-1
+    to: "The node name"
 ```
 
 ## Developing layli

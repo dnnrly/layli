@@ -32,7 +32,7 @@ func Execute() error {
 				return fmt.Errorf("opening input: %w", err)
 			}
 
-			d, err := layli.NewDiagram(
+			d, err := layli.NewDiagramFromFile(
 				f,
 				func(output string) error {
 					name := strings.ReplaceAll(args[0], ".layli", "")
