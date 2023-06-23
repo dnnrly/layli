@@ -3,7 +3,9 @@ package layli
 import (
 	"fmt"
 	"io"
+	"strings"
 
+	svg "github.com/ajstarks/svgo"
 	"gopkg.in/yaml.v3"
 )
 
@@ -38,5 +40,27 @@ func NewDiagramFromFile(r io.ReadCloser, output OutputFunc) (*Diagram, error) {
 
 // Draw turns the diagram in to an image
 func (d *Diagram) Draw() error {
-	return d.output("hello world")
+	width := 100
+	height := 100
+
+	w := strings.Builder{}
+	canvas := svg.New(&w)
+	canvas.Start(width, height, "style=\"background-color: white;\"")
+	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
+	canvas.Roundrect(
+		width/10, height/10,
+		(width/10)*8, (height/10)*8,
+		3, 3,
+	)
+	canvas.Textspan(
+		width/2,
+		height/2,
+		d.config.Nodes[0].Contents,
+		"font-size:10px",
+	)
+	canvas.TextEnd()
+	canvas.Gend()
+
+	canvas.End()
+	return d.output(w.String())
 }

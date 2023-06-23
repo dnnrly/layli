@@ -1,2 +1,3 @@
 nodes:
-  - id: "Hello World"
+  - id: node-1
+    contents: "Hello World"

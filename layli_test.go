@@ -24,3 +24,20 @@ nodes:
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(d.config.Nodes))
 }
+
+func Test_NewDiagramFromFile_GeneratesSimplestDiagram(t *testing.T) {
+	r := strings.NewReader(`
+nodes:
+  - id: node-1
+    contents: "A single box"
+`)
+	actualOutput := ""
+
+	d, _ := NewDiagramFromFile(io.NopCloser(r), func(output string) error {
+		actualOutput = output
+		return nil
+	})
+
+	assert.NoError(t, d.Draw())
+	assert.Contains(t, "A single boxnnn", actualOutput)
+}
