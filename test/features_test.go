@@ -1,11 +1,15 @@
 package test_test
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 
+	"github.com/antchfx/xmlquery"
 	"github.com/cucumber/godog"
 	"github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
@@ -20,6 +24,11 @@ type testContext struct {
 	cmdResult struct {
 		Output string
 		Err    error
+	}
+	svgOutput struct {
+		name     string
+		contents []byte
+		doc      *xmlquery.Node
 	}
 }
 
@@ -86,8 +95,55 @@ func (c *testContext) theAppOutputDoesNotContain(unexpected string) error {
 }
 
 func (c *testContext) aFileExists(file string) error {
-	_, err := os.Stat(file)
-	assert.NoError(c, err)
+	c.svgOutput.name = file
+	f, err := os.Open(file)
+	if err != nil {
+		assert.NoError(c, err)
+		return c.err
+	}
+	c.svgOutput.contents, err = ioutil.ReadAll(f)
+	if err != nil {
+		assert.NoError(c, err)
+		return c.err
+	}
+
+	c.svgOutput.doc, err = xmlquery.Parse(bytes.NewBuffer(c.svgOutput.contents))
+	if err != nil {
+		assert.NoError(c, err)
+		return c.err
+	}
+
+	return nil
+}
+
+func (c *testContext) inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries() error {
+	ids := getNodeIds(c.svgOutput.doc)
+	set := map[string]bool{}
+
+	for _, v := range ids {
+		id, _, _ := strings.Cut(v, "-")
+		set[id] = true
+	}
+
+	for n := range set {
+		rect := xmlquery.FindOne(c.svgOutput.doc, "//rect[starts-with(@id, '"+n+"')]")
+		rectX, _ := strconv.Atoi(rect.SelectAttr("x"))
+		rectY, _ := strconv.Atoi(rect.SelectAttr("y"))
+		rectWidth, _ := strconv.Atoi(rect.SelectAttr("width"))
+		rectHeight, _ := strconv.Atoi(rect.SelectAttr("height"))
+
+		text := xmlquery.FindOne(c.svgOutput.doc, "//text[starts-with(@id, '"+n+"')]")
+		textX, _ := strconv.Atoi(text.SelectAttr("x"))
+		textY, _ := strconv.Atoi(text.SelectAttr("y"))
+		textWidth, _ := strconv.Atoi(text.SelectAttr("width"))
+		textHeight, _ := strconv.Atoi(text.SelectAttr("height"))
+
+		assert.Greater(c, textX, rectX, fmt.Sprintf(`"%s" text "%s" does not fit inside node`, n, text.InnerText()))
+		assert.Greater(c, textY, rectY, fmt.Sprintf(`"%s" text "%s" does not fit inside node`, n, text.InnerText()))
+		assert.Less(c, textX+textWidth, rectX+rectWidth, fmt.Sprintf(`"%s" text "%s" does not fit inside node`, n, text.InnerText()))
+		assert.Less(c, textY+textHeight, rectY+rectHeight, fmt.Sprintf(`"%s" text "%s" does not fit inside node`, n, text.InnerText()))
+	}
+
 	return c.err
 }
 
@@ -118,5 +174,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^the app output contains "(.*)"$`, tc.theAppOutputContains)
 	ctx.Step(`^the app output does not contain "(.*)"$`, tc.theAppOutputDoesNotContain)
 	ctx.Step(`^a file "([^"]*)" exists$`, tc.aFileExists)
-
+	ctx.Step(`^in the SVG file, all node text fits inside the node boundaries$`, tc.inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries)
 }

@@ -51,11 +51,13 @@ func (d *Diagram) Draw() error {
 		width/10, height/10,
 		(width/10)*8, (height/10)*8,
 		3, 3,
+		`id="node1-rect"`,
 	)
 	canvas.Textspan(
 		width/2,
 		height/2,
 		d.config.Nodes[0].Contents,
+		`id="node1-text"`,
 		"font-size:10px",
 	)
 	canvas.TextEnd()

@@ -26,3 +26,4 @@ Feature: Simple CLI commands
         When the app runs with parameters "tmp/fixtures/inputs/hello-world.layli"
         Then the app exits without error
         And a file "tmp/fixtures/inputs/hello-world.svg" exists
+        And in the SVG file, all node text fits inside the node boundaries
