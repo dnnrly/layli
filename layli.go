@@ -41,26 +41,29 @@ func NewDiagramFromFile(r io.ReadCloser, output OutputFunc) (*Diagram, error) {
 // Draw turns the diagram in to an image
 func (d *Diagram) Draw() error {
 	width := 100
-	height := 100
+	height := 62
 
 	w := strings.Builder{}
 	canvas := svg.New(&w)
-	canvas.Start(width, height, "style=\"background-color: white;\"")
+	canvas.Start(width*len(d.config.Nodes), height, "style=\"background-color: white;\"")
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
-	canvas.Roundrect(
-		width/10, height/10,
-		(width/10)*8, (height/10)*8,
-		3, 3,
-		`id="node1-rect"`,
-	)
-	canvas.Textspan(
-		width/2,
-		height/2,
-		d.config.Nodes[0].Contents,
-		`id="node1-text"`,
-		"font-size:10px",
-	)
-	canvas.TextEnd()
+
+	for i, n := range d.config.Nodes {
+		canvas.Roundrect(
+			(width*i)+(width/10), height/10,
+			(width/10)*8, (height/10)*8,
+			3, 3,
+			fmt.Sprintf(`id="node%0d-rect"`, i+1),
+		)
+		canvas.Textspan(
+			(width*i)+(width/2),
+			height/2,
+			n.Contents,
+			fmt.Sprintf(`id="node%0d-text"`, i+1),
+			"font-size:10px",
+		)
+		canvas.TextEnd()
+	}
 	canvas.Gend()
 
 	canvas.End()

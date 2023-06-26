@@ -1,0 +1,5 @@
+nodes:
+  - id: node-1
+    contents: "First Node"
+  - id: node-2
+    contents: "Second Node"

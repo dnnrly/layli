@@ -27,3 +27,11 @@ Feature: Simple CLI commands
         Then the app exits without error
         And a file "tmp/fixtures/inputs/hello-world.svg" exists
         And in the SVG file, all node text fits inside the node boundaries
+
+    @Acceptance
+    Scenario: Generates a single node diagram
+        When the app runs with parameters "tmp/fixtures/inputs/2-nodes.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/2-nodes.svg" exists
+        And the number of nodes is 2
+        And in the SVG file, all node text fits inside the node boundaries

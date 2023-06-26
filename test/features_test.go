@@ -39,12 +39,12 @@ func (c *testContext) Errorf(format string, args ...interface{}) {
 }
 
 func (c *testContext) theTestFixuresHaveBeenReset() error {
-	err := os.RemoveAll("tmp/fixtures")
-	if err != nil {
-		return fmt.Errorf("deleting old fixtures: %w", err)
-	}
+	// err := os.RemoveAll("tmp/fixtures")
+	// if err != nil {
+	// 	return fmt.Errorf("deleting old fixtures: %w", err)
+	// }
 
-	err = copy.Copy("fixtures/", "tmp/fixtures")
+	err := copy.Copy("fixtures/", "tmp/fixtures")
 	if err != nil {
 		return fmt.Errorf("copying new fixtures: %w", err)
 	}
@@ -147,6 +147,20 @@ func (c *testContext) inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries() error
 	return c.err
 }
 
+func (c *testContext) theNumberOfNodesIs(expected int) error {
+	ids := getNodeIds(c.svgOutput.doc)
+	set := map[string]bool{}
+
+	for _, v := range ids {
+		id, _, _ := strings.Cut(v, "-")
+		set[id] = true
+	}
+
+	assert.Len(c, set, 2)
+
+	return c.err
+}
+
 // nolint: unused
 func InitializeTestSuite(ctx *godog.TestSuiteContext) {
 	ctx.BeforeSuite(func() {})
@@ -175,4 +189,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^the app output does not contain "(.*)"$`, tc.theAppOutputDoesNotContain)
 	ctx.Step(`^a file "([^"]*)" exists$`, tc.aFileExists)
 	ctx.Step(`^in the SVG file, all node text fits inside the node boundaries$`, tc.inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries)
+	ctx.Step(`^the number of nodes is (\d+)$`, tc.theNumberOfNodesIs)
 }
