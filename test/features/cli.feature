@@ -35,3 +35,4 @@ Feature: Simple CLI commands
         And a file "tmp/fixtures/inputs/2-nodes.svg" exists
         And the number of nodes is 2
         And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap

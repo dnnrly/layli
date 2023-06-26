@@ -161,6 +161,54 @@ func (c *testContext) theNumberOfNodesIs(expected int) error {
 	return c.err
 }
 
+func (c *testContext) inTheSVGFileNodesDoNotOverlap() error {
+	// Find all rectangle elements
+	rectangles := xmlquery.Find(c.svgOutput.doc, "//rect")
+	assert.NotEmpty(c, rectangles, "No rectangles found")
+
+	// Check for overlap
+	for i := 0; i < len(rectangles); i++ {
+		rectA := rectangles[i]
+		for j := i + 1; j < len(rectangles); j++ {
+			rectB := rectangles[j]
+			assert.False(c, isOverlap(rectA, rectB), "Rectangles overlap")
+		}
+	}
+
+	return c.err
+}
+
+// Helper function to check if two rectangles overlap
+func isOverlap(rectA, rectB *xmlquery.Node) bool {
+	xA := rectA.SelectAttr("x")
+	yA := rectA.SelectAttr("y")
+	widthA := rectA.SelectAttr("width")
+	heightA := rectA.SelectAttr("height")
+
+	xB := rectB.SelectAttr("x")
+	yB := rectB.SelectAttr("y")
+	widthB := rectB.SelectAttr("width")
+	heightB := rectB.SelectAttr("height")
+
+	leftA := parseFloat(xA)
+	rightA := leftA + parseFloat(widthA)
+	topA := parseFloat(yA)
+	bottomA := topA + parseFloat(heightA)
+
+	leftB := parseFloat(xB)
+	rightB := leftB + parseFloat(widthB)
+	topB := parseFloat(yB)
+	bottomB := topB + parseFloat(heightB)
+
+	return !(rightA <= leftB || leftA >= rightB || bottomA <= topB || topA >= bottomB)
+}
+
+// Helper function to parse a float value from string
+func parseFloat(value string) float64 {
+	result, _ := strconv.ParseFloat(value, 64)
+	return result
+}
+
 // nolint: unused
 func InitializeTestSuite(ctx *godog.TestSuiteContext) {
 	ctx.BeforeSuite(func() {})
@@ -190,4 +238,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a file "([^"]*)" exists$`, tc.aFileExists)
 	ctx.Step(`^in the SVG file, all node text fits inside the node boundaries$`, tc.inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries)
 	ctx.Step(`^the number of nodes is (\d+)$`, tc.theNumberOfNodesIs)
+	ctx.Step(`^in the SVG file, nodes do not overlap$`, tc.inTheSVGFileNodesDoNotOverlap)
 }
