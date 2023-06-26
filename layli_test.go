@@ -39,5 +39,5 @@ nodes:
 	})
 
 	assert.NoError(t, d.Draw())
-	assert.Contains(t, "A single boxnnn", actualOutput)
+	assert.Contains(t, actualOutput, "A single box")
 }
