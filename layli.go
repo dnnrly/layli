@@ -72,18 +72,18 @@ func (d *Diagram) Draw() error {
 		}
 	}
 
-	for i, n := range d.config.Nodes {
+	for _, n := range d.config.Nodes {
 		canvas.Roundrect(
 			(nodeWidth*n.X)+(nodeWidth/10), (nodeHeight*n.Y)+nodeHeight/10,
 			(nodeWidth/10)*8, (nodeHeight/10)*8,
 			3, 3,
-			fmt.Sprintf(`id="node%0d-rect"`, i+1),
+			fmt.Sprintf(`id="%s"`, n.Id),
 		)
 		canvas.Textspan(
 			(nodeWidth*n.X)+(nodeWidth/2),
 			(nodeHeight*n.Y)+(nodeHeight/2),
 			n.Contents,
-			fmt.Sprintf(`id="node%0d-text"`, i+1),
+			fmt.Sprintf(`id="%s-text"`, n.Id),
 			"font-size:10px",
 		)
 		canvas.TextEnd()
