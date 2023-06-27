@@ -156,7 +156,7 @@ func (c *testContext) theNumberOfNodesIs(expected int) error {
 		set[id] = true
 	}
 
-	assert.Len(c, set, 2)
+	assert.Len(c, set, expected)
 
 	return c.err
 }
@@ -178,35 +178,20 @@ func (c *testContext) inTheSVGFileNodesDoNotOverlap() error {
 	return c.err
 }
 
-// Helper function to check if two rectangles overlap
-func isOverlap(rectA, rectB *xmlquery.Node) bool {
-	xA := rectA.SelectAttr("x")
-	yA := rectA.SelectAttr("y")
-	widthA := rectA.SelectAttr("width")
-	heightA := rectA.SelectAttr("height")
+func (c *testContext) theImageHasAWidthLessThan(expected int) error {
+	wStr := xmlquery.FindOne(c.svgOutput.doc, "/*/@width").InnerText()
+	width := parseFloat(wStr)
+	assert.Less(c, width, float64(expected))
 
-	xB := rectB.SelectAttr("x")
-	yB := rectB.SelectAttr("y")
-	widthB := rectB.SelectAttr("width")
-	heightB := rectB.SelectAttr("height")
-
-	leftA := parseFloat(xA)
-	rightA := leftA + parseFloat(widthA)
-	topA := parseFloat(yA)
-	bottomA := topA + parseFloat(heightA)
-
-	leftB := parseFloat(xB)
-	rightB := leftB + parseFloat(widthB)
-	topB := parseFloat(yB)
-	bottomB := topB + parseFloat(heightB)
-
-	return !(rightA <= leftB || leftA >= rightB || bottomA <= topB || topA >= bottomB)
+	return c.err
 }
 
-// Helper function to parse a float value from string
-func parseFloat(value string) float64 {
-	result, _ := strconv.ParseFloat(value, 64)
-	return result
+func (c *testContext) theImageHasAHeightLessThan(expected int) error {
+	hStr := xmlquery.FindOne(c.svgOutput.doc, "/*/@height").InnerText()
+	height := parseFloat(hStr)
+	assert.Less(c, height, float64(expected))
+
+	return c.err
 }
 
 // nolint: unused
@@ -239,4 +224,6 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^in the SVG file, all node text fits inside the node boundaries$`, tc.inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries)
 	ctx.Step(`^the number of nodes is (\d+)$`, tc.theNumberOfNodesIs)
 	ctx.Step(`^in the SVG file, nodes do not overlap$`, tc.inTheSVGFileNodesDoNotOverlap)
+	ctx.Step(`^the image has a width less than (\d+)$`, tc.theImageHasAWidthLessThan)
+	ctx.Step(`^the image has a height less than (\d+)$`, tc.theImageHasAHeightLessThan)
 }

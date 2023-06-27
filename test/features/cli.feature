@@ -36,3 +36,14 @@ Feature: Simple CLI commands
         And the number of nodes is 2
         And in the SVG file, all node text fits inside the node boundaries
         And in the SVG file, nodes do not overlap
+
+    @Acceptance
+    Scenario: Generates an image with smallest area
+        When the app runs with parameters "tmp/fixtures/inputs/14-nodes.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/14-nodes.svg" exists
+        And the number of nodes is 14
+        And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap
+        And the image has a width less than 401
+        And the image has a height less than 321
