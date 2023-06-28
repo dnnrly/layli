@@ -12,14 +12,6 @@ import (
 
 type OutputFunc func(output string) error
 
-type Node struct {
-	Id       string `yaml:"id"`
-	Contents string `yaml:"contents"`
-
-	X int `yaml:"-"`
-	Y int `yaml:"-"`
-}
-
 type DiagramConfig struct {
 	Nodes []Node `yaml:"nodes"`
 }
@@ -65,28 +57,17 @@ func (d *Diagram) Draw() error {
 	pos := 0
 	for y := 0; y < size && pos < len(d.config.Nodes); y++ {
 		for x := 0; x < size && pos < len(d.config.Nodes); x++ {
-			fmt.Printf("x=%d y=%d pos=%d\n", x, y, pos)
 			d.config.Nodes[pos].X = x
 			d.config.Nodes[pos].Y = y
+			d.config.Nodes[pos].Width = nodeWidth
+			d.config.Nodes[pos].Height = nodeHeight
+
 			pos++
 		}
 	}
 
 	for _, n := range d.config.Nodes {
-		canvas.Roundrect(
-			(nodeWidth*n.X)+(nodeWidth/10), (nodeHeight*n.Y)+nodeHeight/10,
-			(nodeWidth/10)*8, (nodeHeight/10)*8,
-			3, 3,
-			fmt.Sprintf(`id="%s"`, n.Id),
-		)
-		canvas.Textspan(
-			(nodeWidth*n.X)+(nodeWidth/2),
-			(nodeHeight*n.Y)+(nodeHeight/2),
-			n.Contents,
-			fmt.Sprintf(`id="%s-text"`, n.Id),
-			"font-size:10px",
-		)
-		canvas.TextEnd()
+		n.Draw(canvas)
 	}
 	canvas.Gend()
 
