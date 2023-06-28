@@ -18,11 +18,11 @@ func TestNode_DrawNode(t *testing.T) {
 		Height:   80,
 	}
 
-	drawer.On("Roundrect", 400+10, 400+8, 80, 64, 3, 3, `id="nodeA"`).Once()
-	drawer.On("Textspan", 400+50, 400+40, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
+	drawer.On("Roundrect", (233*4)-50, (233*5)-40, 100, 80, 3, 3, `id="nodeA"`).Once()
+	drawer.On("Textspan", 233*4, 233*5, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
-	n.Draw(drawer)
+	n.Draw(drawer, 233)
 
 	drawer.AssertExpectations(t)
 }

@@ -18,16 +18,16 @@ type Node struct {
 	Height int `yaml:"-"`
 }
 
-func (n *Node) Draw(d NodeDrawer) {
+func (n *Node) Draw(d NodeDrawer, spacing int) {
 	d.Roundrect(
-		(n.Width*n.X)+(n.Width/10), (n.Height*n.Y)+n.Height/10,
-		(n.Width/10)*8, (n.Height/10)*8,
+		spacing*n.X-n.Width/2, spacing*n.Y-n.Height/2,
+		n.Width, n.Height,
 		3, 3,
 		fmt.Sprintf(`id="%s"`, n.Id),
 	)
 	d.Textspan(
-		(n.Width*n.X)+(n.Width/2),
-		(n.Height*n.Y)+(n.Height/2),
+		spacing*n.X,
+		spacing*n.Y,
 		n.Contents,
 		fmt.Sprintf(`id="%s-text"`, n.Id),
 		"font-size:10px",

@@ -46,19 +46,20 @@ func (d *Diagram) Draw() error {
 		size = 2
 	}
 
+	gridSpacing := 150
 	nodeWidth := 100
 	nodeHeight := 80
 
 	w := strings.Builder{}
 	canvas := svg.New(&w)
-	canvas.Start(nodeWidth*size, nodeHeight*size, "style=\"background-color: white;\"")
+	canvas.Start(gridSpacing*(size+1), gridSpacing*(size+1), "style=\"background-color: white;\"")
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
 
 	pos := 0
 	for y := 0; y < size && pos < len(d.config.Nodes); y++ {
 		for x := 0; x < size && pos < len(d.config.Nodes); x++ {
-			d.config.Nodes[pos].X = x
-			d.config.Nodes[pos].Y = y
+			d.config.Nodes[pos].X = x + 1
+			d.config.Nodes[pos].Y = y + 1
 			d.config.Nodes[pos].Width = nodeWidth
 			d.config.Nodes[pos].Height = nodeHeight
 
@@ -67,7 +68,7 @@ func (d *Diagram) Draw() error {
 	}
 
 	for _, n := range d.config.Nodes {
-		n.Draw(canvas)
+		n.Draw(canvas, gridSpacing)
 	}
 	canvas.Gend()
 
