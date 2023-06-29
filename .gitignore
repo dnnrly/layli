@@ -22,3 +22,5 @@ tmp/
 test/tmp/
 share/
 dist/
+
+dist/

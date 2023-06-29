@@ -19,7 +19,7 @@ nodes:
 
 	d, err := NewDiagramFromFile(io.NopCloser(r), func(output string) error {
 		return nil
-	})
+	}, false)
 
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(d.config.Nodes))
@@ -36,7 +36,7 @@ nodes:
 	d, _ := NewDiagramFromFile(io.NopCloser(r), func(output string) error {
 		actualOutput = output
 		return nil
-	})
+	}, false)
 
 	assert.NoError(t, d.Draw())
 	assert.Contains(t, actualOutput, "A single box")

@@ -139,12 +139,28 @@ func (c *testContext) inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries() error
 		textHeight, _ := strconv.Atoi(text.SelectAttr("height"))
 
 		assert.Greater(c, textX, rectX, fmt.Sprintf(`"%s" text "%s" does not fit inside node`, n, text.InnerText()))
+		if c.err != nil {
+			return c.err
+		}
+
 		assert.Greater(c, textY, rectY, fmt.Sprintf(`"%s" text "%s" does not fit inside node`, n, text.InnerText()))
+		if c.err != nil {
+			return c.err
+		}
+
 		assert.Less(c, textX+textWidth, rectX+rectWidth, fmt.Sprintf(`"%s" text "%s" does not fit inside node`, n, text.InnerText()))
+		if c.err != nil {
+			return c.err
+		}
+
 		assert.Less(c, textY+textHeight, rectY+rectHeight, fmt.Sprintf(`"%s" text "%s" does not fit inside node`, n, text.InnerText()))
+		if c.err != nil {
+			return c.err
+		}
+
 	}
 
-	return c.err
+	return nil
 }
 
 func (c *testContext) theNumberOfNodesIs(expected int) error {
@@ -172,10 +188,14 @@ func (c *testContext) inTheSVGFileNodesDoNotOverlap() error {
 		for j := i + 1; j < len(rectangles); j++ {
 			rectB := rectangles[j]
 			assert.False(c, isOverlap(rectA, rectB), "Rectangles overlap")
+			if c.err != nil {
+				return c.err
+			}
+
 		}
 	}
 
-	return c.err
+	return nil
 }
 
 func (c *testContext) theImageHasAWidthLessThan(expected int) error {
@@ -190,6 +210,67 @@ func (c *testContext) theImageHasAHeightLessThan(expected int) error {
 	hStr := xmlquery.FindOne(c.svgOutput.doc, "/*/@height").InnerText()
 	height := parseFloat(hStr)
 	assert.Less(c, height, float64(expected))
+
+	return c.err
+}
+
+func (c *testContext) inTheSVGFileAllNodesFitOnTheImage() error {
+	ids := getNodeIds(c.svgOutput.doc)
+	set := map[string]bool{}
+
+	for _, v := range ids {
+		id, _, _ := strings.Cut(v, "-")
+		set[id] = true
+	}
+
+	wStr := xmlquery.FindOne(c.svgOutput.doc, "/*/@width").InnerText()
+	width, _ := strconv.Atoi(wStr)
+
+	hStr := xmlquery.FindOne(c.svgOutput.doc, "/*/@height").InnerText()
+	height, _ := strconv.Atoi(hStr)
+
+	for n := range set {
+		rect := xmlquery.FindOne(c.svgOutput.doc, "//rect[starts-with(@id, '"+n+"')]")
+		rectX, _ := strconv.Atoi(rect.SelectAttr("x"))
+		rectY, _ := strconv.Atoi(rect.SelectAttr("y"))
+		rectWidth, _ := strconv.Atoi(rect.SelectAttr("width"))
+		rectHeight, _ := strconv.Atoi(rect.SelectAttr("height"))
+
+		assert.Less(c, 0, rectX, fmt.Sprintf(`node "%s" X does not fit on page (%d > %d)`, n, 0, rectX))
+		if c.err != nil {
+			return c.err
+		}
+
+		assert.Less(c, 0, rectY, fmt.Sprintf(`node "%s" Y does not fit on page (%d > %d)`, n, 0, rectY))
+		if c.err != nil {
+			return c.err
+		}
+
+		assert.Greater(c, width, rectX+rectWidth, fmt.Sprintf(`node "%s" X does not fit on page (%d > %d)`, n, width, rectX+rectWidth))
+		if c.err != nil {
+			return c.err
+		}
+
+		assert.Greater(c, height, rectY+rectHeight, fmt.Sprintf(`node "%s" Y does not fit on page (%d > %d)`, n, height, rectY+rectHeight))
+		if c.err != nil {
+			return c.err
+		}
+
+	}
+
+	return nil
+}
+
+func (c *testContext) inTheSVGFileGridDotsAreNotShown() error {
+	nodes := xmlquery.Find(c.svgOutput.doc, "//*[contains(@class, 'path-dot')]")
+	assert.Empty(c, nodes)
+
+	return c.err
+}
+
+func (c *testContext) inTheSVGFilePathGridDotsAreShown() error {
+	nodes := xmlquery.Find(c.svgOutput.doc, "//*[contains(@class, 'path-dot')]")
+	assert.NotEmpty(c, nodes)
 
 	return c.err
 }
@@ -226,4 +307,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^in the SVG file, nodes do not overlap$`, tc.inTheSVGFileNodesDoNotOverlap)
 	ctx.Step(`^the image has a width less than (\d+)$`, tc.theImageHasAWidthLessThan)
 	ctx.Step(`^the image has a height less than (\d+)$`, tc.theImageHasAHeightLessThan)
+	ctx.Step(`^in the SVG file, all nodes fit on the image$`, tc.inTheSVGFileAllNodesFitOnTheImage)
+	ctx.Step(`^in the SVG file, grid dots are not shown$`, tc.inTheSVGFileGridDotsAreNotShown)
+	ctx.Step(`^in the SVG file, path grid dots are shown$`, tc.inTheSVGFilePathGridDotsAreShown)
 }

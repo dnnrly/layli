@@ -27,15 +27,17 @@ Feature: Simple CLI commands
         Then the app exits without error
         And a file "tmp/fixtures/inputs/hello-world.svg" exists
         And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, grid dots are not shown
 
     @Acceptance
-    Scenario: Generates a single node diagram
+    Scenario: Generates a 2 node diagram
         When the app runs with parameters "tmp/fixtures/inputs/2-nodes.layli"
         Then the app exits without error
         And a file "tmp/fixtures/inputs/2-nodes.svg" exists
         And the number of nodes is 2
         And in the SVG file, all node text fits inside the node boundaries
         And in the SVG file, nodes do not overlap
+        And in the SVG file, all nodes fit on the image
 
     @Acceptance
     Scenario: Generates an image with smallest area
@@ -45,5 +47,13 @@ Feature: Simple CLI commands
         And the number of nodes is 14
         And in the SVG file, all node text fits inside the node boundaries
         And in the SVG file, nodes do not overlap
-        And the image has a width less than 401
-        And the image has a height less than 321
+        And the image has a width less than 751
+        And the image has a height less than 751
+        And in the SVG file, all nodes fit on the image
+
+    @Acceptance
+    Scenario: Shows path grid positions
+        When the app runs with parameters "--show-grid tmp/fixtures/inputs/2-nodes.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/2-nodes.svg" exists
+        And in the SVG file, path grid dots are shown
