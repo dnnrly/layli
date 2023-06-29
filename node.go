@@ -12,16 +12,14 @@ type Node struct {
 	Id       string `yaml:"id"`
 	Contents string `yaml:"contents"`
 
-	X      int `yaml:"-"`
-	Y      int `yaml:"-"`
-	Width  int `yaml:"-"`
-	Height int `yaml:"-"`
+	X int `yaml:"-"`
+	Y int `yaml:"-"`
 }
 
-func (n *Node) Draw(d NodeDrawer, spacing int) {
+func (n *Node) Draw(d NodeDrawer, spacing, width, Height int) {
 	d.Roundrect(
-		spacing*n.X-n.Width/2, spacing*n.Y-n.Height/2,
-		n.Width, n.Height,
+		spacing*n.X-width/2, spacing*n.Y-Height/2,
+		width, Height,
 		3, 3,
 		fmt.Sprintf(`id="%s"`, n.Id),
 	)

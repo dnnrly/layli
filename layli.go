@@ -63,8 +63,6 @@ func (d *Diagram) Draw() error {
 		for x := 0; x < size && pos < len(d.config.Nodes); x++ {
 			d.config.Nodes[pos].X = x + 1
 			d.config.Nodes[pos].Y = y + 1
-			d.config.Nodes[pos].Width = nodeWidth
-			d.config.Nodes[pos].Height = nodeHeight
 
 			pos++
 		}
@@ -84,7 +82,7 @@ func (d *Diagram) Draw() error {
 	}
 
 	for _, n := range d.config.Nodes {
-		n.Draw(canvas, gridSpacing)
+		n.Draw(canvas, gridSpacing, nodeWidth, nodeHeight)
 	}
 	canvas.Gend()
 
