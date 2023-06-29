@@ -17,14 +17,16 @@ type DiagramConfig struct {
 }
 
 type Diagram struct {
-	output OutputFunc
-	config DiagramConfig
+	output   OutputFunc
+	config   DiagramConfig
+	showGrid bool
 }
 
 // NewDiagramFromFile reads the configuration and parses it in to a Diagram object
-func NewDiagramFromFile(r io.ReadCloser, output OutputFunc) (*Diagram, error) {
+func NewDiagramFromFile(r io.ReadCloser, output OutputFunc, showGrid bool) (*Diagram, error) {
 	d := Diagram{
-		output: output,
+		output:   output,
+		showGrid: showGrid,
 	}
 	err := yaml.NewDecoder(r).Decode(&d.config)
 	if err != nil {
@@ -46,9 +48,10 @@ func (d *Diagram) Draw() error {
 		size = 2
 	}
 
-	gridSpacing := 150
-	nodeWidth := 100
-	nodeHeight := 80
+	pathSpacing := 20
+	gridSpacing := pathSpacing * 7
+	nodeWidth := pathSpacing * 5
+	nodeHeight := pathSpacing * 3
 
 	w := strings.Builder{}
 	canvas := svg.New(&w)
@@ -64,6 +67,19 @@ func (d *Diagram) Draw() error {
 			d.config.Nodes[pos].Height = nodeHeight
 
 			pos++
+		}
+	}
+
+	if d.showGrid {
+		for y := 0; y < gridSpacing*(size+1); y += pathSpacing {
+			for x := 0; x < gridSpacing*(size+1); x += pathSpacing {
+				canvas.Circle(
+					pathSpacing/2+x,
+					pathSpacing/2+y,
+					1,
+					`class="path-dot"`,
+				)
+			}
 		}
 	}
 

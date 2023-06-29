@@ -261,6 +261,20 @@ func (c *testContext) inTheSVGFileAllNodesFitOnTheImage() error {
 	return nil
 }
 
+func (c *testContext) inTheSVGFileGridDotsAreNotShown() error {
+	nodes := xmlquery.Find(c.svgOutput.doc, "//*[contains(@class, 'path-dot')]")
+	assert.Empty(c, nodes)
+
+	return c.err
+}
+
+func (c *testContext) inTheSVGFilePathGridDotsAreShown() error {
+	nodes := xmlquery.Find(c.svgOutput.doc, "//*[contains(@class, 'path-dot')]")
+	assert.NotEmpty(c, nodes)
+
+	return c.err
+}
+
 // nolint: unused
 func InitializeTestSuite(ctx *godog.TestSuiteContext) {
 	ctx.BeforeSuite(func() {})
@@ -294,4 +308,6 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^the image has a width less than (\d+)$`, tc.theImageHasAWidthLessThan)
 	ctx.Step(`^the image has a height less than (\d+)$`, tc.theImageHasAHeightLessThan)
 	ctx.Step(`^in the SVG file, all nodes fit on the image$`, tc.inTheSVGFileAllNodesFitOnTheImage)
+	ctx.Step(`^in the SVG file, grid dots are not shown$`, tc.inTheSVGFileGridDotsAreNotShown)
+	ctx.Step(`^in the SVG file, path grid dots are shown$`, tc.inTheSVGFilePathGridDotsAreShown)
 }
