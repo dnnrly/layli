@@ -7,9 +7,9 @@ import (
 )
 
 func TestNode_DrawNode(t *testing.T) {
-	drawer := mocks.NewNodeDrawer(t)
+	drawer := mocks.NewLayoutDrawer(t)
 
-	n := Node{
+	n := LayoutNode{
 		Id:       "nodeA",
 		Contents: "some contents",
 		X:        4,
