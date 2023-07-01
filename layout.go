@@ -78,15 +78,26 @@ func (l *Layout) LayoutWidth() int {
 	return l.gridSpacing * (l.GridWidth + 1)
 }
 
+func (l *Layout) InsideAny(x, y int) bool {
+	for _, n := range l.Nodes {
+		if n.IsInside(x, y) {
+			return true
+		}
+	}
+	return false
+}
+
 func (l *Layout) ShowGrid(canvas LayoutDrawer) {
 	for y := 0; y < l.gridSpacing*(l.GridHeight+1); y += l.pathSpacing {
 		for x := 0; x < l.gridSpacing*(l.GridWidth+1); x += l.pathSpacing {
-			canvas.Circle(
-				l.pathSpacing/2+x,
-				l.pathSpacing/2+y,
-				1,
-				`class="path-dot"`,
-			)
+			if !l.InsideAny(l.pathSpacing/2+x, l.pathSpacing/2+y) {
+				canvas.Circle(
+					l.pathSpacing/2+x,
+					l.pathSpacing/2+y,
+					1,
+					`class="path-dot"`,
+				)
+			}
 		}
 	}
 }
@@ -137,6 +148,14 @@ func NewLayoutNode(id, contents string, x, y, spacing, width, height int) Layout
 		left:   x - width/2,
 		right:  x + width/2,
 	}
+}
+
+func (n *LayoutNode) IsInside(x, y int) bool {
+	if y >= n.top && y <= n.bottom && x >= n.left && x <= n.right {
+		return true
+	}
+
+	return false
 }
 
 func (n *LayoutNode) Draw(d LayoutDrawer, spacing, width, height int) {

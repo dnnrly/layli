@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	"github.com/dnnrly/layli/mocks"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestNode_DrawNode(t *testing.T) {
+func TestLayoutNode_DrawNode(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	n := LayoutNode{
@@ -27,4 +28,26 @@ func TestNode_DrawNode(t *testing.T) {
 	n.Draw(drawer, 233, 100, 80)
 
 	drawer.AssertExpectations(t)
+}
+
+func TestLayoutNode_IsInside(t *testing.T) {
+	n := NewLayoutNode("id", "contents", 200, 400, 20, 80, 80)
+
+	assert.True(t, n.IsInside(200, 400))
+	assert.True(t, n.IsInside(160, 400))
+	assert.False(t, n.IsInside(200, 200))
+	assert.False(t, n.IsInside(159, 200))
+}
+
+func TestLayout_InsideAny(t *testing.T) {
+	l := &Layout{
+		Nodes: LayoutNodes{
+			NewLayoutNode("1", "contents", 200, 200, 20, 80, 80),
+			NewLayoutNode("2", "contents", 200, 400, 20, 80, 80),
+		},
+	}
+
+	assert.True(t, l.InsideAny(200, 200))
+	assert.True(t, l.InsideAny(200, 400))
+	assert.False(t, l.InsideAny(200, 300))
 }
