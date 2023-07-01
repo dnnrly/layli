@@ -3,7 +3,7 @@ package test_test
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/exec"
 	"strconv"
@@ -101,7 +101,7 @@ func (c *testContext) aFileExists(file string) error {
 		assert.NoError(c, err)
 		return c.err
 	}
-	c.svgOutput.contents, err = ioutil.ReadAll(f)
+	c.svgOutput.contents, err = io.ReadAll(f)
 	if err != nil {
 		assert.NoError(c, err)
 		return c.err
