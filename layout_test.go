@@ -12,8 +12,12 @@ func TestNode_DrawNode(t *testing.T) {
 	n := LayoutNode{
 		Id:       "nodeA",
 		Contents: "some contents",
-		X:        4,
-		Y:        5,
+		X:        4 * 233,
+		Y:        5 * 233,
+
+		spacing: 233,
+		left:    (233 * 4) - 50,
+		top:     (233 * 5) - 40,
 	}
 
 	drawer.On("Roundrect", (233*4)-50, (233*5)-40, 100, 80, 3, 3, `id="nodeA"`).Once()

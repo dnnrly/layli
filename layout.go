@@ -51,12 +51,17 @@ func NewLayoutFromConfig(c Config) *Layout {
 	pos := 0
 	for y := 0; y < size && pos < numNodes; y++ {
 		for x := 0; x < size && pos < numNodes; x++ {
-			l.Nodes = append(l.Nodes, LayoutNode{
-				Id:       c.Nodes[pos].Id,
-				Contents: c.Nodes[pos].Contents,
-				X:        x + 1,
-				Y:        y + 1,
-			})
+			l.Nodes = append(
+				l.Nodes,
+				NewLayoutNode(
+					c.Nodes[pos].Id,
+					c.Nodes[pos].Contents,
+					(x+1)*l.gridSpacing,
+					(y+1)*l.gridSpacing,
+					pathSpacing,
+					l.nodeWidth, l.nodeHeight,
+				),
+			)
 
 			pos++
 		}
@@ -95,22 +100,55 @@ func (l *Layout) Draw(canvas LayoutDrawer) {
 type LayoutNode struct {
 	Id       string
 	Contents string
-	X        int
-	Y        int
+
+	// location of the centre of the node in pixels
+	X int
+	Y int
+
+	spacing int // number of pixels between 'path' points on either axis
+
+	// dimensions of the node in pixels
+	width  int
+	height int
+
+	// the pixel position of the edges of the node
+	top    int
+	bottom int
+	left   int
+	right  int
 }
 
 type LayoutNodes []LayoutNode
 
-func (n *LayoutNode) Draw(d LayoutDrawer, spacing, width, Height int) {
+func NewLayoutNode(id, contents string, x, y, spacing, width, height int) LayoutNode {
+	return LayoutNode{
+		Id:       id,
+		Contents: contents,
+		X:        x,
+		Y:        y,
+
+		spacing: spacing,
+
+		width:  width,
+		height: height,
+
+		top:    y - height/2,
+		bottom: y + height/2,
+		left:   x - width/2,
+		right:  x + width/2,
+	}
+}
+
+func (n *LayoutNode) Draw(d LayoutDrawer, spacing, width, height int) {
 	d.Roundrect(
-		spacing*n.X-width/2, spacing*n.Y-Height/2,
-		width, Height,
+		n.left, n.top,
+		width, height,
 		3, 3,
 		fmt.Sprintf(`id="%s"`, n.Id),
 	)
 	d.Textspan(
-		spacing*n.X,
-		spacing*n.Y,
+		n.X,
+		n.Y,
 		n.Contents,
 		fmt.Sprintf(`id="%s-text"`, n.Id),
 		"font-size:10px",
