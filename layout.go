@@ -87,16 +87,23 @@ func (l *Layout) InsideAny(x, y int) bool {
 	return false
 }
 
+func (l *Layout) IsAnyPort(x, y int) bool {
+	for _, n := range l.Nodes {
+		if n.IsPort(x, y) {
+			return true
+		}
+	}
+	return false
+}
+
 func (l *Layout) ShowGrid(canvas LayoutDrawer) {
-	for y := 0; y < l.gridSpacing*(l.GridHeight+1); y += l.pathSpacing {
-		for x := 0; x < l.gridSpacing*(l.GridWidth+1); x += l.pathSpacing {
-			if !l.InsideAny(l.pathSpacing/2+x, l.pathSpacing/2+y) {
-				canvas.Circle(
-					l.pathSpacing/2+x,
-					l.pathSpacing/2+y,
-					1,
-					`class="path-dot"`,
-				)
+	for y := 0; y < l.LayoutHeight(); y += l.pathSpacing {
+		for x := 0; x < l.LayoutWidth(); x += l.pathSpacing {
+			gridX := l.pathSpacing/2 + x
+			gridY := l.pathSpacing/2 + y
+
+			if !l.InsideAny(gridX, gridY) || l.IsAnyPort(gridX, gridY) {
+				canvas.Circle(gridX, gridY, 1, `class="path-dot"`)
 			}
 		}
 	}
@@ -156,6 +163,42 @@ func (n *LayoutNode) IsInside(x, y int) bool {
 	}
 
 	return false
+}
+
+func (n *LayoutNode) IsPort(x, y int) bool {
+	if x%n.spacing != 0 || y%n.spacing != 0 {
+		return false
+	}
+
+	if x == n.left && y == n.top {
+		return false
+	}
+
+	if x == n.left && y == n.bottom {
+		return false
+	}
+
+	if x == n.right && y == n.top {
+		return false
+	}
+
+	if x == n.right && y == n.bottom {
+		return false
+	}
+
+	if !(x == n.left || x == n.right || y == n.top || y == n.bottom) {
+		return false
+	}
+
+	if y > n.top && y < n.bottom {
+		return true
+	}
+
+	if x > n.left && x < n.right {
+		return true
+	}
+
+	return true
 }
 
 func (n *LayoutNode) Draw(d LayoutDrawer, spacing, width, height int) {
