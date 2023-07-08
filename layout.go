@@ -13,21 +13,19 @@ type LayoutDrawer interface {
 }
 
 type Layout struct {
-	Nodes      LayoutNodes
-	GridHeight int
-	GridWidth  int
+	Nodes LayoutNodes
 
-	pathSpacing int
-	gridSpacing int
-	nodeHeight  int
-	nodeWidth   int
+	nodeHeight int // Height of a node in path unites
+	nodeWidth  int // Width of a node in path units
+
+	pathSpacing int // Length of a path unit in pixels
 }
 
 func NewLayoutFromConfig(c Config) *Layout {
 	numNodes := len(c.Nodes)
 
 	root := math.Sqrt(float64(numNodes))
-	size := int(math.Round(root))
+	size := int(math.Ceil(root))
 
 	if size < int(root) {
 		size++
@@ -38,14 +36,11 @@ func NewLayoutFromConfig(c Config) *Layout {
 	pathSpacing := 20
 
 	l := &Layout{
-		Nodes:      LayoutNodes{},
-		GridWidth:  size,
-		GridHeight: size,
+		Nodes: LayoutNodes{},
 
 		pathSpacing: pathSpacing,
-		gridSpacing: pathSpacing * 7,
-		nodeWidth:   pathSpacing * 5,
-		nodeHeight:  pathSpacing * 3,
+		nodeWidth:   5,
+		nodeHeight:  3,
 	}
 
 	pos := 0
@@ -56,9 +51,8 @@ func NewLayoutFromConfig(c Config) *Layout {
 				NewLayoutNode(
 					c.Nodes[pos].Id,
 					c.Nodes[pos].Contents,
-					(x+1)*l.gridSpacing,
-					(y+1)*l.gridSpacing,
-					pathSpacing,
+					x*(l.nodeWidth+1),
+					y*(l.nodeHeight+1),
 					l.nodeWidth, l.nodeHeight,
 				),
 			)
@@ -71,11 +65,27 @@ func NewLayoutFromConfig(c Config) *Layout {
 }
 
 func (l *Layout) LayoutHeight() int {
-	return l.gridSpacing * (l.GridHeight + 1)
+	numNodes := len(l.Nodes)
+
+	root := math.Sqrt(float64(numNodes))
+	rows := numNodes / int(root)
+	if numNodes%int(root) == 0 {
+		rows--
+	}
+
+	return (1 + (rows * l.nodeHeight) + rows) * l.pathSpacing
 }
 
 func (l *Layout) LayoutWidth() int {
-	return l.gridSpacing * (l.GridWidth + 1)
+	numNodes := len(l.Nodes)
+	columns := numNodes
+
+	if numNodes >= 4 {
+		root := math.Sqrt(float64(numNodes))
+		columns = int(math.Ceil(root))
+	}
+
+	return (1 + (columns * l.nodeWidth) + columns) * l.pathSpacing
 }
 
 func (l *Layout) InsideAny(x, y int) bool {
@@ -96,34 +106,28 @@ func (l *Layout) IsAnyPort(x, y int) bool {
 	return false
 }
 
-func (l *Layout) ShowGrid(canvas LayoutDrawer) {
-	for y := 0; y < l.LayoutHeight(); y += l.pathSpacing {
-		for x := 0; x < l.LayoutWidth(); x += l.pathSpacing {
-			gridX := l.pathSpacing/2 + x
-			gridY := l.pathSpacing/2 + y
+func (l *Layout) ShowGrid(canvas LayoutDrawer, spacing int) {
+	for y := 0; y <= l.LayoutHeight(); y++ {
+		for x := 0; x <= l.LayoutWidth(); x++ {
+			gridX := x
+			gridY := y
 
 			if !l.InsideAny(gridX, gridY) || l.IsAnyPort(gridX, gridY) {
-				canvas.Circle(gridX, gridY, 1, `class="path-dot"`)
+				canvas.Circle(gridX*spacing, gridY*spacing, 1, `class="path-dot"`)
 			}
 		}
 	}
 }
 
-func (l *Layout) Draw(canvas LayoutDrawer) {
+func (l *Layout) Draw(canvas LayoutDrawer, spacing int) {
 	for _, n := range l.Nodes {
-		n.Draw(canvas, l.gridSpacing, l.nodeWidth, l.nodeHeight)
+		n.Draw(canvas, spacing)
 	}
 }
 
 type LayoutNode struct {
 	Id       string
 	Contents string
-
-	// location of the centre of the node in pixels
-	X int
-	Y int
-
-	spacing int // number of pixels between 'path' points on either axis
 
 	// dimensions of the node in pixels
 	width  int
@@ -138,22 +142,18 @@ type LayoutNode struct {
 
 type LayoutNodes []LayoutNode
 
-func NewLayoutNode(id, contents string, x, y, spacing, width, height int) LayoutNode {
+func NewLayoutNode(id, contents string, left, top, width, height int) LayoutNode {
 	return LayoutNode{
 		Id:       id,
 		Contents: contents,
-		X:        x,
-		Y:        y,
-
-		spacing: spacing,
 
 		width:  width,
 		height: height,
 
-		top:    y - height/2,
-		bottom: y + height/2,
-		left:   x - width/2,
-		right:  x + width/2,
+		top:    top,
+		bottom: top + height,
+		left:   left,
+		right:  left + width,
 	}
 }
 
@@ -166,51 +166,40 @@ func (n *LayoutNode) IsInside(x, y int) bool {
 }
 
 func (n *LayoutNode) IsPort(x, y int) bool {
-	if x%n.spacing != 0 || y%n.spacing != 0 {
+	// Points not on any of the borders are rejected
+	if x != n.left && x != n.right && y != n.top && y != n.bottom {
 		return false
 	}
 
-	if x == n.left && y == n.top {
+	// All corners are rejected
+	if x == n.left && y == n.top ||
+		x == n.left && y == n.bottom ||
+		x == n.right && y == n.top ||
+		x == n.right && y == n.bottom {
 		return false
 	}
 
-	if x == n.left && y == n.bottom {
+	if y < n.top && y > n.bottom {
 		return false
 	}
 
-	if x == n.right && y == n.top {
-		return false
-	}
-
-	if x == n.right && y == n.bottom {
-		return false
-	}
-
-	if !(x == n.left || x == n.right || y == n.top || y == n.bottom) {
-		return false
-	}
-
-	if y > n.top && y < n.bottom {
-		return true
-	}
-
-	if x > n.left && x < n.right {
+	if x < n.left && x > n.right {
 		return true
 	}
 
 	return true
 }
 
-func (n *LayoutNode) Draw(d LayoutDrawer, spacing, width, height int) {
+func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 	d.Roundrect(
-		n.left, n.top,
-		width, height,
+		n.left*spacing, n.top*spacing,
+		n.width*spacing, n.height*spacing,
 		3, 3,
 		fmt.Sprintf(`id="%s"`, n.Id),
 	)
 	d.Textspan(
-		n.X,
-		n.Y,
+		n.left*spacing+((n.width*spacing)/2),
+		n.top*spacing+((n.height*spacing)/2),
 		n.Contents,
 		fmt.Sprintf(`id="%s-text"`, n.Id),
 		"font-size:10px",

@@ -47,10 +47,10 @@ func (d *Diagram) Draw() error {
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
 
 	if d.showGrid {
-		d.layout.ShowGrid(canvas)
+		d.layout.ShowGrid(canvas, 20)
 	}
 
-	d.layout.Draw(canvas)
+	d.layout.Draw(canvas, 20)
 	canvas.Gend()
 
 	canvas.End()

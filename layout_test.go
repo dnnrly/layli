@@ -7,73 +7,97 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestLayout_LayoutSize(t *testing.T) {
+	l := Layout{
+		pathSpacing: 20,
+		nodeWidth:   3,
+		nodeHeight:  2,
+	}
+
+	l.Nodes = make(LayoutNodes, 2)
+	assert.Equal(t, (1+3+1+3+1)*20, l.LayoutWidth())
+	assert.Equal(t, (1+2+1)*20, l.LayoutHeight())
+
+	l.Nodes = make(LayoutNodes, 5)
+	assert.Equal(t, (1+3+1+3+1+3+1)*20, l.LayoutWidth())
+	assert.Equal(t, (1+2+1+2+1)*20, l.LayoutHeight())
+
+	l.Nodes = make(LayoutNodes, 8)
+	assert.Equal(t, (1+3+1+3+1+3+1)*20, l.LayoutWidth())
+	assert.Equal(t, (1+2+1+2+1+2+1)*20, l.LayoutHeight())
+}
+
 func TestLayoutNode_DrawNode(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	n := LayoutNode{
 		Id:       "nodeA",
 		Contents: "some contents",
-		X:        4 * 233,
-		Y:        5 * 233,
 
-		spacing: 233,
-		left:    (233 * 4) - 50,
-		top:     (233 * 5) - 40,
+		left: 4,
+		top:  5,
+
+		width:  3,
+		height: 3,
 	}
 
-	drawer.On("Roundrect", (233*4)-50, (233*5)-40, 100, 80, 3, 3, `id="nodeA"`).Once()
-	drawer.On("Textspan", 233*4, 233*5, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
+	drawer.On("Roundrect", 160, 200, 120, 120, 3, 3, `id="nodeA"`).Once()
+	drawer.On("Textspan", 220, 260, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
-	n.Draw(drawer, 233, 100, 80)
+	n.Draw(drawer, 40)
 
 	drawer.AssertExpectations(t)
 }
 
 func TestLayoutNode_IsInside(t *testing.T) {
-	n := NewLayoutNode("id", "contents", 200, 400, 20, 80, 80)
+	n := NewLayoutNode("id", "contents", 3, 7, 5, 3)
 
-	assert.True(t, n.IsInside(200, 400))
-	assert.True(t, n.IsInside(160, 400))
-	assert.False(t, n.IsInside(200, 200))
-	assert.False(t, n.IsInside(159, 200))
+	assert.True(t, n.IsInside(3, 7))
+	assert.True(t, n.IsInside(8, 10))
+	assert.False(t, n.IsInside(3, 6))
+	assert.False(t, n.IsInside(8, 12))
 }
 
 func TestLayoutNode_IsPort(t *testing.T) {
-	n := NewLayoutNode("id", "contents", 200, 400, 20, 80, 80)
+	n := NewLayoutNode("id", "contents", 3, 7, 5, 3)
 
-	assert.False(t, n.IsPort(200, 400), "200,400 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.False(t, n.IsPort(201, 360), "201,360 - not a valid position")
-	assert.False(t, n.IsPort(160, 360), "160,360 - corner %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.True(t, n.IsPort(160, 420), "160,420 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.True(t, n.IsPort(240, 380), "240,380 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.True(t, n.IsPort(180, 360), "180,360 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.True(t, n.IsPort(220, 440), "220,440 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
+	// Inside
+	assert.False(t, n.IsPort(4, 8), "4,8 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
+	// Outside
+	assert.False(t, n.IsPort(2, 23), "4,8 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
+
+	// Corner
+	assert.False(t, n.IsPort(3, 7), "3,7 - corner %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
+	assert.True(t, n.IsPort(3, 9), "3,9 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
+	assert.True(t, n.IsPort(8, 8), "8,7 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
+	assert.True(t, n.IsPort(4, 10), "3,10 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
+	assert.True(t, n.IsPort(6, 10), "8,10 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
 }
 
 func TestLayout_InsideAny(t *testing.T) {
 	l := &Layout{
 		Nodes: LayoutNodes{
-			NewLayoutNode("1", "contents", 200, 200, 20, 80, 80),
-			NewLayoutNode("2", "contents", 200, 400, 20, 80, 80),
+			NewLayoutNode("1", "contents", 3, 7, 5, 3),
+			NewLayoutNode("2", "contents", 10, 12, 5, 3),
 		},
 	}
 
-	assert.True(t, l.InsideAny(200, 200))
-	assert.True(t, l.InsideAny(200, 400))
-	assert.False(t, l.InsideAny(200, 300))
+	assert.True(t, l.InsideAny(4, 8))
+	assert.True(t, l.InsideAny(12, 15))
+	assert.False(t, l.InsideAny(9, 10))
 }
 
 func TestLayout_IsAnyPort(t *testing.T) {
 	l := &Layout{
 		Nodes: LayoutNodes{
-			NewLayoutNode("1", "contents", 200, 200, 20, 80, 80),
-			NewLayoutNode("2", "contents", 200, 400, 20, 80, 80),
+			NewLayoutNode("1", "contents", 3, 7, 5, 3),
+			NewLayoutNode("2", "contents", 10, 12, 5, 3),
 		},
 	}
 
-	assert.False(t, l.IsAnyPort(200, 200))
-	assert.True(t, l.IsAnyPort(160, 200))
-	assert.False(t, l.IsAnyPort(220, 300))
-	assert.True(t, l.IsAnyPort(180, 360))
+	assert.False(t, l.IsAnyPort(3, 7))
+	assert.True(t, l.IsAnyPort(10, 8))
+	assert.False(t, l.IsAnyPort(9, 9))
+	assert.True(t, l.IsAnyPort(10, 13))
 }
