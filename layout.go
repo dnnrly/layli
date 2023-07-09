@@ -15,8 +15,10 @@ type LayoutDrawer interface {
 type Layout struct {
 	Nodes LayoutNodes
 
-	nodeHeight int // Height of a node in path unites
-	nodeWidth  int // Width of a node in path units
+	nodeHeight   int // Height of a node in path unites
+	nodeWidth    int // Width of a node in path units
+	nodeMargin   int // Spare around nodes in path units
+	layoutBorder int // Space at edge of layout in path units
 
 	pathSpacing int // Length of a path unit in pixels
 }
@@ -33,14 +35,17 @@ func NewLayoutFromConfig(c Config) *Layout {
 	if numNodes < 4 {
 		size = 2
 	}
-	pathSpacing := 20
+
+	border := 1
+	margin := 2
 
 	l := &Layout{
 		Nodes: LayoutNodes{},
 
-		pathSpacing: pathSpacing,
-		nodeWidth:   5,
-		nodeHeight:  3,
+		nodeWidth:    5,
+		nodeHeight:   3,
+		nodeMargin:   margin,
+		layoutBorder: border,
 	}
 
 	pos := 0
@@ -51,8 +56,14 @@ func NewLayoutFromConfig(c Config) *Layout {
 				NewLayoutNode(
 					c.Nodes[pos].Id,
 					c.Nodes[pos].Contents,
-					x*(l.nodeWidth+1),
-					y*(l.nodeHeight+1),
+					l.layoutBorder+
+						l.nodeMargin+
+						(x*l.nodeWidth)+
+						(x*(l.nodeMargin*2)),
+					l.layoutBorder+
+						l.nodeMargin+
+						(y*l.nodeHeight)+
+						(y*(l.nodeMargin*2)),
 					l.nodeWidth, l.nodeHeight,
 				),
 			)
@@ -64,6 +75,7 @@ func NewLayoutFromConfig(c Config) *Layout {
 	return l
 }
 
+// LayoutHeight is the height in path units
 func (l *Layout) LayoutHeight() int {
 	numNodes := len(l.Nodes)
 
@@ -73,9 +85,12 @@ func (l *Layout) LayoutHeight() int {
 		rows--
 	}
 
-	return (1 + (rows * l.nodeHeight) + rows) * l.pathSpacing
+	return l.layoutBorder*2 +
+		(rows * l.nodeHeight) +
+		(rows * l.nodeMargin * 2)
 }
 
+// LayoutWidth is the width in path units
 func (l *Layout) LayoutWidth() int {
 	numNodes := len(l.Nodes)
 	columns := numNodes
@@ -85,7 +100,9 @@ func (l *Layout) LayoutWidth() int {
 		columns = int(math.Ceil(root))
 	}
 
-	return (1 + (columns * l.nodeWidth) + columns) * l.pathSpacing
+	return l.layoutBorder*2 +
+		(columns * l.nodeWidth) +
+		(columns * l.nodeMargin * 2)
 }
 
 func (l *Layout) InsideAny(x, y int) bool {

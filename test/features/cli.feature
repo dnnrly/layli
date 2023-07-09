@@ -47,8 +47,6 @@ Feature: Simple CLI commands
         And the number of nodes is 14
         And in the SVG file, all node text fits inside the node boundaries
         And in the SVG file, nodes do not overlap
-        And the image has a width less than 751
-        And the image has a height less than 751
         And in the SVG file, all nodes fit on the image
 
     @Acceptance

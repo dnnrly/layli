@@ -10,21 +10,25 @@ import (
 func TestLayout_LayoutSize(t *testing.T) {
 	l := Layout{
 		pathSpacing: 20,
-		nodeWidth:   3,
-		nodeHeight:  2,
+
+		nodeWidth:  5,
+		nodeHeight: 4,
+		nodeMargin: 1,
+
+		layoutBorder: 1,
 	}
 
 	l.Nodes = make(LayoutNodes, 2)
-	assert.Equal(t, (1+3+1+3+1)*20, l.LayoutWidth())
-	assert.Equal(t, (1+2+1)*20, l.LayoutHeight())
+	assert.Equal(t, 1+1+5+2+5+1+1, l.LayoutWidth())
+	assert.Equal(t, 1+1+4+1+1, l.LayoutHeight())
 
 	l.Nodes = make(LayoutNodes, 5)
-	assert.Equal(t, (1+3+1+3+1+3+1)*20, l.LayoutWidth())
-	assert.Equal(t, (1+2+1+2+1)*20, l.LayoutHeight())
+	assert.Equal(t, 1+1+5+2+5+2+5+1+1, l.LayoutWidth())
+	assert.Equal(t, 1+1+4+2+4+1+1, l.LayoutHeight())
 
 	l.Nodes = make(LayoutNodes, 8)
-	assert.Equal(t, (1+3+1+3+1+3+1)*20, l.LayoutWidth())
-	assert.Equal(t, (1+2+1+2+1+2+1)*20, l.LayoutHeight())
+	assert.Equal(t, 1+1+5+2+5+2+5+1+1, l.LayoutWidth())
+	assert.Equal(t, 1+1+4+2+4+2+4+1+1, l.LayoutHeight())
 }
 
 func TestLayoutNode_DrawNode(t *testing.T) {

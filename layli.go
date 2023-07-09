@@ -38,19 +38,21 @@ func NewDiagramFromFile(r io.ReadCloser, output OutputFunc, showGrid bool) (*Dia
 func (d *Diagram) Draw() error {
 	w := strings.Builder{}
 
+	pathUnitSize := 20
+
 	canvas := svg.New(&w)
 	canvas.Start(
-		d.layout.LayoutWidth(),
-		d.layout.LayoutHeight(),
+		d.layout.LayoutWidth()*pathUnitSize,
+		d.layout.LayoutHeight()*pathUnitSize,
 		"style=\"background-color: white;\"",
 	)
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
 
 	if d.showGrid {
-		d.layout.ShowGrid(canvas, 20)
+		d.layout.ShowGrid(canvas, pathUnitSize)
 	}
 
-	d.layout.Draw(canvas, 20)
+	d.layout.Draw(canvas, pathUnitSize)
 	canvas.Gend()
 
 	canvas.End()
