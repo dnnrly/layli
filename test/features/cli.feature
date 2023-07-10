@@ -35,6 +35,7 @@ Feature: Simple CLI commands
         Then the app exits without error
         And a file "tmp/fixtures/inputs/2-nodes.svg" exists
         And the number of nodes is 2
+        And the number of paths is 1
         And in the SVG file, all node text fits inside the node boundaries
         And in the SVG file, nodes do not overlap
         And in the SVG file, all nodes fit on the image

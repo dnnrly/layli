@@ -21,6 +21,18 @@ func (_m *LayoutDrawer) Circle(x int, y int, r int, s ...string) {
 	_m.Called(_ca...)
 }
 
+// Path provides a mock function with given fields: d, s
+func (_m *LayoutDrawer) Path(d string, s ...string) {
+	_va := make([]interface{}, len(s))
+	for _i := range s {
+		_va[_i] = s[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, d)
+	_ca = append(_ca, _va...)
+	_m.Called(_ca...)
+}
+
 // Roundrect provides a mock function with given fields: x, y, w, h, rx, ry, s
 func (_m *LayoutDrawer) Roundrect(x int, y int, w int, h int, rx int, ry int, s ...string) {
 	_va := make([]interface{}, len(s))

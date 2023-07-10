@@ -177,6 +177,14 @@ func (c *testContext) theNumberOfNodesIs(expected int) error {
 	return c.err
 }
 
+func (c *testContext) theNumberOfPathsIs(expected int) error {
+	paths := xmlquery.Find(c.svgOutput.doc, "//path[contains(@class, 'path-line')]")
+
+	assert.Len(c, paths, expected)
+
+	return c.err
+}
+
 func (c *testContext) inTheSVGFileNodesDoNotOverlap() error {
 	// Find all rectangle elements
 	rectangles := xmlquery.Find(c.svgOutput.doc, "//rect")
@@ -304,6 +312,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a file "([^"]*)" exists$`, tc.aFileExists)
 	ctx.Step(`^in the SVG file, all node text fits inside the node boundaries$`, tc.inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries)
 	ctx.Step(`^the number of nodes is (\d+)$`, tc.theNumberOfNodesIs)
+	ctx.Step(`^the number of paths is (\d+)$`, tc.theNumberOfPathsIs)
 	ctx.Step(`^in the SVG file, nodes do not overlap$`, tc.inTheSVGFileNodesDoNotOverlap)
 	ctx.Step(`^the image has a width less than (\d+)$`, tc.theImageHasAWidthLessThan)
 	ctx.Step(`^the image has a height less than (\d+)$`, tc.theImageHasAHeightLessThan)

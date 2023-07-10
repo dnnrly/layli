@@ -53,6 +53,17 @@ func (d *Diagram) Draw() error {
 	}
 
 	d.layout.Draw(canvas, pathUnitSize)
+
+	p := Points{
+		Point{X: 5.5, Y: 4.5},
+		Point{X: 8, Y: 4},
+		Point{X: 10, Y: 4},
+		Point{X: 10, Y: 5},
+		Point{X: 12, Y: 5},
+		Point{X: 14.5, Y: 4.5},
+	}
+	p.Draw(canvas, pathUnitSize)
+
 	canvas.Gend()
 
 	canvas.End()

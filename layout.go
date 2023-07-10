@@ -7,6 +7,7 @@ import (
 
 type LayoutDrawer interface {
 	Circle(x int, y int, r int, s ...string)
+	Path(d string, s ...string)
 	Roundrect(x int, y int, w int, h int, rx int, ry int, s ...string)
 	Textspan(x int, y int, t string, s ...string)
 	TextEnd()
