@@ -207,6 +207,33 @@ func (n *LayoutNode) IsPort(x, y int) bool {
 	return true
 }
 
+func (n *LayoutNode) GetPorts() Points {
+	ports := Points{}
+
+	for i := n.left + 1; i < n.right; i++ {
+		ports = append(ports,
+			Point{X: float64(i), Y: float64(n.top)},
+			Point{X: float64(i), Y: float64(n.bottom)},
+		)
+	}
+
+	for i := n.top + 1; i < n.bottom; i++ {
+		ports = append(ports,
+			Point{X: float64(n.left), Y: float64(i)},
+			Point{X: float64(n.right), Y: float64(i)},
+		)
+	}
+
+	return ports
+}
+
+func (n *LayoutNode) GetCentre() Point {
+	return Point{
+		X: float64(n.left) + float64(n.width)/2,
+		Y: float64(n.top) + float64(n.height)/2,
+	}
+}
+
 func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 	d.Roundrect(
 		n.left*spacing, n.top*spacing,

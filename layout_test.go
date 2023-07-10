@@ -55,11 +55,11 @@ func TestLayoutNode_DrawNode(t *testing.T) {
 }
 
 func TestLayoutNode_IsInside(t *testing.T) {
-	n := NewLayoutNode("id", "contents", 3, 7, 5, 3)
+	n := NewLayoutNode("id", "contents", 3, 3, 5, 3)
 
-	assert.True(t, n.IsInside(3, 7))
-	assert.True(t, n.IsInside(8, 10))
-	assert.False(t, n.IsInside(3, 6))
+	assert.True(t, n.IsInside(3, 3))
+	assert.True(t, n.IsInside(5, 6))
+	assert.False(t, n.IsInside(4, 7))
 	assert.False(t, n.IsInside(8, 12))
 }
 
@@ -77,6 +77,39 @@ func TestLayoutNode_IsPort(t *testing.T) {
 	assert.True(t, n.IsPort(8, 8), "8,7 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
 	assert.True(t, n.IsPort(4, 10), "3,10 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
 	assert.True(t, n.IsPort(6, 10), "8,10 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
+}
+
+func TestLayoutNode_GetPorts(t *testing.T) {
+	n := NewLayoutNode("id", "contents", 3, 3, 5, 3)
+
+	ports := n.GetPorts()
+	assert.Len(t, ports, 12)
+
+	// Left points
+	assert.Contains(t, ports, Point{X: 3, Y: 4})
+	assert.Contains(t, ports, Point{X: 3, Y: 5})
+
+	// Right points
+	assert.Contains(t, ports, Point{X: 8, Y: 4})
+	assert.Contains(t, ports, Point{X: 8, Y: 5})
+
+	// Top points
+	assert.Contains(t, ports, Point{X: 4, Y: 3})
+	assert.Contains(t, ports, Point{X: 5, Y: 3})
+	assert.Contains(t, ports, Point{X: 6, Y: 3})
+	assert.Contains(t, ports, Point{X: 7, Y: 3})
+
+	// Bottom points
+	assert.Contains(t, ports, Point{X: 4, Y: 6})
+	assert.Contains(t, ports, Point{X: 5, Y: 6})
+	assert.Contains(t, ports, Point{X: 6, Y: 6})
+	assert.Contains(t, ports, Point{X: 7, Y: 6})
+}
+
+func TestLayoutNode_GetCentre(t *testing.T) {
+	n := NewLayoutNode("id", "contents", 3, 3, 5, 3)
+
+	assert.Equal(t, Point{X: 5.5, Y: 4.5}, n.GetCentre())
 }
 
 func TestLayout_InsideAny(t *testing.T) {
