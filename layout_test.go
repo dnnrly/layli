@@ -113,6 +113,16 @@ func TestLayoutNode_GetCentre(t *testing.T) {
 	assert.Equal(t, Point{X: 5.5, Y: 4.5}, n.GetCentre())
 }
 
+func TestLayoutNodes_ByID(t *testing.T) {
+	nodes := LayoutNodes{
+		NewLayoutNode("1", "contents", 3, 7, 5, 3),
+		NewLayoutNode("2", "contents", 10, 12, 5, 3),
+	}
+
+	assert.Equal(t, NewLayoutNode("1", "contents", 3, 7, 5, 3), *nodes.ByID("1"))
+	assert.Equal(t, NewLayoutNode("2", "contents", 10, 12, 5, 3), *nodes.ByID("2"))
+}
+
 func TestLayout_InsideAny(t *testing.T) {
 	l := &Layout{
 		Nodes: LayoutNodes{
@@ -144,7 +154,7 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPath{
-		paths: Points{
+		points: Points{
 			Point{X: 5.5, Y: 4.5},
 			Point{X: 8, Y: 4},
 			Point{X: 10, Y: 4},
@@ -169,8 +179,8 @@ func TestLayoutPaths_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPaths{
-		LayoutPath{paths: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
-		LayoutPath{paths: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
 	}
 
 	drawer.On("Path", mock.Anything, `class="path-line"`).Twice()

@@ -74,18 +74,9 @@ func NewLayoutFromConfig(c Config) *Layout {
 		}
 	}
 
-	// l.Paths = LayoutPaths{
-	// 	LayoutPath{
-	// 		paths: Points{
-	// 			Point{X: 5.5, Y: 4.5},
-	// 			Point{X: 8, Y: 4},
-	// 			Point{X: 10, Y: 4},
-	// 			Point{X: 10, Y: 5},
-	// 			Point{X: 12, Y: 5},
-	// 			Point{X: 14.5, Y: 4.5},
-	// 		},
-	// 	},
-	// }
+	for _, p := range c.Edges {
+		l.AddPath(p.From, p.To)
+	}
 
 	return l
 }
@@ -178,6 +169,15 @@ type LayoutNode struct {
 }
 
 type LayoutNodes []LayoutNode
+
+func (nodes LayoutNodes) ByID(id string) *LayoutNode {
+	for _, n := range nodes {
+		if n.Id == id {
+			return &n
+		}
+	}
+	return nil
+}
 
 func NewLayoutNode(id, contents string, left, top, width, height int) LayoutNode {
 	return LayoutNode{
@@ -272,11 +272,11 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 }
 
 type LayoutPath struct {
-	paths Points
+	points Points
 }
 
 func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
-	canvas.Path(p.paths.Path(spacing), `class="path-line"`)
+	canvas.Path(p.points.Path(spacing), `class="path-line"`)
 }
 
 type LayoutPaths []LayoutPath
