@@ -5,6 +5,7 @@ import (
 
 	"github.com/dnnrly/layli/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestLayout_LayoutSize(t *testing.T) {
@@ -137,4 +138,44 @@ func TestLayout_IsAnyPort(t *testing.T) {
 	assert.True(t, l.IsAnyPort(10, 8))
 	assert.False(t, l.IsAnyPort(9, 9))
 	assert.True(t, l.IsAnyPort(10, 13))
+}
+
+func TestLayoutPath_Draw(t *testing.T) {
+	drawer := mocks.NewLayoutDrawer(t)
+
+	p := LayoutPath{
+		paths: Points{
+			Point{X: 5.5, Y: 4.5},
+			Point{X: 8, Y: 4},
+			Point{X: 10, Y: 4},
+			Point{X: 10, Y: 5},
+			Point{X: 12, Y: 5},
+			Point{X: 14.5, Y: 4.5},
+		},
+	}
+
+	drawer.On(
+		"Path",
+		"M 80 40 L 100 40 L 100 50 L 120 50",
+		`class="path-line"`,
+	).Once()
+
+	p.Draw(drawer, 10)
+
+	drawer.AssertExpectations(t)
+}
+
+func TestLayoutPaths_Draw(t *testing.T) {
+	drawer := mocks.NewLayoutDrawer(t)
+
+	p := LayoutPaths{
+		LayoutPath{paths: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{paths: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+	}
+
+	drawer.On("Path", mock.Anything, `class="path-line"`).Twice()
+
+	p.Draw(drawer, 10)
+
+	drawer.AssertExpectations(t)
 }

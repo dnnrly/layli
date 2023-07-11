@@ -28,6 +28,7 @@ func NewDiagramFromFile(r io.ReadCloser, output OutputFunc, showGrid bool) (*Dia
 	if err != nil {
 		return nil, fmt.Errorf("reading config file: %w", err)
 	}
+	d.config.Spacing = 20
 
 	d.layout = NewLayoutFromConfig(d.config)
 
@@ -38,31 +39,19 @@ func NewDiagramFromFile(r io.ReadCloser, output OutputFunc, showGrid bool) (*Dia
 func (d *Diagram) Draw() error {
 	w := strings.Builder{}
 
-	pathUnitSize := 20
-
 	canvas := svg.New(&w)
 	canvas.Start(
-		d.layout.LayoutWidth()*pathUnitSize,
-		d.layout.LayoutHeight()*pathUnitSize,
+		d.layout.LayoutWidth()*d.config.Spacing,
+		d.layout.LayoutHeight()*d.config.Spacing,
 		"style=\"background-color: white;\"",
 	)
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
 
 	if d.showGrid {
-		d.layout.ShowGrid(canvas, pathUnitSize)
+		d.layout.ShowGrid(canvas, d.config.Spacing)
 	}
 
-	d.layout.Draw(canvas, pathUnitSize)
-
-	p := Points{
-		Point{X: 5.5, Y: 4.5},
-		Point{X: 8, Y: 4},
-		Point{X: 10, Y: 4},
-		Point{X: 10, Y: 5},
-		Point{X: 12, Y: 5},
-		Point{X: 14.5, Y: 4.5},
-	}
-	p.Draw(canvas, pathUnitSize)
+	d.layout.Draw(canvas, d.config.Spacing)
 
 	canvas.Gend()
 

@@ -11,7 +11,7 @@ type Point struct {
 
 type Points []Point
 
-func (p Points) Draw(d LayoutDrawer, spacing int) {
+func (p Points) Path(spacing int) string {
 	path := fmt.Sprintf(
 		"M %d %d",
 		int(p[1].X)*spacing,
@@ -26,5 +26,5 @@ func (p Points) Draw(d LayoutDrawer, spacing int) {
 		)
 	}
 
-	d.Path(path, `class="path-line"`)
+	return path
 }

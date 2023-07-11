@@ -15,6 +15,7 @@ type LayoutDrawer interface {
 
 type Layout struct {
 	Nodes LayoutNodes
+	Paths LayoutPaths
 
 	nodeHeight   int // Height of a node in path unites
 	nodeWidth    int // Width of a node in path units
@@ -72,6 +73,19 @@ func NewLayoutFromConfig(c Config) *Layout {
 			pos++
 		}
 	}
+
+	// l.Paths = LayoutPaths{
+	// 	LayoutPath{
+	// 		paths: Points{
+	// 			Point{X: 5.5, Y: 4.5},
+	// 			Point{X: 8, Y: 4},
+	// 			Point{X: 10, Y: 4},
+	// 			Point{X: 10, Y: 5},
+	// 			Point{X: 12, Y: 5},
+	// 			Point{X: 14.5, Y: 4.5},
+	// 		},
+	// 	},
+	// }
 
 	return l
 }
@@ -141,6 +155,11 @@ func (l *Layout) Draw(canvas LayoutDrawer, spacing int) {
 	for _, n := range l.Nodes {
 		n.Draw(canvas, spacing)
 	}
+
+	for _, p := range l.Paths {
+		p.Draw(canvas, spacing)
+	}
+
 }
 
 type LayoutNode struct {
@@ -250,4 +269,22 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 		"font-size:10px",
 	)
 	d.TextEnd()
+}
+
+type LayoutPath struct {
+	paths Points
+}
+
+func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
+	canvas.Path(p.paths.Path(spacing), `class="path-line"`)
+}
+
+type LayoutPaths []LayoutPath
+
+func (paths *LayoutPaths) Draw(canvas LayoutDrawer, spacing int) {
+	fmt.Printf("Drawing %d paths\n", len(*paths))
+	for i, p := range *paths {
+		fmt.Printf("Drawing path %d of %d\n", i+1, len(*paths))
+		p.Draw(canvas, spacing)
+	}
 }

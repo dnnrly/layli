@@ -3,3 +3,7 @@ nodes:
     contents: "First Node"
   - id: node2
     contents: "Second Node"
+
+edges:
+  - from: node1
+    to: node2
