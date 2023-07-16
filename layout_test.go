@@ -136,7 +136,7 @@ func TestLayout_InsideAny(t *testing.T) {
 	l := NewLayoutFromConfig(layoutTestConfig)
 
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
-	vm.MapAvailable(l.InsideAny)
+	vm.MapSet(l.InsideAny)
 	assert.Equal(t, strings.ReplaceAll(
 		`....................
 		....................
@@ -153,7 +153,7 @@ func TestLayout_IsAnyPort(t *testing.T) {
 	l := NewLayoutFromConfig(layoutTestConfig)
 
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
-	vm.MapAvailable(l.IsAnyPort)
+	vm.MapSet(l.IsAnyPort)
 	assert.Equal(t, strings.ReplaceAll(
 		`....................
 		....................
