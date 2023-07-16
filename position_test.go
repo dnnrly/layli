@@ -18,3 +18,7 @@ func TestPoints_Draw(t *testing.T) {
 
 	assert.Equal(t, "M 80 40 L 100 40 L 100 50 L 120 50", p.Path(10))
 }
+
+func TestPoint_String(t *testing.T) {
+	assert.Equal(t, "4.0,7.0", Point{X: 4, Y: 7}.String())
+}

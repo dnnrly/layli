@@ -171,3 +171,18 @@ func TestVertexMap_MapAnd(t *testing.T) {
 		.....
 		.....`, "	", ""), m.String(), m)
 }
+
+func TestVertexMap_GetVertexIDs(t *testing.T) {
+	m := NewVertexMap(5, 5)
+
+	m.Set(2, 1, true)
+	m.Set(2, 2, true)
+	m.Set(2, 3, true)
+
+	points := m.GetVertexPoints()
+
+	assert.Len(t, points, 3)
+	assert.Contains(t, points, Point{X: 2, Y: 1})
+	assert.Contains(t, points, Point{X: 2, Y: 2})
+	assert.Contains(t, points, Point{X: 2, Y: 3})
+}

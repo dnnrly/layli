@@ -1,6 +1,8 @@
 package layli
 
-import "strings"
+import (
+	"strings"
+)
 
 type VertexMap struct {
 	points [][]bool
@@ -86,4 +88,18 @@ func (v *VertexMap) MapAnd(m VertexMapper) {
 	v.MapSet(func(x, y int) bool {
 		return m(x, y) && v.points[x][y]
 	})
+}
+
+func (v *VertexMap) GetVertexPoints() Points {
+	p := Points{}
+
+	for x := 0; x < v.width; x++ {
+		for y := 0; y < v.height; y++ {
+			if v.points[x][y] {
+				p = append(p, Point{X: float64(x), Y: float64(y)})
+			}
+		}
+	}
+
+	return p
 }

@@ -28,3 +28,7 @@ func (p Points) Path(spacing int) string {
 
 	return path
 }
+
+func (p Point) String() string {
+	return fmt.Sprintf("%.1f,%.1f", p.X, p.Y)
+}
