@@ -23,6 +23,8 @@ type Layout struct {
 	layoutBorder int // Space at edge of layout in path units
 
 	pathSpacing int // Length of a path unit in pixels
+
+	vertexMap VertexMap // The state of all of the positions on the grid
 }
 
 func NewLayoutFromConfig(c Config) *Layout {
@@ -38,16 +40,13 @@ func NewLayoutFromConfig(c Config) *Layout {
 		size = 2
 	}
 
-	border := 1
-	margin := 2
-
 	l := &Layout{
 		Nodes: LayoutNodes{},
 
-		nodeWidth:    5,
-		nodeHeight:   3,
-		nodeMargin:   margin,
-		layoutBorder: border,
+		nodeWidth:    c.NodeWidth,
+		nodeHeight:   c.NodeHeight,
+		nodeMargin:   c.Margin,
+		layoutBorder: c.Border,
 	}
 
 	pos := 0
@@ -130,8 +129,8 @@ func (l *Layout) IsAnyPort(x, y int) bool {
 }
 
 func (l *Layout) ShowGrid(canvas LayoutDrawer, spacing int) {
-	for y := 0; y <= l.LayoutHeight(); y++ {
-		for x := 0; x <= l.LayoutWidth(); x++ {
+	for x := 0; x <= l.LayoutWidth(); x++ {
+		for y := 0; y <= l.LayoutHeight(); y++ {
 			gridX := x
 			gridY := y
 
@@ -188,9 +187,9 @@ func NewLayoutNode(id, contents string, left, top, width, height int) LayoutNode
 		height: height,
 
 		top:    top,
-		bottom: top + height,
+		bottom: top + height - 1,
 		left:   left,
-		right:  left + width,
+		right:  left + width - 1,
 	}
 }
 
@@ -203,28 +202,23 @@ func (n *LayoutNode) IsInside(x, y int) bool {
 }
 
 func (n *LayoutNode) IsPort(x, y int) bool {
-	// Points not on any of the borders are rejected
-	if x != n.left && x != n.right && y != n.top && y != n.bottom {
-		return false
-	}
-
-	// All corners are rejected
-	if x == n.left && y == n.top ||
-		x == n.left && y == n.bottom ||
-		x == n.right && y == n.top ||
-		x == n.right && y == n.bottom {
-		return false
-	}
-
-	if y < n.top && y > n.bottom {
-		return false
-	}
-
-	if x < n.left && x > n.right {
+	if y == n.top && x > n.left && x < n.right {
 		return true
 	}
 
-	return true
+	if y == n.bottom && x > n.left && x < n.right {
+		return true
+	}
+
+	if x == n.left && y > n.top && y < n.bottom {
+		return true
+	}
+
+	if x == n.right && y > n.top && y < n.bottom {
+		return true
+	}
+
+	return false
 }
 
 func (n *LayoutNode) GetPorts() Points {

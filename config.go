@@ -4,6 +4,11 @@ type Config struct {
 	Nodes   ConfigNodes `yaml:"nodes"`
 	Edges   ConfigEdges `yaml:"edges"`
 	Spacing int         `yaml:"-"`
+
+	NodeWidth  int `yaml:"width"`
+	NodeHeight int `yaml:"height"`
+	Border     int `yaml:"border"`
+	Margin     int `yaml:"margin"`
 }
 
 type ConfigNode struct {

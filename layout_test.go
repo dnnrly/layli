@@ -1,12 +1,25 @@
 package layli
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/dnnrly/layli/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
+
+var layoutTestConfig = Config{
+	Nodes: ConfigNodes{
+		ConfigNode{Id: "1"},
+		ConfigNode{Id: "2"},
+	},
+	Spacing:    20,
+	NodeWidth:  5,
+	NodeHeight: 3,
+	Margin:     2,
+	Border:     1,
+}
 
 func TestLayout_LayoutSize(t *testing.T) {
 	l := Layout{
@@ -58,53 +71,49 @@ func TestLayoutNode_DrawNode(t *testing.T) {
 func TestLayoutNode_IsInside(t *testing.T) {
 	n := NewLayoutNode("id", "contents", 3, 3, 5, 3)
 
-	assert.True(t, n.IsInside(3, 3))
-	assert.True(t, n.IsInside(5, 6))
-	assert.False(t, n.IsInside(4, 7))
-	assert.False(t, n.IsInside(8, 12))
+	// ...........
+	// ...........
+	// ...........
+	// ...xxxxx...
+	// ...xxxxx...
+	// ...xxxxx...
+	// ...........
+	// ...........
+	// ...........
+
+	assert.True(t, n.IsInside(3, 3), "3,3 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
+	assert.True(t, n.IsInside(6, 5), "5,6 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
+	assert.False(t, n.IsInside(3, 2), "3,2 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
+	assert.False(t, n.IsInside(8, 3), "8,3 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
 }
 
 func TestLayoutNode_IsPort(t *testing.T) {
-	n := NewLayoutNode("id", "contents", 3, 7, 5, 3)
-
-	// Inside
-	assert.False(t, n.IsPort(4, 8), "4,8 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	// Outside
-	assert.False(t, n.IsPort(2, 23), "4,8 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-
-	// Corner
-	assert.False(t, n.IsPort(3, 7), "3,7 - corner %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.True(t, n.IsPort(3, 9), "3,9 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.True(t, n.IsPort(8, 8), "8,7 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.True(t, n.IsPort(4, 10), "3,10 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-	assert.True(t, n.IsPort(6, 10), "8,10 %d,%d,%d,%d", n.top, n.bottom, n.left, n.right)
-}
-
-func TestLayoutNode_GetPorts(t *testing.T) {
 	n := NewLayoutNode("id", "contents", 3, 3, 5, 3)
 
-	ports := n.GetPorts()
-	assert.Len(t, ports, 12)
+	// ...........
+	// ...........
+	// ...........
+	// ....xxx....
+	// ...x...x...
+	// ....xxx....
+	// ...........
+	// ...........
+	// ...........
 
-	// Left points
-	assert.Contains(t, ports, Point{X: 3, Y: 4})
-	assert.Contains(t, ports, Point{X: 3, Y: 5})
+	// Inside
+	assert.False(t, n.IsPort(4, 4), "4,4 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
 
-	// Right points
-	assert.Contains(t, ports, Point{X: 8, Y: 4})
-	assert.Contains(t, ports, Point{X: 8, Y: 5})
+	// Outside
+	assert.False(t, n.IsPort(3, 2), "2,2 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
+	assert.False(t, n.IsPort(4, 8), "4,8 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
 
-	// Top points
-	assert.Contains(t, ports, Point{X: 4, Y: 3})
-	assert.Contains(t, ports, Point{X: 5, Y: 3})
-	assert.Contains(t, ports, Point{X: 6, Y: 3})
-	assert.Contains(t, ports, Point{X: 7, Y: 3})
+	// Corner
+	assert.False(t, n.IsPort(3, 3), "3,7 - corner %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
 
-	// Bottom points
-	assert.Contains(t, ports, Point{X: 4, Y: 6})
-	assert.Contains(t, ports, Point{X: 5, Y: 6})
-	assert.Contains(t, ports, Point{X: 6, Y: 6})
-	assert.Contains(t, ports, Point{X: 7, Y: 6})
+	assert.True(t, n.IsPort(3, 4), "3,4 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
+	assert.True(t, n.IsPort(6, 5), "6,5 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
+	assert.True(t, n.IsPort(4, 3), "4,3 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
+	assert.True(t, n.IsPort(4, 5), "4,5 %d,%d,%d,%d", n.left, n.right, n.top, n.bottom)
 }
 
 func TestLayoutNode_GetCentre(t *testing.T) {
@@ -124,30 +133,37 @@ func TestLayoutNodes_ByID(t *testing.T) {
 }
 
 func TestLayout_InsideAny(t *testing.T) {
-	l := &Layout{
-		Nodes: LayoutNodes{
-			NewLayoutNode("1", "contents", 3, 7, 5, 3),
-			NewLayoutNode("2", "contents", 10, 12, 5, 3),
-		},
-	}
+	l := NewLayoutFromConfig(layoutTestConfig)
 
-	assert.True(t, l.InsideAny(4, 8))
-	assert.True(t, l.InsideAny(12, 15))
-	assert.False(t, l.InsideAny(9, 10))
+	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
+	vm.MapAvailable(l.InsideAny)
+	assert.Equal(t, strings.ReplaceAll(
+		`....................
+		....................
+		....................
+		...xxxxx....xxxxx...
+		...xxxxx....xxxxx...
+		...xxxxx....xxxxx...
+		....................
+		....................
+		....................`, "	", ""), vm.String(), vm)
 }
 
 func TestLayout_IsAnyPort(t *testing.T) {
-	l := &Layout{
-		Nodes: LayoutNodes{
-			NewLayoutNode("1", "contents", 3, 7, 5, 3),
-			NewLayoutNode("2", "contents", 10, 12, 5, 3),
-		},
-	}
+	l := NewLayoutFromConfig(layoutTestConfig)
 
-	assert.False(t, l.IsAnyPort(3, 7))
-	assert.True(t, l.IsAnyPort(10, 8))
-	assert.False(t, l.IsAnyPort(9, 9))
-	assert.True(t, l.IsAnyPort(10, 13))
+	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
+	vm.MapAvailable(l.IsAnyPort)
+	assert.Equal(t, strings.ReplaceAll(
+		`....................
+		....................
+		....................
+		....xxx......xxx....
+		...x...x....x...x...
+		....xxx......xxx....
+		....................
+		....................
+		....................`, "	", ""), vm.String(), vm)
 }
 
 func TestLayoutPath_Draw(t *testing.T) {

@@ -30,6 +30,19 @@ func NewDiagramFromFile(r io.ReadCloser, output OutputFunc, showGrid bool) (*Dia
 	}
 	d.config.Spacing = 20
 
+	if d.config.NodeWidth == 0 {
+		d.config.NodeWidth = 5
+	}
+	if d.config.NodeHeight == 0 {
+		d.config.NodeHeight = 3
+	}
+	if d.config.Margin == 0 {
+		d.config.Margin = 2
+	}
+	if d.config.Border == 0 {
+		d.config.Border = 1
+	}
+
 	d.layout = NewLayoutFromConfig(d.config)
 
 	return &d, nil
