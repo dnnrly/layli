@@ -74,12 +74,100 @@ func TestVertexMap_String(t *testing.T) {
 		....................`, "	", ""), m.String(), m)
 }
 
-func TestVertexMap_MapAvailable(t *testing.T) {
+func TestVertexMap_MapSet(t *testing.T) {
 	m := NewVertexMap(20, 20)
 
-	m.MapAvailable(func(x, y int) bool {
+	m.MapSet(func(x, y int) bool {
 		return (x+y)%2 == 0
 	})
 
-	assert.Equal(t, 200, m.CountAvailable(true), m)
+	assert.Equal(t, strings.ReplaceAll(
+		`x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x`, "	", ""), m.String(), m)
+}
+
+func TestVertexMap_MapUnset(t *testing.T) {
+	m := NewVertexMap(20, 20)
+
+	m.MapUnset(func(x, y int) bool {
+		return (x+y)%2 == 0
+	})
+
+	assert.Equal(t, strings.ReplaceAll(
+		`.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.
+		.x.x.x.x.x.x.x.x.x.x
+		x.x.x.x.x.x.x.x.x.x.`, "	", ""), m.String(), m)
+}
+
+func TestVertexMap_MapOr(t *testing.T) {
+	m := NewVertexMap(5, 5)
+
+	m.Set(2, 1, true)
+	m.Set(2, 2, true)
+	m.Set(2, 3, true)
+
+	m.MapOr(func(x, y int) bool {
+		return x == 2
+	})
+
+	assert.Equal(t, strings.ReplaceAll(
+		`..x..
+		..x..
+		..x..
+		..x..
+		..x..`, "	", ""), m.String(), m)
+}
+
+func TestVertexMap_MapAnd(t *testing.T) {
+	m := NewVertexMap(5, 5)
+
+	m.Set(2, 1, true)
+	m.Set(2, 2, true)
+	m.Set(2, 3, true)
+
+	m.MapAnd(func(x, y int) bool {
+		return y == 2
+	})
+
+	assert.Equal(t, strings.ReplaceAll(
+		`.....
+		.....
+		..x..
+		.....
+		.....`, "	", ""), m.String(), m)
 }

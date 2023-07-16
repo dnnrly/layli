@@ -62,10 +62,28 @@ func (v VertexMap) String() string {
 
 type VertexMapper func(x, y int) bool
 
-func (v *VertexMap) MapAvailable(m VertexMapper) {
+func (v *VertexMap) MapSet(m VertexMapper) {
 	for x := 0; x < v.width; x++ {
 		for y := 0; y < v.height; y++ {
 			v.points[x][y] = m(x, y)
 		}
 	}
+}
+
+func (v *VertexMap) MapUnset(m VertexMapper) {
+	v.MapSet(func(x, y int) bool {
+		return !m(x, y)
+	})
+}
+
+func (v *VertexMap) MapOr(m VertexMapper) {
+	v.MapSet(func(x, y int) bool {
+		return m(x, y) || v.points[x][y]
+	})
+}
+
+func (v *VertexMap) MapAnd(m VertexMapper) {
+	v.MapSet(func(x, y int) bool {
+		return m(x, y) && v.points[x][y]
+	})
 }
