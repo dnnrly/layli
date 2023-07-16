@@ -3,6 +3,7 @@ module github.com/dnnrly/layli
 go 1.20
 
 require (
+	github.com/RyanCarrier/dijkstra v1.3.0
 	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b
 	github.com/antchfx/xmlquery v1.3.17
 	github.com/cucumber/godog v0.11.0
