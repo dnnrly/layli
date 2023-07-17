@@ -103,3 +103,35 @@ func (v *VertexMap) GetVertexPoints() Points {
 
 	return p
 }
+
+type Arc struct {
+	From     Point
+	To       Point
+	Distance int
+}
+
+type Arcs []Arc
+
+func (all *Arcs) Add(from Point, to Point, distance int) {
+	*all = append(*all, Arc{
+		From:     from,
+		To:       to,
+		Distance: distance,
+	})
+}
+
+func (all Arcs) Exists(from Point, to Point) bool {
+	for _, v := range all {
+		if v.From == from && v.To == to {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (all Arcs) AddToGraph(g Graph) {
+	for _, v := range all {
+		g.AddMappedArc(v.From.String(), v.To.String(), int64(v.Distance))
+	}
+}

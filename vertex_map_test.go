@@ -4,8 +4,22 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dnnrly/layli/mocks"
 	"github.com/stretchr/testify/assert"
 )
+
+var vertexTestConfig = Config{
+	Nodes: ConfigNodes{
+		ConfigNode{Id: "1"},
+		ConfigNode{Id: "2"},
+		ConfigNode{Id: "3"},
+	},
+	Spacing:    20,
+	NodeWidth:  5,
+	NodeHeight: 3,
+	Margin:     2,
+	Border:     1,
+}
 
 func TestVertexMap_Count(t *testing.T) {
 	m := NewVertexMap(20, 20)
@@ -172,7 +186,7 @@ func TestVertexMap_MapAnd(t *testing.T) {
 		.....`, "	", ""), m.String(), m)
 }
 
-func TestVertexMap_GetVertexIDs(t *testing.T) {
+func TestVertexMap_GetVertexPoints(t *testing.T) {
 	m := NewVertexMap(5, 5)
 
 	m.Set(2, 1, true)
@@ -185,4 +199,40 @@ func TestVertexMap_GetVertexIDs(t *testing.T) {
 	assert.Contains(t, points, Point{X: 2, Y: 1})
 	assert.Contains(t, points, Point{X: 2, Y: 2})
 	assert.Contains(t, points, Point{X: 2, Y: 3})
+}
+
+func TestArcs_Add(t *testing.T) {
+	arcs := Arcs{}
+
+	arcs.Add(Point{X: 1, Y: 2}, Point{X: 1, Y: 3}, 1)
+	arcs.Add(Point{X: 1, Y: 2}, Point{X: 1, Y: 5}, 1)
+
+	assert.Len(t, arcs, 2)
+	assert.Contains(t, arcs, Arc{From: Point{X: 1, Y: 2}, To: Point{X: 1, Y: 3}, Distance: 1})
+	assert.Contains(t, arcs, Arc{From: Point{X: 1, Y: 2}, To: Point{X: 1, Y: 5}, Distance: 1})
+}
+
+func TestArcs_Exists(t *testing.T) {
+	arcs := Arcs{}
+
+	arcs.Add(Point{X: 1, Y: 2}, Point{X: 1, Y: 3}, 1)
+	arcs.Add(Point{X: 1, Y: 2}, Point{X: 1, Y: 5}, 1)
+
+	assert.True(t, arcs.Exists(Point{X: 1, Y: 2}, Point{X: 1, Y: 3}))
+	assert.False(t, arcs.Exists(Point{X: 1, Y: 2}, Point{X: 1, Y: 9}))
+}
+
+func TestArcs_AddToGraph(t *testing.T) {
+	g := mocks.NewGraph(t)
+
+	arcs := Arcs{}
+	arcs.Add(Point{X: 1, Y: 2}, Point{X: 1, Y: 3}, 1)
+	arcs.Add(Point{X: 1, Y: 2}, Point{X: 1, Y: 5}, 1)
+
+	g.On("AddMappedArc", "1.0,2.0", "1.0,3.0", int64(1)).Return(nil).Once()
+	g.On("AddMappedArc", "1.0,2.0", "1.0,5.0", int64(1)).Return(nil).Once()
+
+	arcs.AddToGraph(g)
+
+	g.AssertExpectations(t)
 }
