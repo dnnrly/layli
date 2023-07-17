@@ -47,13 +47,16 @@ x				graph.AddMappedVertex(toMap(x, y))
 6. graph.Shortest() -> convert to LayoutPath
 */
 
-func (l *Layout) BuildVertexMap() {
-	width := l.LayoutWidth()
-	height := l.LayoutHeight()
+type Graph interface {
+	AddMappedArc(Source, Destination string, Distance int64) error
+}
 
-	l.vertexMap = NewVertexMap(width, height)
-	l.vertexMap.MapUnset(l.InsideAny)
-	l.vertexMap.MapOr(l.IsAnyPort)
+func BuildVertexMap(l *Layout) VertexMap {
+	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
+	vm.MapUnset(l.InsideAny)
+	vm.MapOr(l.IsAnyPort)
+
+	return vm
 }
 
 func (l *Layout) AddPath(from, to string) {

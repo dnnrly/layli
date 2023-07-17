@@ -36,8 +36,7 @@ func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 
 func TestLayout_BuildVertexMap(t *testing.T) {
 	l := NewLayoutFromConfig(pathTestConfig)
-
-	l.BuildVertexMap()
+	vm := BuildVertexMap(l)
 
 	assert.Equal(t, strings.ReplaceAll(
 		`xxxxxxxxxxxxxxxxxx
@@ -50,5 +49,5 @@ func TestLayout_BuildVertexMap(t *testing.T) {
 		xxxxxxxxxxxxxxxxxx
 		xxxxxxxxxxxxxxxxxx
 		xxxxxxxxxxxxxxxxxx
-		xxxxxxxxxxxxxxxxxx`, "	", ""), l.vertexMap.String(), l.vertexMap)
+		xxxxxxxxxxxxxxxxxx`, "	", ""), vm.String(), vm)
 }
