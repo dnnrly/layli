@@ -9,18 +9,56 @@ type Graph struct {
 	mock.Mock
 }
 
-// AddMappedArc provides a mock function with given fields: from, to, distace
-func (_m *Graph) AddMappedArc(from string, to string, distace int64) error {
-	ret := _m.Called(from, to, distace)
+// AddMappedArc provides a mock function with given fields: Source, Destination, Distance
+func (_m *Graph) AddMappedArc(Source string, Destination string, Distance int64) error {
+	ret := _m.Called(Source, Destination, Distance)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(string, string, int64) error); ok {
-		r0 = rf(from, to, distace)
+		r0 = rf(Source, Destination, Distance)
 	} else {
 		r0 = ret.Error(0)
 	}
 
 	return r0
+}
+
+// AddMappedVertex provides a mock function with given fields: ID
+func (_m *Graph) AddMappedVertex(ID string) int {
+	ret := _m.Called(ID)
+
+	var r0 int
+	if rf, ok := ret.Get(0).(func(string) int); ok {
+		r0 = rf(ID)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	return r0
+}
+
+// GetMapped provides a mock function with given fields: a
+func (_m *Graph) GetMapped(a int) (string, error) {
+	ret := _m.Called(a)
+
+	var r0 string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int) (string, error)); ok {
+		return rf(a)
+	}
+	if rf, ok := ret.Get(0).(func(int) string); ok {
+		r0 = rf(a)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	if rf, ok := ret.Get(1).(func(int) error); ok {
+		r1 = rf(a)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // NewGraph creates a new instance of Graph. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

@@ -186,6 +186,40 @@ func TestVertexMap_MapAnd(t *testing.T) {
 		.....`, "	", ""), m.String(), m)
 }
 
+func TestVertexMap_GetArcs(t *testing.T) {
+	m := NewVertexMap(5, 5)
+
+	// .....
+	// .x.x.
+	// .....
+	// .x.x.
+	// .....
+
+	m.MapSet(func(x, y int) bool { return true })
+	m.Set(1, 1, false)
+	m.Set(1, 3, false)
+	m.Set(3, 1, false)
+	m.Set(3, 3, false)
+
+	arcs := m.GetArcs()
+
+	assert.Len(t, arcs, 120)
+
+	// Some representative points
+	assert.True(t, arcs.Exists(Point{X: 2, Y: 0}, Point{X: 2, Y: 4}))
+	assert.True(t, arcs.Exists(Point{X: 4, Y: 4}, Point{X: 4, Y: 1}))
+
+	// A reversed point - we go back as wekk as forwards
+	assert.True(t, arcs.Exists(Point{X: 2, Y: 4}, Point{X: 2, Y: 0}))
+	assert.True(t, arcs.Exists(Point{X: 2, Y: 4}, Point{X: 2, Y: 0}))
+
+	// A point that crosses invalid points
+	assert.False(t, arcs.Exists(Point{X: 0, Y: 1}, Point{X: 2, Y: 1}))
+
+	// From and To are the same point
+	assert.False(t, arcs.Exists(Point{X: 0, Y: 1}, Point{X: 0, Y: 1}))
+}
+
 func TestVertexMap_GetVertexPoints(t *testing.T) {
 	m := NewVertexMap(5, 5)
 

@@ -1,6 +1,8 @@
 package layli
 
 import (
+	"fmt"
+	"math"
 	"strings"
 )
 
@@ -90,7 +92,7 @@ func (v *VertexMap) MapAnd(m VertexMapper) {
 	})
 }
 
-func (v *VertexMap) GetVertexPoints() Points {
+func (v VertexMap) GetVertexPoints() Points {
 	p := Points{}
 
 	for x := 0; x < v.width; x++ {
@@ -102,6 +104,42 @@ func (v *VertexMap) GetVertexPoints() Points {
 	}
 
 	return p
+}
+
+func (vm VertexMap) GetArcs() Arcs {
+	arcs := Arcs{}
+
+	points := vm.GetVertexPoints()
+
+	for _, from := range points {
+		for _, to := range points {
+			if from != to {
+				if from.X == to.X {
+					ok := true
+					for p := int(math.Min(from.Y, to.Y)); p <= int(math.Max(from.Y, to.Y)); p++ {
+						ok = ok && vm.points[int(from.X)][p]
+					}
+
+					if ok {
+						arcs.Add(from, to, 1)
+					}
+				}
+
+				if from.Y == to.Y {
+					ok := true
+					for p := int(math.Min(from.X, to.X)); p <= int(math.Max(from.X, to.X)); p++ {
+						ok = ok && vm.points[p][int(from.Y)]
+					}
+
+					if ok {
+						arcs.Add(from, to, 1)
+					}
+				}
+			}
+		}
+	}
+
+	return arcs
 }
 
 type Arc struct {
@@ -134,4 +172,14 @@ func (all Arcs) AddToGraph(g Graph) {
 	for _, v := range all {
 		g.AddMappedArc(v.From.String(), v.To.String(), int64(v.Distance))
 	}
+}
+
+func (all Arcs) String() string {
+	str := []string{}
+
+	for _, v := range all {
+		str = append(str, fmt.Sprintf("%s-%s-%d", v.From, v.To, v.Distance))
+	}
+
+	return strings.Join(str, "\n")
 }

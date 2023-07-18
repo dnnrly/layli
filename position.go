@@ -2,6 +2,10 @@ package layli
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/RyanCarrier/dijkstra"
 )
 
 type Point struct {
@@ -9,7 +13,30 @@ type Point struct {
 	Y float64
 }
 
+func (p Point) String() string {
+	return fmt.Sprintf("%.1f,%.1f", p.X, p.Y)
+}
+
 type Points []Point
+
+func NewPointsFromBestPath(g Graph, path dijkstra.BestPath) Points {
+	points := Points{}
+
+	for _, id := range path.Path {
+		p, err := g.GetMapped(id)
+		if err != nil {
+			panic(fmt.Sprintf("getting vertex %d from graph: %v", id, err))
+		}
+
+		parts := strings.Split(p, ",")
+		x, _ := strconv.ParseFloat(parts[0], 64)
+		y, _ := strconv.ParseFloat(parts[1], 64)
+
+		points = append(points, Point{X: x, Y: y})
+	}
+
+	return points
+}
 
 func (p Points) Path(spacing int) string {
 	path := fmt.Sprintf(
@@ -29,6 +56,8 @@ func (p Points) Path(spacing int) string {
 	return path
 }
 
-func (p Point) String() string {
-	return fmt.Sprintf("%.1f,%.1f", p.X, p.Y)
+func (p Points) AddToGraph(g Graph) {
+	for _, v := range p {
+		g.AddMappedVertex(v.String())
+	}
 }
