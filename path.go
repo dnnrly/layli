@@ -1,7 +1,9 @@
 package layli
 
 import (
-	"math"
+	"fmt"
+
+	"github.com/RyanCarrier/dijkstra"
 )
 
 /*
@@ -65,8 +67,8 @@ func BuildVertexMap(l *Layout) VertexMap {
 	return vm
 }
 
-func (l *Layout) AddPath(from, to string) {
-	// g := dijkstra.NewGraph()
+func (l *Layout) AddPath(from, to string) error {
+	g := dijkstra.NewGraph()
 
 	nFrom := l.Nodes.ByID(from)
 	nTo := l.Nodes.ByID(to)
@@ -74,55 +76,54 @@ func (l *Layout) AddPath(from, to string) {
 	vm := BuildVertexMap(l)
 	arcs := vm.GetArcs()
 
-	// vm.GetVertexPoints().AddToGraph(g)
+	vm.GetVertexPoints().AddToGraph(g)
 
+	var idFrom int
 	{
 		// Add "from" paths
 		centre := nFrom.GetCentre()
+		idFrom = g.AddMappedVertex(centre.String())
 		ports := nFrom.GetPorts()
 		for _, to := range ports {
 			arcs.Add(
 				centre,
 				to,
-				int(math.Sqrt(
-					(centre.X-to.X)*(centre.X-to.X)+
-						(centre.Y-to.Y)*(centre.Y-to.Y),
-				)*100),
+				int(centre.Distance(to)*100),
 			)
 		}
-		ports = append(ports, centre)
-		// ports.AddToGraph(g)
+		ports.AddToGraph(g)
 	}
 
+	var idTo int
 	{
 		// Add "to" paths
-		centre := nFrom.GetCentre()
-		ports := nFrom.GetPorts()
+		centre := nTo.GetCentre()
+		idTo = g.AddMappedVertex(centre.String())
+		ports := nTo.GetPorts()
 		for _, from := range ports {
 			arcs.Add(
 				from,
 				centre,
-				int(math.Sqrt(
-					(centre.X-from.X)*(centre.X-from.X)+
-						(centre.Y-from.Y)*(centre.Y-from.Y),
-				)*100),
+				int(centre.Distance(from)*100),
 			)
 		}
-		ports = append(ports, centre)
-		// ports.AddToGraph(g)
+		ports.AddToGraph(g)
 	}
 
-	// g.Shortest()
+	arcs.AddToGraph(g)
+
+	path, err := g.Shortest(idFrom, idTo)
+	if err != nil {
+		return fmt.Errorf("finding shortest path: %w", err)
+	}
+	points := NewPointsFromBestPath(g, path)
 
 	l.Paths = append(
 		l.Paths,
 		LayoutPath{
-			points: Points{
-				nFrom.GetCentre(),
-				nTo.GetCentre(),
-			},
+			points: points,
 		},
 	)
 
-	// graph := dijkstra.NewGraph()
+	return nil
 }

@@ -22,16 +22,16 @@ var pathTestConfig = Config{
 func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 	l := NewLayoutFromConfig(pathTestConfig)
 
-	l.AddPath("1", "2")
-
-	assert.Len(t, l.Paths, 1)
-	assert.Equal(t,
-		LayoutPath{points: Points{
-			Point{X: 4, Y: 4},
-			Point{X: 5, Y: 4},
-			Point{X: 8, Y: 4},
-			Point{X: 9, Y: 4},
-		}}, l.Paths)
+	if assert.NoError(t, l.AddPath("1", "2"), l.vertexMap.String()) {
+		assert.Len(t, l.Paths, 1)
+		assert.Equal(t,
+			LayoutPath{points: Points{
+				Point{X: 4, Y: 4},
+				Point{X: 5, Y: 4},
+				Point{X: 8, Y: 4},
+				Point{X: 9, Y: 4},
+			}}, l.Paths)
+	}
 }
 
 func TestLayout_BuildVertexMap(t *testing.T) {

@@ -2,6 +2,7 @@ package layli
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -11,6 +12,12 @@ import (
 type Point struct {
 	X float64
 	Y float64
+}
+
+func (p Point) Distance(to Point) float64 {
+	a := (p.X - to.X)
+	b := (p.Y - to.Y)
+	return math.Sqrt(a*a + b*b)
 }
 
 func (p Point) String() string {
