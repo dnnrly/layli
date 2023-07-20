@@ -129,15 +129,9 @@ func (l *Layout) IsAnyPort(x, y int) bool {
 }
 
 func (l *Layout) ShowGrid(canvas LayoutDrawer, spacing int) {
-	for x := 0; x <= l.LayoutWidth(); x++ {
-		for y := 0; y <= l.LayoutHeight(); y++ {
-			gridX := x
-			gridY := y
-
-			if !l.InsideAny(gridX, gridY) || l.IsAnyPort(gridX, gridY) {
-				canvas.Circle(gridX*spacing, gridY*spacing, 1, `class="path-dot"`)
-			}
-		}
+	vm := BuildVertexMap(l)
+	for _, v := range vm.GetVertexPoints() {
+		canvas.Circle(int(v.X)*spacing, int(v.Y)*spacing, 1, `class="path-dot"`)
 	}
 }
 
@@ -251,13 +245,13 @@ func (n *LayoutNode) GetCentre() Point {
 func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 	d.Roundrect(
 		n.left*spacing, n.top*spacing,
-		n.width*spacing, n.height*spacing,
+		(n.width-1)*spacing, (n.height-1)*spacing,
 		3, 3,
 		fmt.Sprintf(`id="%s"`, n.Id),
 	)
 	d.Textspan(
-		n.left*spacing+((n.width*spacing)/2),
-		n.top*spacing+((n.height*spacing)/2),
+		n.left*spacing+(((n.width-1)*spacing)/2),
+		n.top*spacing+(((n.height-1)*spacing)/2),
 		n.Contents,
 		fmt.Sprintf(`id="%s-text"`, n.Id),
 		"font-size:10px",

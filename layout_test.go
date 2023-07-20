@@ -59,8 +59,8 @@ func TestLayoutNode_DrawNode(t *testing.T) {
 		height: 3,
 	}
 
-	drawer.On("Roundrect", 160, 200, 120, 120, 3, 3, `id="nodeA"`).Once()
-	drawer.On("Textspan", 220, 260, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`).Once()
+	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
 	n.Draw(drawer, 40)
