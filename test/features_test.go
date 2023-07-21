@@ -3,7 +3,7 @@ package test_test
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/exec"
 	"strconv"
@@ -101,7 +101,7 @@ func (c *testContext) aFileExists(file string) error {
 		assert.NoError(c, err)
 		return c.err
 	}
-	c.svgOutput.contents, err = ioutil.ReadAll(f)
+	c.svgOutput.contents, err = io.ReadAll(f)
 	if err != nil {
 		assert.NoError(c, err)
 		return c.err
@@ -173,6 +173,14 @@ func (c *testContext) theNumberOfNodesIs(expected int) error {
 	}
 
 	assert.Len(c, set, expected)
+
+	return c.err
+}
+
+func (c *testContext) theNumberOfPathsIs(expected int) error {
+	paths := xmlquery.Find(c.svgOutput.doc, "//path[contains(@class, 'path-line')]")
+
+	assert.Len(c, paths, expected)
 
 	return c.err
 }
@@ -304,6 +312,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a file "([^"]*)" exists$`, tc.aFileExists)
 	ctx.Step(`^in the SVG file, all node text fits inside the node boundaries$`, tc.inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries)
 	ctx.Step(`^the number of nodes is (\d+)$`, tc.theNumberOfNodesIs)
+	ctx.Step(`^the number of paths is (\d+)$`, tc.theNumberOfPathsIs)
 	ctx.Step(`^in the SVG file, nodes do not overlap$`, tc.inTheSVGFileNodesDoNotOverlap)
 	ctx.Step(`^the image has a width less than (\d+)$`, tc.theImageHasAWidthLessThan)
 	ctx.Step(`^the image has a height less than (\d+)$`, tc.theImageHasAHeightLessThan)
