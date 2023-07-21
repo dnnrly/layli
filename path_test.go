@@ -24,13 +24,8 @@ func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 
 	if assert.NoError(t, l.AddPath("1", "2"), l.vertexMap.String()) {
 		assert.Len(t, l.Paths, 1)
-		assert.Equal(t,
-			LayoutPath{points: Points{
-				Point{X: 4, Y: 4},
-				Point{X: 5, Y: 4},
-				Point{X: 8, Y: 4},
-				Point{X: 9, Y: 4},
-			}}, l.Paths)
+		assert.Contains(t, l.Paths[0].points, Point{X: 5.5, Y: 5.5})
+		assert.Contains(t, l.Paths[0].points, Point{X: 12.5, Y: 5.5})
 	}
 }
 

@@ -111,6 +111,10 @@ func (vm VertexMap) GetArcs() Arcs {
 
 	points := vm.GetVertexPoints()
 
+	cost := func(a, b float64) int {
+		return int(math.Max(a, b)-math.Min(a, b)) * 1000
+	}
+
 	for _, from := range points {
 		for _, to := range points {
 			if from != to {
@@ -121,7 +125,7 @@ func (vm VertexMap) GetArcs() Arcs {
 					}
 
 					if ok {
-						arcs.Add(from, to, 1)
+						arcs.Add(from, to, cost(from.Y, to.Y))
 					}
 				}
 
@@ -132,7 +136,7 @@ func (vm VertexMap) GetArcs() Arcs {
 					}
 
 					if ok {
-						arcs.Add(from, to, 1)
+						arcs.Add(from, to, cost(from.X, to.X))
 					}
 				}
 			}
@@ -166,6 +170,16 @@ func (all Arcs) Exists(from Point, to Point) bool {
 	}
 
 	return false
+}
+
+func (all Arcs) Get(from Point, to Point) Arc {
+	for _, v := range all {
+		if v.From == from && v.To == to {
+			return v
+		}
+	}
+
+	return Arc{}
 }
 
 func (all Arcs) AddToGraph(g Graph) {
