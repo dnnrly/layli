@@ -52,7 +52,7 @@ Feature: Simple CLI commands
 
     @Acceptance
     Scenario: Shows path grid positions
-        When the app runs with parameters "--show-grid tmp/fixtures/inputs/2-nodes.layli"
+        When the app runs with parameters "--show-grid --output tmp/fixtures/inputs/2-nodes-with-grid.svg tmp/fixtures/inputs/2-nodes.layli"
         Then the app exits without error
-        And a file "tmp/fixtures/inputs/2-nodes.svg" exists
+        And a file "tmp/fixtures/inputs/2-nodes-with-grid.svg" exists
         And in the SVG file, path grid dots are shown
