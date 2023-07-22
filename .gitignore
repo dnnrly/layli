@@ -5,6 +5,7 @@
 *.so
 *.dylib
 *.swp
+/*.svg
 
 # Test binary, build with `go test -c`
 *.test
