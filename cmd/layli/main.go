@@ -34,12 +34,15 @@ func Execute() error {
 				return fmt.Errorf("opening input: %w", err)
 			}
 
+			if output == "" {
+				output = strings.ReplaceAll(args[0], ".layli", "")
+				output = fmt.Sprintf("%s.svg", output)
+			}
+
 			d, err := layli.NewDiagramFromFile(
 				f,
-				func(output string) error {
-					name := strings.ReplaceAll(args[0], ".layli", "")
-					name = fmt.Sprintf("%s.svg", name)
-					return os.WriteFile(name, []byte(output), 0644)
+				func(data string) error {
+					return os.WriteFile(output, []byte(data), 0644)
 				},
 				showGrid,
 			)

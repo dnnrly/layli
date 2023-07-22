@@ -1,3 +1,5 @@
+//go:build acceptance
+
 package test_test
 
 import (
