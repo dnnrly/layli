@@ -1,0 +1,34 @@
+nodes:
+  - id: node1
+    contents: "Node 1"
+  - id: node2
+    contents: "Node 2"
+  - id: node3
+    contents: "Node 3"
+  - id: node4
+    contents: "Node 4"
+  - id: node5
+    contents: "Node 5"
+  - id: node6
+    contents: "Node 6"
+  - id: node7
+    contents: "Node 7"
+  - id: node8
+    contents: "Node 8"
+  - id: node9
+    contents: "Node 9"
+  - id: node10
+    contents: "Node 10"
+
+edges:
+  - from: node1
+    to: node6
+  - from: node3
+    to: node6
+  - from: node8
+    to: node9
+
+border: 1
+margin: 1
+width: 5
+height: 4
