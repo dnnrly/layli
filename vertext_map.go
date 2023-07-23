@@ -65,13 +65,20 @@ func (v VertexMap) String() string {
 }
 
 type VertexMapper func(x, y int) bool
+type VertexStateMapper func(x, y int, state bool) bool
 
-func (v *VertexMap) MapSet(m VertexMapper) {
+func (v *VertexMap) Map(m VertexStateMapper) {
 	for x := 0; x < v.width; x++ {
 		for y := 0; y < v.height; y++ {
-			v.points[x][y] = m(x, y)
+			v.points[x][y] = m(x, y, v.points[x][y])
 		}
 	}
+}
+
+func (v *VertexMap) MapSet(m VertexMapper) {
+	v.Map(func(x, y int, state bool) bool {
+		return m(x, y)
+	})
 }
 
 func (v *VertexMap) MapUnset(m VertexMapper) {

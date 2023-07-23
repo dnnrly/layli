@@ -34,15 +34,15 @@ func TestLayout_BuildVertexMap(t *testing.T) {
 	vm := BuildVertexMap(l)
 
 	assert.Equal(t, strings.ReplaceAll(
-		`xxxxxxxxxxxxxxxxxx
-		xxxxxxxxxxxxxxxxxx
-		xxxxxxxxxxxxxxxxxx
-		xxxxxxxxxxxxxxxxxx
-		xxxx.x.xxxx.x.xxxx
-		xxxxx.xxxxxx.xxxxx
-		xxxx.x.xxxx.x.xxxx
-		xxxxxxxxxxxxxxxxxx
-		xxxxxxxxxxxxxxxxxx
-		xxxxxxxxxxxxxxxxxx
-		xxxxxxxxxxxxxxxxxx`, "	", ""), vm.String(), vm)
+		`..................
+		..................
+		..xxxxxxxxxxxxxx..
+		..xxxxxxxxxxxxxx..
+		..xx.x.xxxx.x.xx..
+		..xxx.xxxxxx.xxx..
+		..xx.x.xxxx.x.xx..
+		..xxxxxxxxxxxxxx..
+		..xxxxxxxxxxxxxx..
+		..................
+		..................`, "	", ""), vm.String(), vm)
 }

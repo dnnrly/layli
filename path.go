@@ -63,6 +63,10 @@ func BuildVertexMap(l *Layout) VertexMap {
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
 	vm.MapUnset(l.InsideAny)
 	vm.MapOr(l.IsAnyPort)
+	vm.Map(func(x, y int, current bool) bool { return x >= l.layoutBorder && current })
+	vm.Map(func(x, y int, current bool) bool { return y >= l.layoutBorder && current })
+	vm.Map(func(x, y int, current bool) bool { return x < l.LayoutWidth()-l.layoutBorder && current })
+	vm.Map(func(x, y int, current bool) bool { return y < l.LayoutHeight()-l.layoutBorder && current })
 
 	return vm
 }

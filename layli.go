@@ -54,8 +54,8 @@ func (d *Diagram) Draw() error {
 
 	canvas := svg.New(&w)
 	canvas.Start(
-		d.layout.LayoutWidth()*d.config.Spacing,
-		d.layout.LayoutHeight()*d.config.Spacing,
+		(d.layout.LayoutWidth()-1)*d.config.Spacing,
+		(d.layout.LayoutHeight()-1)*d.config.Spacing,
 		"style=\"background-color: white;\"",
 	)
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
