@@ -270,9 +270,7 @@ func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
 type LayoutPaths []LayoutPath
 
 func (paths *LayoutPaths) Draw(canvas LayoutDrawer, spacing int) {
-	fmt.Printf("Drawing %d paths\n", len(*paths))
-	for i, p := range *paths {
-		fmt.Printf("Drawing path %d of %d\n", i+1, len(*paths))
+	for _, p := range *paths {
 		p.Draw(canvas, spacing)
 	}
 }

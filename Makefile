@@ -71,6 +71,10 @@ ci-test: ## ci target - run tests to generate coverage data
 	mkdir -p ./tmp/coverage
 	go test -coverprofile=./tmp/coverage/ci-test.txt -covermode=set ./...
 
+.PHONY: check-docs
+check-docs: build ## make sure that the documentation is up to date
+	go test -tags docs -test.run TestReadme -json | tparse -all
+
 .PHONY: acceptance-test
 acceptance-test: build ## run acceptance tests
 	rm -rf ./test/tmp
