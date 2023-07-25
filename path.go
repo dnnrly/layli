@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/RyanCarrier/dijkstra"
+	dj "github.com/dnnrly/layli/pathfinder/djikstra"
 )
 
 /*
@@ -76,6 +77,8 @@ func (l *Layout) AddPath(from, to string) error {
 
 	nFrom := l.Nodes.ByID(from)
 	nTo := l.Nodes.ByID(to)
+
+	dj.NewPathFinder(nFrom.GetCentre(), nTo.GetCentre())
 
 	vm := BuildVertexMap(l)
 	arcs := vm.GetArcs()

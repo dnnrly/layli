@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	dj "github.com/RyanCarrier/dijkstra"
-	"github.com/dnnrly/layli"
 )
 
 type PathFinder struct {
@@ -14,7 +13,7 @@ type PathFinder struct {
 	end   int
 }
 
-func NewPathFinder(start, end layli.Point) *PathFinder {
+func NewPathFinder(start, end Point) *PathFinder {
 	pf := &PathFinder{
 		graph: *dj.NewGraph(),
 	}
@@ -25,18 +24,18 @@ func NewPathFinder(start, end layli.Point) *PathFinder {
 	return pf
 }
 
-type CostFunction func(from, to layli.Point) int64
+type CostFunction func(from, to Point) int64
 
-func (pf *PathFinder) AddConnection(from layli.Point, cost CostFunction, to layli.Point) {
+func (pf *PathFinder) AddConnection(from Point, cost CostFunction, to Point) {
 	pf.graph.AddMappedVertex(from.String())
 	pf.graph.AddMappedVertex(to.String())
 
 	pf.graph.AddMappedArc(from.String(), to.String(), cost(from, to))
 }
 
-func (pf *PathFinder) BestPath() layli.LayoutPath {
+func (pf *PathFinder) BestPath() []Point {
 	found, _ := pf.graph.Shortest(pf.start, pf.end)
-	path := layli.LayoutPath{}
+	path := []Point{}
 
 	for _, id := range found.Path {
 		p, _ := pf.graph.GetMapped(id)
@@ -45,7 +44,7 @@ func (pf *PathFinder) BestPath() layli.LayoutPath {
 		x, _ := strconv.ParseFloat(parts[0], 64)
 		y, _ := strconv.ParseFloat(parts[1], 64)
 
-		path.Points = append(path.Points, layli.Point{X: x, Y: y})
+		path = append(path, Point(&coordinate{x: x, y: y}))
 	}
 
 	return path

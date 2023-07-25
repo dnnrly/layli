@@ -24,6 +24,10 @@ func (p Point) String() string {
 	return fmt.Sprintf("%.1f,%.1f", p.X, p.Y)
 }
 
+func (p Point) Coordinates() (float64, float64) {
+	return p.X, p.Y
+}
+
 type Points []Point
 
 func NewPointsFromBestPath(g Graph, path dijkstra.BestPath) Points {
