@@ -260,11 +260,11 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 }
 
 type LayoutPath struct {
-	points Points
+	Points Points
 }
 
 func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
-	canvas.Path(p.points.Path(spacing), `class="path-line"`)
+	canvas.Path(p.Points.Path(spacing), `class="path-line"`)
 }
 
 type LayoutPaths []LayoutPath

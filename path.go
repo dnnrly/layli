@@ -125,7 +125,7 @@ func (l *Layout) AddPath(from, to string) error {
 	l.Paths = append(
 		l.Paths,
 		LayoutPath{
-			points: points,
+			Points: points,
 		},
 	)
 
