@@ -189,12 +189,6 @@ func (all Arcs) Get(from Point, to Point) Arc {
 	return Arc{}
 }
 
-func (all Arcs) AddToGraph(g Graph) {
-	for _, v := range all {
-		g.AddMappedArc(v.From.String(), v.To.String(), int64(v.Distance))
-	}
-}
-
 func (all Arcs) String() string {
 	str := []string{}
 

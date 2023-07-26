@@ -3,15 +3,23 @@ package layli
 import (
 	"fmt"
 	"math"
-	"strconv"
-	"strings"
 
-	"github.com/RyanCarrier/dijkstra"
+	"github.com/dnnrly/layli/pathfinder/djikstra"
 )
 
 type Point struct {
 	X float64
 	Y float64
+}
+
+func PythagoreanDistance(from, to djikstra.Point) int64 {
+	x1, y1 := from.Coordinates()
+	x2, y2 := to.Coordinates()
+
+	a := (x1 - x2)
+	b := (y1 - y2)
+
+	return int64(math.Sqrt(a*a+b*b) * 100)
 }
 
 func (p Point) Distance(to Point) float64 {
@@ -30,25 +38,6 @@ func (p Point) Coordinates() (float64, float64) {
 
 type Points []Point
 
-func NewPointsFromBestPath(g Graph, path dijkstra.BestPath) Points {
-	points := Points{}
-
-	for _, id := range path.Path {
-		p, err := g.GetMapped(id)
-		if err != nil {
-			panic(fmt.Sprintf("getting vertex %d from graph: %v", id, err))
-		}
-
-		parts := strings.Split(p, ",")
-		x, _ := strconv.ParseFloat(parts[0], 64)
-		y, _ := strconv.ParseFloat(parts[1], 64)
-
-		points = append(points, Point{X: x, Y: y})
-	}
-
-	return points
-}
-
 func (p Points) Path(spacing int) string {
 	path := fmt.Sprintf(
 		"M %d %d",
@@ -65,10 +54,4 @@ func (p Points) Path(spacing int) string {
 	}
 
 	return path
-}
-
-func (p Points) AddToGraph(g Graph) {
-	for _, v := range p {
-		g.AddMappedVertex(v.String())
-	}
 }

@@ -4,7 +4,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dnnrly/layli/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -273,21 +272,6 @@ func TestArcs_Get(t *testing.T) {
 
 	assert.Equal(t, Arc{From: Point{X: 1, Y: 2}, To: Point{X: 1, Y: 3}, Distance: 1}, arcs.Get(Point{X: 1, Y: 2}, Point{X: 1, Y: 3}))
 	assert.Equal(t, Arc{}, arcs.Get(Point{X: 1, Y: 2}, Point{X: 1, Y: 9}))
-}
-
-func TestArcs_AddToGraph(t *testing.T) {
-	g := mocks.NewGraph(t)
-
-	arcs := Arcs{}
-	arcs.Add(Point{X: 1, Y: 2}, Point{X: 1, Y: 3}, 101)
-	arcs.Add(Point{X: 1, Y: 2}, Point{X: 1, Y: 5}, 103)
-
-	g.On("AddMappedArc", "1.0,2.0", "1.0,3.0", int64(101)).Return(nil).Once()
-	g.On("AddMappedArc", "1.0,2.0", "1.0,5.0", int64(103)).Return(nil).Once()
-
-	arcs.AddToGraph(g)
-
-	g.AssertExpectations(t)
 }
 
 func TestArcs_String(t *testing.T) {
