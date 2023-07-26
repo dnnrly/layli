@@ -27,11 +27,13 @@ func NewPathFinder(start, end Point) *PathFinder {
 
 type CostFunction func(from, to Point) int64
 
-func (pf *PathFinder) AddConnection(from Point, cost CostFunction, to Point) {
+func (pf *PathFinder) AddConnection(from Point, cost CostFunction, to ...Point) {
 	pf.graph.AddMappedVertex(from.String())
-	pf.graph.AddMappedVertex(to.String())
 
-	pf.graph.AddMappedArc(from.String(), to.String(), cost(from, to))
+	for _, p := range to {
+		pf.graph.AddMappedVertex(p.String())
+		pf.graph.AddMappedArc(from.String(), p.String(), cost(from, p))
+	}
 }
 
 func (pf *PathFinder) BestPath() ([]Point, error) {
