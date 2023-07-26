@@ -1,6 +1,7 @@
 package djikstra
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -33,8 +34,12 @@ func (pf *PathFinder) AddConnection(from Point, cost CostFunction, to Point) {
 	pf.graph.AddMappedArc(from.String(), to.String(), cost(from, to))
 }
 
-func (pf *PathFinder) BestPath() []Point {
-	found, _ := pf.graph.Shortest(pf.start, pf.end)
+func (pf *PathFinder) BestPath() ([]Point, error) {
+	found, err := pf.graph.Shortest(pf.start, pf.end)
+	if err != nil {
+		return nil, fmt.Errorf("calculating shortest path: %w", err)
+	}
+
 	path := []Point{}
 
 	for _, id := range found.Path {
@@ -47,5 +52,5 @@ func (pf *PathFinder) BestPath() []Point {
 		path = append(path, Point(&coordinate{x: x, y: y}))
 	}
 
-	return path
+	return path, nil
 }
