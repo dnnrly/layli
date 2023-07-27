@@ -15,6 +15,8 @@ This tools produces diagrams and has 2 simple aims:
 [![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fdnnrly%2Flayli)](https://twitter.com/intent/tweet?url=https://github.com/dnnrly/layli)
 
 
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W414S4U)
+
 ## Using layli
 
 ### Installation
