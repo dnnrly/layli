@@ -6,6 +6,13 @@ import (
 	"github.com/dnnrly/layli/pathfinder/djikstra"
 )
 
+type PathFinder interface {
+	AddConnection(from djikstra.Point, cost djikstra.CostFunction, to ...djikstra.Point)
+	BestPath() ([]djikstra.Point, error)
+}
+
+type CreateFinder func(start, end djikstra.Point) PathFinder
+
 func BuildVertexMap(l *Layout) VertexMap {
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
 	vm.MapUnset(l.InsideAny)
@@ -22,7 +29,14 @@ func (l *Layout) AddPath(from, to string) error {
 	nFrom := l.Nodes.ByID(from)
 	nTo := l.Nodes.ByID(to)
 
-	finder := djikstra.NewPathFinder(nFrom.GetCentre(), nTo.GetCentre())
+	if l.CreateFinder == nil {
+		panic("finder is nil!")
+	}
+
+	finder := l.CreateFinder(
+		nFrom.GetCentre(),
+		nTo.GetCentre(),
+	)
 
 	vm := BuildVertexMap(l)
 	arcs := vm.GetArcs()

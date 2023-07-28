@@ -4,7 +4,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dnnrly/layli/mocks"
+	"github.com/dnnrly/layli/pathfinder/djikstra"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 var pathTestConfig = Config{
@@ -20,17 +24,45 @@ var pathTestConfig = Config{
 }
 
 func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
-	l := NewLayoutFromConfig(pathTestConfig)
+	finder := mocks.NewPathFinder(t)
+	var gotStart djikstra.Point
+	var gotEnd djikstra.Point
 
-	if assert.NoError(t, l.AddPath("1", "2"), l.vertexMap.String()) {
-		assert.Len(t, l.Paths, 1)
-		assert.Contains(t, l.Paths[0].Points, Point{X: 5.5, Y: 5.5})
-		assert.Contains(t, l.Paths[0].Points, Point{X: 12.5, Y: 5.5})
-	}
+	finder.On("AddConnection", mock.Anything, mock.Anything, mock.Anything)
+	finder.On("BestPath").Return([]djikstra.Point{
+		Point{X: 5.5, Y: 5.5},
+		Point{X: 6, Y: 5},
+		Point{X: 12, Y: 5},
+		Point{X: 12.5, Y: 5.5},
+	}, nil)
+
+	l := NewLayoutFromConfig(func(start, end djikstra.Point) PathFinder {
+		gotStart = start
+		gotEnd = end
+		return finder
+	}, pathTestConfig)
+
+	require.NoError(t, l.AddPath("1", "2"))
+
+	assert.Equal(t, Point{X: 5.5, Y: 5.5}, gotStart)
+	assert.Equal(t, Point{X: 12.5, Y: 5.5}, gotEnd)
+
+	assert.Len(t, l.Paths, 1)
+	assert.Equal(t, LayoutPath{
+		Points: []Point{
+			Point{X: 5.5, Y: 5.5},
+			Point{X: 6, Y: 5},
+			Point{X: 12, Y: 5},
+			Point{X: 12.5, Y: 5.5},
+		},
+	}, l.Paths[0])
 }
 
 func TestLayout_BuildVertexMap(t *testing.T) {
-	l := NewLayoutFromConfig(pathTestConfig)
+	finder := mocks.NewPathFinder(t)
+	l := NewLayoutFromConfig(func(start, end djikstra.Point) PathFinder {
+		return finder
+	}, pathTestConfig)
 	vm := BuildVertexMap(l)
 
 	assert.Equal(t, strings.ReplaceAll(
