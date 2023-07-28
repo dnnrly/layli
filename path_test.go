@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/dnnrly/layli/mocks"
-	"github.com/dnnrly/layli/pathfinder/djikstra"
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -25,18 +25,18 @@ var pathTestConfig = Config{
 
 func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
-	var gotStart djikstra.Point
-	var gotEnd djikstra.Point
+	var gotStart dijkstra.Point
+	var gotEnd dijkstra.Point
 
 	finder.On("AddConnection", mock.Anything, mock.Anything, mock.Anything)
-	finder.On("BestPath").Return([]djikstra.Point{
+	finder.On("BestPath").Return([]dijkstra.Point{
 		Point{X: 5.5, Y: 5.5},
 		Point{X: 6, Y: 5},
 		Point{X: 12, Y: 5},
 		Point{X: 12.5, Y: 5.5},
 	}, nil)
 
-	l := NewLayoutFromConfig(func(start, end djikstra.Point) PathFinder {
+	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
 		gotStart = start
 		gotEnd = end
 		return finder
@@ -60,7 +60,7 @@ func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 
 func TestLayout_BuildVertexMap(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
-	l := NewLayoutFromConfig(func(start, end djikstra.Point) PathFinder {
+	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
 		return finder
 	}, pathTestConfig)
 	vm := BuildVertexMap(l)

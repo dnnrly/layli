@@ -5,11 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dnnrly/layli/pathfinder/djikstra"
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/stretchr/testify/assert"
 )
 
-func nilCreator(start, end djikstra.Point) PathFinder { return nil }
+func nilCreator(start, end dijkstra.Point) PathFinder { return nil }
 
 func Test_NewDiagramFromFile_Simple(t *testing.T) {
 	r := strings.NewReader(`

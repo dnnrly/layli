@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	djikstra "github.com/dnnrly/layli/pathfinder/djikstra"
+	djikstra "github.com/dnnrly/layli/pathfinder/dijkstra"
 
 	mock "github.com/stretchr/testify/mock"
 )

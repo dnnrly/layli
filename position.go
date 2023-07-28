@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/dnnrly/layli/pathfinder/djikstra"
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
 
 type Point struct {
@@ -12,7 +12,7 @@ type Point struct {
 	Y float64
 }
 
-func PythagoreanDistance(from, to djikstra.Point) int64 {
+func PythagoreanDistance(from, to dijkstra.Point) int64 {
 	x1, y1 := from.Coordinates()
 	x2, y2 := to.Coordinates()
 

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/dnnrly/layli/mocks"
-	"github.com/dnnrly/layli/pathfinder/djikstra"
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -135,7 +135,7 @@ func TestLayoutNodes_ByID(t *testing.T) {
 
 func TestLayout_InsideAny(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
-	l := NewLayoutFromConfig(func(start, end djikstra.Point) PathFinder { return finder }, layoutTestConfig)
+	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, layoutTestConfig)
 
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
 	vm.MapSet(l.InsideAny)
@@ -153,7 +153,7 @@ func TestLayout_InsideAny(t *testing.T) {
 
 func TestLayout_IsAnyPort(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
-	l := NewLayoutFromConfig(func(start, end djikstra.Point) PathFinder { return finder }, layoutTestConfig)
+	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, layoutTestConfig)
 
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
 	vm.MapSet(l.IsAnyPort)

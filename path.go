@@ -3,15 +3,15 @@ package layli
 import (
 	"fmt"
 
-	"github.com/dnnrly/layli/pathfinder/djikstra"
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
 
 type PathFinder interface {
-	AddConnection(from djikstra.Point, cost djikstra.CostFunction, to ...djikstra.Point)
-	BestPath() ([]djikstra.Point, error)
+	AddConnection(from dijkstra.Point, cost dijkstra.CostFunction, to ...dijkstra.Point)
+	BestPath() ([]dijkstra.Point, error)
 }
 
-type CreateFinder func(start, end djikstra.Point) PathFinder
+type CreateFinder func(start, end dijkstra.Point) PathFinder
 
 func BuildVertexMap(l *Layout) VertexMap {
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
@@ -28,10 +28,6 @@ func BuildVertexMap(l *Layout) VertexMap {
 func (l *Layout) AddPath(from, to string) error {
 	nFrom := l.Nodes.ByID(from)
 	nTo := l.Nodes.ByID(to)
-
-	if l.CreateFinder == nil {
-		panic("finder is nil!")
-	}
 
 	finder := l.CreateFinder(
 		nFrom.GetCentre(),

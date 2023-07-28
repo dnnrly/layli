@@ -1,4 +1,4 @@
-package djikstra
+package dijkstra
 
 import "fmt"
 

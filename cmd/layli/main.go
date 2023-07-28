@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/dnnrly/layli"
-	"github.com/dnnrly/layli/pathfinder/djikstra"
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/spf13/cobra"
 )
 
@@ -18,9 +18,9 @@ func main() {
 	}
 }
 
-var newPathFinder = func(start, end djikstra.Point) layli.PathFinder {
+var newPathFinder = func(start, end dijkstra.Point) layli.PathFinder {
 	fmt.Printf("Creating new path finder %s,%s\n", start, end)
-	return djikstra.NewPathFinder(start, end)
+	return dijkstra.NewPathFinder(start, end)
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
