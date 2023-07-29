@@ -14,8 +14,9 @@ type LayoutDrawer interface {
 }
 
 type Layout struct {
-	Nodes LayoutNodes
-	Paths LayoutPaths
+	Nodes        LayoutNodes
+	Paths        LayoutPaths
+	CreateFinder CreateFinder
 
 	nodeHeight   int // Height of a node in path unites
 	nodeWidth    int // Width of a node in path units
@@ -23,11 +24,9 @@ type Layout struct {
 	layoutBorder int // Space at edge of layout in path units
 
 	pathSpacing int // Length of a path unit in pixels
-
-	vertexMap VertexMap // The state of all of the positions on the grid
 }
 
-func NewLayoutFromConfig(c Config) *Layout {
+func NewLayoutFromConfig(finder CreateFinder, c Config) *Layout {
 	numNodes := len(c.Nodes)
 
 	root := math.Sqrt(float64(numNodes))
@@ -41,7 +40,8 @@ func NewLayoutFromConfig(c Config) *Layout {
 	}
 
 	l := &Layout{
-		Nodes: LayoutNodes{},
+		Nodes:        LayoutNodes{},
+		CreateFinder: finder,
 
 		nodeWidth:    c.NodeWidth,
 		nodeHeight:   c.NodeHeight,
@@ -260,11 +260,11 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 }
 
 type LayoutPath struct {
-	points Points
+	Points Points
 }
 
 func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
-	canvas.Path(p.points.Path(spacing), `class="path-line"`)
+	canvas.Path(p.Points.Path(spacing), `class="path-line"`)
 }
 
 type LayoutPaths []LayoutPath

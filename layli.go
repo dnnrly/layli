@@ -19,7 +19,7 @@ type Diagram struct {
 }
 
 // NewDiagramFromFile reads the configuration and parses it in to a Diagram object
-func NewDiagramFromFile(r io.ReadCloser, output OutputFunc, showGrid bool) (*Diagram, error) {
+func NewDiagramFromFile(cf CreateFinder, r io.ReadCloser, output OutputFunc, showGrid bool) (*Diagram, error) {
 	d := Diagram{
 		output:   output,
 		showGrid: showGrid,
@@ -43,7 +43,7 @@ func NewDiagramFromFile(r io.ReadCloser, output OutputFunc, showGrid bool) (*Dia
 		d.config.Border = 1
 	}
 
-	d.layout = NewLayoutFromConfig(d.config)
+	d.layout = NewLayoutFromConfig(cf, d.config)
 
 	return &d, nil
 }

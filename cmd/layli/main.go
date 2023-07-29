@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/dnnrly/layli"
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/spf13/cobra"
 )
 
@@ -15,6 +16,11 @@ func main() {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
+}
+
+var newPathFinder = func(start, end dijkstra.Point) layli.PathFinder {
+	fmt.Printf("Creating new path finder %s,%s\n", start, end)
+	return dijkstra.NewPathFinder(start, end)
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -40,7 +46,7 @@ func Execute() error {
 			}
 
 			d, err := layli.NewDiagramFromFile(
-				f,
+				newPathFinder, f,
 				func(data string) error {
 					return os.WriteFile(output, []byte(data), 0644)
 				},

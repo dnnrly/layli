@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/dnnrly/layli/mocks"
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -130,10 +131,12 @@ func TestLayoutNodes_ByID(t *testing.T) {
 
 	assert.Equal(t, NewLayoutNode("1", "contents", 3, 7, 5, 3), *nodes.ByID("1"))
 	assert.Equal(t, NewLayoutNode("2", "contents", 10, 12, 5, 3), *nodes.ByID("2"))
+	assert.Nil(t, nodes.ByID("unknown"))
 }
 
 func TestLayout_InsideAny(t *testing.T) {
-	l := NewLayoutFromConfig(layoutTestConfig)
+	finder := mocks.NewPathFinder(t)
+	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, layoutTestConfig)
 
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
 	vm.MapSet(l.InsideAny)
@@ -150,7 +153,8 @@ func TestLayout_InsideAny(t *testing.T) {
 }
 
 func TestLayout_IsAnyPort(t *testing.T) {
-	l := NewLayoutFromConfig(layoutTestConfig)
+	finder := mocks.NewPathFinder(t)
+	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, layoutTestConfig)
 
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
 	vm.MapSet(l.IsAnyPort)
@@ -170,7 +174,7 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPath{
-		points: Points{
+		Points: Points{
 			Point{X: 5.5, Y: 4.5},
 			Point{X: 8, Y: 4},
 			Point{X: 10, Y: 4},
@@ -195,8 +199,8 @@ func TestLayoutPaths_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPaths{
-		LayoutPath{points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
-		LayoutPath{points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
 	}
 
 	drawer.On("Path", mock.Anything, `class="path-line"`).Twice()
