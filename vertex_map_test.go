@@ -21,6 +21,20 @@ func TestVertexMap_Count(t *testing.T) {
 	assert.Equal(t, 3, m.CountAvailable(true))
 }
 
+func TestVertexMap_Get(t *testing.T) {
+	m := NewVertexMap(20, 20)
+
+	assert.Equal(t, 400, m.CountAvailable(false))
+	assert.Equal(t, 0, m.CountAvailable(true))
+
+	m.Set(1, 2, true)
+	m.Set(1, 3, true)
+	m.Set(1, 4, true)
+
+	assert.True(t, m.Get(1, 2))
+	assert.False(t, m.Get(2, 1))
+}
+
 func TestVertexMap_String(t *testing.T) {
 	m := NewVertexMap(20, 20)
 

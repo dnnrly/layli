@@ -44,3 +44,20 @@ nodes:
 	assert.NoError(t, d.Draw())
 	assert.Contains(t, actualOutput, "A single box")
 }
+
+func Test_NewDiagramFromFile_HandlesBadYaml(t *testing.T) {
+	r := strings.NewReader(`
+nodes:
+
+sdsd}
+`)
+	actualOutput := ""
+
+	_, err := NewDiagramFromFile(nilCreator, io.NopCloser(r), func(output string) error {
+		actualOutput = output
+		return nil
+	}, false)
+
+	assert.Error(t, err)
+	assert.Empty(t, actualOutput)
+}

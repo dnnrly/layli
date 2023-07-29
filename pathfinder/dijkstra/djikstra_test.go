@@ -56,5 +56,6 @@ func TestCannotFindImpossiblePath(t *testing.T) {
 	pf.AddConnection(p(3, 2), cost, p(2, 2))
 
 	_, err := pf.BestPath()
+	assert.Contains(t, err.Error(), "calculating shortest path")
 	assert.ErrorIs(t, err, dj.ErrNoPath)
 }

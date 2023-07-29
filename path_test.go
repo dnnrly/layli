@@ -50,13 +50,26 @@ func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 	assert.Len(t, l.Paths, 1)
 	assert.Equal(t, LayoutPath{
 		Points: []Point{
-			Point{X: 5.5, Y: 5.5},
-			Point{X: 6, Y: 5},
-			Point{X: 12, Y: 5},
-			Point{X: 12.5, Y: 5.5},
+			{X: 5.5, Y: 5.5},
+			{X: 6, Y: 5},
+			{X: 12, Y: 5},
+			{X: 12.5, Y: 5.5},
 		},
 	}, l.Paths[0])
 }
+
+// func TestLayout_AddPath_ErrorAddingPaths(t *testing.T) {
+// 	finder := mocks.NewPathFinder(t)
+
+// 	finder.On("AddConnection", mock.Anything, mock.Anything, mock.Anything)
+// 	finder.On("BestPath").Return([]dijkstra.Point{}, errors.New("not paths"))
+
+// 	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
+// 		return finder
+// 	}, pathTestConfig)
+
+// 	require.Error(t, l.AddPath("1", "2"))
+// }
 
 func TestLayout_BuildVertexMap(t *testing.T) {
 	finder := mocks.NewPathFinder(t)

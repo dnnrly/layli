@@ -131,6 +131,7 @@ func TestLayoutNodes_ByID(t *testing.T) {
 
 	assert.Equal(t, NewLayoutNode("1", "contents", 3, 7, 5, 3), *nodes.ByID("1"))
 	assert.Equal(t, NewLayoutNode("2", "contents", 10, 12, 5, 3), *nodes.ByID("2"))
+	assert.Nil(t, nodes.ByID("unknown"))
 }
 
 func TestLayout_InsideAny(t *testing.T) {
