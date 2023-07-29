@@ -51,6 +51,16 @@ Feature: Simple CLI commands
         And in the SVG file, all nodes fit on the image
 
     @Acceptance
+    Scenario: Generates an image with a square number of nodes
+        When the app runs with parameters "tmp/fixtures/inputs/9-nodes.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/9-nodes.svg" exists
+        And the number of nodes is 9
+        And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap
+        And in the SVG file, all nodes fit on the image
+
+    @Acceptance
     Scenario: Shows path grid positions
         When the app runs with parameters "--show-grid --output tmp/fixtures/inputs/2-nodes-with-grid.svg tmp/fixtures/inputs/2-nodes.layli"
         Then the app exits without error
