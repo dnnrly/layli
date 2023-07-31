@@ -19,7 +19,6 @@ func main() {
 }
 
 var newPathFinder = func(start, end dijkstra.Point) layli.PathFinder {
-	fmt.Printf("Creating new path finder %s,%s\n", start, end)
 	return dijkstra.NewPathFinder(start, end)
 }
 
