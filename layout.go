@@ -85,9 +85,13 @@ func (l *Layout) LayoutHeight() int {
 	numNodes := len(l.Nodes)
 
 	root := math.Sqrt(float64(numNodes))
-	rows := numNodes / int(root)
-	if numNodes%int(root) == 0 {
-		rows--
+	rows := 1
+	if numNodes > 2 {
+		columns := int(math.Ceil(root))
+		rows = numNodes / columns
+		if (numNodes % columns) != 0 {
+			rows++
+		}
 	}
 
 	return l.layoutBorder*2 +

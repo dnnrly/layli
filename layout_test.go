@@ -23,27 +23,45 @@ var layoutTestConfig = Config{
 }
 
 func TestLayout_LayoutSize(t *testing.T) {
+	width := 5
+	height := 4
 	l := Layout{
 		pathSpacing: 20,
 
-		nodeWidth:  5,
-		nodeHeight: 4,
+		nodeWidth:  width,
+		nodeHeight: height,
 		nodeMargin: 1,
 
 		layoutBorder: 1,
 	}
 
+	l.Nodes = make(LayoutNodes, 1)
+	assert.Equal(t, 1+(width+2)+1, l.LayoutWidth(), "Expected width: 2 nodes")
+	assert.Equal(t, 1+(height+2)+1, l.LayoutHeight(), "Expected height: 1 node")
+
 	l.Nodes = make(LayoutNodes, 2)
-	assert.Equal(t, 1+1+5+2+5+1+1, l.LayoutWidth())
-	assert.Equal(t, 1+1+4+1+1, l.LayoutHeight())
+	assert.Equal(t, 1+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 2 nodes")
+	assert.Equal(t, 1+(height+2)+1, l.LayoutHeight(), "Expected height: 1 node")
+
+	l.Nodes = make(LayoutNodes, 4)
+	assert.Equal(t, 1+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 2 nodes")
+	assert.Equal(t, 1+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 2 nodes")
 
 	l.Nodes = make(LayoutNodes, 5)
-	assert.Equal(t, 1+1+5+2+5+2+5+1+1, l.LayoutWidth())
-	assert.Equal(t, 1+1+4+2+4+1+1, l.LayoutHeight())
+	assert.Equal(t, 1+(width+2)+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 3 nodes")
+	assert.Equal(t, 1+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 2 nodes")
 
 	l.Nodes = make(LayoutNodes, 8)
-	assert.Equal(t, 1+1+5+2+5+2+5+1+1, l.LayoutWidth())
-	assert.Equal(t, 1+1+4+2+4+2+4+1+1, l.LayoutHeight())
+	assert.Equal(t, 1+(width+2)+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 3 nodes")
+	assert.Equal(t, 1+(height+2)+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 3 nodes")
+
+	l.Nodes = make(LayoutNodes, 9)
+	assert.Equal(t, 1+(width+2)+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 3 nodes")
+	assert.Equal(t, 1+(height+2)+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 3 nodes")
+
+	l.Nodes = make(LayoutNodes, 10)
+	assert.Equal(t, 1+(width+2)+(width+2)+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 3 nodes")
+	assert.Equal(t, 1+(height+2)+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 3 nodes")
 }
 
 func TestLayoutNode_DrawNode(t *testing.T) {
