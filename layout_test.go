@@ -206,6 +206,7 @@ func TestLayoutPath_Draw(t *testing.T) {
 		"Path",
 		"M 80 40 L 100 40 L 100 50 L 120 50",
 		`class="path-line"`,
+		`marker-end="url(#arrow)"`,
 	).Once()
 
 	p.Draw(drawer, 10)
@@ -221,7 +222,7 @@ func TestLayoutPaths_Draw(t *testing.T) {
 		LayoutPath{Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
 	}
 
-	drawer.On("Path", mock.Anything, `class="path-line"`).Twice()
+	drawer.On("Path", mock.Anything, `class="path-line"`, `marker-end="url(#arrow)"`).Twice()
 
 	p.Draw(drawer, 10)
 

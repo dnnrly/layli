@@ -14,7 +14,7 @@ func getNodeIds(node *xmlquery.Node) []string {
 
 	// Iterate over child nodes
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		if child.Type == xmlquery.ElementNode {
+		if child.Type == xmlquery.ElementNode && child.Data == "rect" {
 			// Check if the element has an "id" attribute
 			for _, attr := range child.Attr {
 				if attr.Name.Local == "id" {

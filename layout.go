@@ -268,7 +268,7 @@ type LayoutPath struct {
 }
 
 func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
-	canvas.Path(p.Points.Path(spacing), `class="path-line"`)
+	canvas.Path(p.Points.Path(spacing), `class="path-line"`, `marker-end="url(#arrow)"`)
 }
 
 type LayoutPaths []LayoutPath

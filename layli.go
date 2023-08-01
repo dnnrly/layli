@@ -59,6 +59,16 @@ func (d *Diagram) Draw() error {
 		"style=\"background-color: white;\"",
 	)
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
+	canvas.Def()
+	canvas.Marker("arrow", 10, 5, 10, 10,
+		`refX="10"`, `refY="5"`,
+		`fill="black"`,
+		`markerWidth="6"`,
+		`markerHeight="6"`,
+		`orient="auto-start-reverse"`)
+	canvas.Path("M 0 0 L 10 5 L 0 10 z")
+	canvas.MarkerEnd()
+	canvas.DefEnd()
 
 	if d.showGrid {
 		d.layout.ShowGrid(canvas, d.config.Spacing)
