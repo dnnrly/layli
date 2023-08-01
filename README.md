@@ -6,8 +6,8 @@ This tools produces diagrams and has 2 simple aims:
 2. Look pretty
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/dnnrly/layli)](https://github.com/dnnrly/layli/releases/latest)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/dnnrly/layli/release.yml?branch=master)](https://github.com/dnnrly/layli/actions/workflows/release.yml?branch=master)
-[![report card](https://goreportcard.com/badge/github.com/dnnrly/layli)](https://goreportcard.com/report/github.com/dnnrly/layli)
+[![Build Status](https://github.com/dnnrly/layli/actions/workflows/pr.yml/badge.svg)](https://github.com/dnnrly/layli/actions/workflows/pr.yml)
+[![codecov](https://codecov.io/gh/dnnrly/layli/branch/master/graph/badge.svg?token=OY6UgcQeWf)](https://codecov.io/gh/dnnrly/layli)
 [![godoc](https://godoc.org/github.com/dnnrly/layli?status.svg)](http://godoc.org/github.com/dnnrly/layli)
 
 ![GitHub watchers](https://img.shields.io/github/watchers/dnnrly/layli?style=social)
