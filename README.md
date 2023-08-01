@@ -110,6 +110,8 @@ edges:
     to: node6
   - from: node8
     to: node9
+  - from: node7
+    to: node5
 
 border: 1
 margin: 1

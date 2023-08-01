@@ -437,5 +437,6 @@
 <path d="M 100 100 L 100 120 L 200 120 L 200 160" class="path-line" marker-end="url(#arrow)" />
 <path d="M 340 100 L 340 120 L 300 120 L 300 180 L 260 180" class="path-line" marker-end="url(#arrow)" />
 <path d="M 480 220 L 480 240 L 160 240 L 160 300 L 120 300" class="path-line" marker-end="url(#arrow)" />
+<path d="M 340 220 L 340 240 L 100 240 L 100 220" class="path-line" marker-end="url(#arrow)" />
 </g>
 </svg>

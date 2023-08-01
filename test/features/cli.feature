@@ -66,3 +66,11 @@ Feature: Simple CLI commands
         Then the app exits without error
         And a file "tmp/fixtures/inputs/2-nodes-with-grid.svg" exists
         And in the SVG file, path grid dots are shown
+
+    @Acceptance
+    Scenario: Corrects crossing lines without moving nodes
+        When the app runs with parameters "--show-grid --output tmp/fixtures/inputs/crossing-lines.svg tmp/fixtures/inputs/crossing-lines.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/crossing-lines.svg" exists
+        And in the SVG file, path grid dots are shown
+        And the number of paths is 7
