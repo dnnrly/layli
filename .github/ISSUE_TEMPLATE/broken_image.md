@@ -1,6 +1,7 @@
 ---
 name: Broken image
 about: Submit a layli image that doesn't look right
+label: bug
 ---
 
 **Add the layli definition here**
