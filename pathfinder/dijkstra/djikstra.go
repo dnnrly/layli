@@ -31,8 +31,8 @@ func (pf *PathFinder) AddConnection(from Point, cost CostFunction, to ...Point) 
 	pf.graph.AddMappedVertex(from.String())
 
 	for _, p := range to {
-		pf.graph.AddMappedVertex(p.String())
-		pf.graph.AddMappedArc(from.String(), p.String(), cost(from, p))
+		_ = pf.graph.AddMappedVertex(p.String())
+		_ = pf.graph.AddMappedArc(from.String(), p.String(), cost(from, p))
 	}
 }
 

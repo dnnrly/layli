@@ -74,7 +74,7 @@ func NewLayoutFromConfig(finder CreateFinder, c Config) *Layout {
 	}
 
 	for _, p := range c.Edges {
-		l.AddPath(p.From, p.To)
+		_ = l.AddPath(p.From, p.To)
 	}
 
 	return l
