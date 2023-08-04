@@ -73,4 +73,5 @@ Feature: Simple CLI commands
         Then the app exits without error
         And a file "tmp/fixtures/inputs/crossing-lines.svg" exists
         And in the SVG file, path grid dots are shown
-        And the number of paths is 7
+        # And the number of paths is 7
+        And no paths cross

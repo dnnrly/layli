@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/antchfx/xmlquery"
+	"github.com/dnnrly/layli/test"
 	"github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
 )
@@ -182,6 +183,25 @@ func (c *testContext) theNumberOfPathsIs(expected int) error {
 	paths := xmlquery.Find(c.svgOutput.doc, "//path[contains(@class, 'path-line')]")
 
 	assert.Len(c, paths, expected)
+
+	return c.err
+}
+
+func (c *testContext) noPathsCross() error {
+	paths := xmlquery.Find(c.svgOutput.doc, "//path[contains(@class, 'path-line')]")
+
+	allPaths := []test.Segments{}
+	for _, p := range paths {
+		allPaths = append(allPaths, test.NewSegments(p.SelectAttr("d")))
+	}
+
+	for i, p := range allPaths {
+		for j, s := range allPaths {
+			if i != j {
+				assert.False(c, p.Crosses(s), fmt.Sprintf("path %d crosses path %d", j+1, i+1))
+			}
+		}
+	}
 
 	return c.err
 }

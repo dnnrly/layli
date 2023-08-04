@@ -53,6 +53,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^in the SVG file, all node text fits inside the node boundaries$`, tc.inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries)
 	ctx.Step(`^the number of nodes is (\d+)$`, tc.theNumberOfNodesIs)
 	ctx.Step(`^the number of paths is (\d+)$`, tc.theNumberOfPathsIs)
+	ctx.Step(`^no paths cross$`, tc.noPathsCross)
 	ctx.Step(`^in the SVG file, nodes do not overlap$`, tc.inTheSVGFileNodesDoNotOverlap)
 	ctx.Step(`^the image has a width less than (\d+)$`, tc.theImageHasAWidthLessThan)
 	ctx.Step(`^the image has a height less than (\d+)$`, tc.theImageHasAHeightLessThan)
