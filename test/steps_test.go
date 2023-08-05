@@ -182,7 +182,7 @@ func (c *testContext) theNumberOfNodesIs(expected int) error {
 func (c *testContext) theNumberOfPathsIs(expected int) error {
 	paths := xmlquery.Find(c.svgOutput.doc, "//path[contains(@class, 'path-line')]")
 
-	assert.Len(c, paths, expected)
+	assert.Len(c, paths, expected, printPaths(paths))
 
 	return c.err
 }

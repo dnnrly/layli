@@ -21,8 +21,6 @@ edges:
     to: node2
   - from: node4
     to: node3
-  - from: node2
-    to: node3
 
 border: 1
 margin: 1

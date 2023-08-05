@@ -4,6 +4,7 @@ package test_test
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/antchfx/xmlquery"
 )
@@ -61,4 +62,14 @@ func isOverlap(rectA, rectB *xmlquery.Node) bool {
 func parseFloat(value string) float64 {
 	result, _ := strconv.ParseFloat(value, 64)
 	return result
+}
+
+func printPaths(nodes []*xmlquery.Node) string {
+	str := []string{}
+
+	for _, n := range nodes {
+		str = append(str, n.SelectAttr("d"))
+	}
+
+	return strings.Join(str, "\n")
 }
