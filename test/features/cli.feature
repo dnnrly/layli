@@ -78,6 +78,6 @@ Feature: Simple CLI commands
 
     @Acceptance
     Scenario: Errors when cannot find paths without crossing
-        When the app runs with parameters "--show-grid --output tmp/fixtures/inputs/impossible-paths.svg tmp/fixtures/inputs/impossible-paths.layli"
+        When the app runs with parameters "--output tmp/fixtures/inputs/impossible-paths.svg tmp/fixtures/inputs/impossible-paths.layli"
         Then the app exits with an error
         And the app output contains "cannot find a path between node2 and node3"
