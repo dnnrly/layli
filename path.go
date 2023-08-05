@@ -91,7 +91,8 @@ func (l *Layout) AddPath(from, to string) error {
 
 	points, err := finder.BestPath()
 	if err != nil {
-		return fmt.Errorf("finding shortest path: %w", err)
+		// return fmt.Errorf("cannot find a path between %w", err)
+		return fmt.Errorf("cannot find a path between %s and %s", from, to)
 	}
 
 	path := LayoutPath{}

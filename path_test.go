@@ -36,7 +36,7 @@ func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 		Point{X: 12.5, Y: 5.5},
 	}, nil)
 
-	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
+	l, _ := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
 		gotStart = start
 		gotEnd = end
 		return finder
@@ -73,7 +73,7 @@ func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 
 func TestLayout_BuildVertexMap(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
-	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
+	l, _ := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
 		return finder
 	}, pathTestConfig)
 	vm := BuildVertexMap(l)
@@ -94,7 +94,7 @@ func TestLayout_BuildVertexMap(t *testing.T) {
 
 func TestLayout_BuildVertexMapWithPaths(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
-	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
+	l, _ := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
 		return finder
 	}, pathTestConfig)
 	l.Paths = append(l.Paths, LayoutPath{

@@ -43,7 +43,10 @@ func NewDiagramFromFile(cf CreateFinder, r io.ReadCloser, output OutputFunc, sho
 		d.config.Border = 1
 	}
 
-	d.layout = NewLayoutFromConfig(cf, d.config)
+	d.layout, err = NewLayoutFromConfig(cf, d.config)
+	if err != nil {
+		return nil, err
+	}
 
 	return &d, nil
 }
