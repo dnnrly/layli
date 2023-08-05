@@ -43,7 +43,10 @@ func NewDiagramFromFile(cf CreateFinder, r io.ReadCloser, output OutputFunc, sho
 		d.config.Border = 1
 	}
 
-	d.layout = NewLayoutFromConfig(cf, d.config)
+	d.layout, err = NewLayoutFromConfig(cf, d.config)
+	if err != nil {
+		return nil, err
+	}
 
 	return &d, nil
 }
@@ -60,11 +63,9 @@ func (d *Diagram) Draw() error {
 	)
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
 	canvas.Def()
-	canvas.Marker("arrow", 10, 5, 10, 10,
-		`refX="10"`, `refY="5"`,
+	canvas.Marker("arrow", 10, 5, 7, 7,
+		`viewBox="0 0 10 10"`,
 		`fill="black"`,
-		`markerWidth="6"`,
-		`markerHeight="6"`,
 		`orient="auto-start-reverse"`)
 	canvas.Path("M 0 0 L 10 5 L 0 10 z")
 	canvas.MarkerEnd()

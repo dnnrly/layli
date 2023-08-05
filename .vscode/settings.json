@@ -1,3 +1,4 @@
 {
-    "go.buildTags": "acceptance,docs"
+    "go.buildTags": "acceptance,docs",
+    "svg.preview.background": "transparent"
 }

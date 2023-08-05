@@ -26,7 +26,7 @@ type Layout struct {
 	pathSpacing int // Length of a path unit in pixels
 }
 
-func NewLayoutFromConfig(finder CreateFinder, c Config) *Layout {
+func NewLayoutFromConfig(finder CreateFinder, c Config) (*Layout, error) {
 	numNodes := len(c.Nodes)
 
 	root := math.Sqrt(float64(numNodes))
@@ -74,10 +74,13 @@ func NewLayoutFromConfig(finder CreateFinder, c Config) *Layout {
 	}
 
 	for _, p := range c.Edges {
-		_ = l.AddPath(p.From, p.To)
+		err := l.AddPath(p.From, p.To)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return l
+	return l, nil
 }
 
 // LayoutHeight is the height in path units

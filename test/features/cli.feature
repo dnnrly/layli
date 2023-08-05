@@ -66,3 +66,18 @@ Feature: Simple CLI commands
         Then the app exits without error
         And a file "tmp/fixtures/inputs/2-nodes-with-grid.svg" exists
         And in the SVG file, path grid dots are shown
+
+    @Acceptance
+    Scenario: Corrects crossing lines without moving nodes
+        When the app runs with parameters "--show-grid --output tmp/fixtures/inputs/crossing-lines.svg tmp/fixtures/inputs/crossing-lines.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/crossing-lines.svg" exists
+        And in the SVG file, path grid dots are shown
+        And the number of paths is 6
+        And no paths cross
+
+    @Acceptance
+    Scenario: Errors when cannot find paths without crossing
+        When the app runs with parameters "--output tmp/fixtures/inputs/impossible-paths.svg tmp/fixtures/inputs/impossible-paths.layli"
+        Then the app exits with an error
+        And the app output contains "cannot find a path between node2 and node3"

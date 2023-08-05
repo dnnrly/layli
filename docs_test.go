@@ -28,5 +28,5 @@ func TestReadme_ImageUpToDate(t *testing.T) {
 	result, err := exec.Command("git", "status", "demo.svg").Output()
 	require.NoError(t, err)
 
-	assert.NotContains(t, string(result), "demo.svg")
+	assert.NotContains(t, string(result), "demo.svg", "demo.svg has not been committed")
 }

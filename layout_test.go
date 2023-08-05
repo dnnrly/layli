@@ -8,6 +8,7 @@ import (
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 var layoutTestConfig = Config{
@@ -154,7 +155,8 @@ func TestLayoutNodes_ByID(t *testing.T) {
 
 func TestLayout_InsideAny(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
-	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, layoutTestConfig)
+	l, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, layoutTestConfig)
+	require.NoError(t, err)
 
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
 	vm.MapSet(l.InsideAny)
@@ -172,7 +174,8 @@ func TestLayout_InsideAny(t *testing.T) {
 
 func TestLayout_IsAnyPort(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
-	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, layoutTestConfig)
+	l, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, layoutTestConfig)
+	require.NoError(t, err)
 
 	vm := NewVertexMap(l.LayoutWidth(), l.LayoutHeight())
 	vm.MapSet(l.IsAnyPort)
