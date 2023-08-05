@@ -91,3 +91,33 @@ func TestLayout_BuildVertexMap(t *testing.T) {
 		..................
 		..................`, "	", ""), vm.String(), vm)
 }
+
+func TestLayout_BuildVertexMapWithPaths(t *testing.T) {
+	finder := mocks.NewPathFinder(t)
+	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
+		return finder
+	}, pathTestConfig)
+	l.Paths = append(l.Paths, LayoutPath{
+		Points: Points{
+			Point{X: 5.5, Y: 5},
+			Point{X: 6, Y: 5},
+			Point{X: 11, Y: 5},
+			Point{X: 11.5, Y: 5},
+		},
+	})
+
+	vm := BuildVertexMap(l)
+
+	assert.Equal(t, strings.ReplaceAll(
+		`..................
+		..................
+		..xxxxxxxxxxxxxx..
+		..xxxxxxxxxxxxxx..
+		..xx.x.xxxx.x.xx..
+		..xxx........xxx..
+		..xx.x.xxxx.x.xx..
+		..xxxxxxxxxxxxxx..
+		..xxxxxxxxxxxxxx..
+		..................
+		..................`, "	", ""), vm.String(), vm)
+}

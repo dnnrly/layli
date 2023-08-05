@@ -2,6 +2,7 @@ package layli
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
@@ -22,6 +23,31 @@ func BuildVertexMap(l *Layout) VertexMap {
 	vm.Map(func(x, y int, current bool) bool { return x < l.LayoutWidth()-l.layoutBorder && current })
 	vm.Map(func(x, y int, current bool) bool { return y < l.LayoutHeight()-l.layoutBorder && current })
 
+	for _, v := range l.Paths {
+		for p := 1; p < len(v.Points)-2; p++ {
+			start := v.Points[p]
+			end := v.Points[p+1]
+
+			x := math.Min(start.X, end.X)
+			y := math.Min(start.Y, end.Y)
+
+			xMax := math.Max(start.X, end.X)
+			yMax := math.Max(start.Y, end.Y)
+
+			vm.Set(int(x), int(y), false)
+			for x != xMax || y != yMax {
+				if x != xMax {
+					x += 1
+				}
+				if y != yMax {
+					y += 1
+				}
+
+				vm.Set(int(x), int(y), false)
+			}
+		}
+	}
+
 	return vm
 }
 
@@ -35,6 +61,7 @@ func (l *Layout) AddPath(from, to string) error {
 	)
 
 	vm := BuildVertexMap(l)
+
 	arcs := vm.GetArcs()
 	for _, a := range arcs {
 		finder.AddConnection(a.From, PythagoreanDistance, a.To)
