@@ -18,35 +18,44 @@ type Diagram struct {
 	showGrid bool
 }
 
+func NewConfigFromFile(r io.Reader) (*Config, error) {
+	config := Config{}
+	err := yaml.NewDecoder(r).Decode(&config)
+	if err != nil {
+		return nil, fmt.Errorf("reading config file: %w", err)
+	}
+	config.Spacing = 20
+
+	if config.NodeWidth == 0 {
+		config.NodeWidth = 5
+	}
+	if config.NodeHeight == 0 {
+		config.NodeHeight = 3
+	}
+	if config.Margin == 0 {
+		config.Margin = 2
+	}
+	if config.Border == 0 {
+		config.Border = 1
+	}
+
+	return &config, nil
+}
+
 // NewDiagramFromFile reads the configuration and parses it in to a Diagram object
-func NewDiagramFromFile(cf CreateFinder, r io.ReadCloser, output OutputFunc, showGrid bool) (*Diagram, error) {
+func NewDiagramFromFile(cf CreateFinder, config *Config, output OutputFunc, showGrid bool) (*Diagram, error) {
 	d := Diagram{
 		output:   output,
 		showGrid: showGrid,
 	}
-	err := yaml.NewDecoder(r).Decode(&d.config)
-	if err != nil {
-		return nil, fmt.Errorf("reading config file: %w", err)
-	}
-	d.config.Spacing = 20
+	d.config = *config
 
-	if d.config.NodeWidth == 0 {
-		d.config.NodeWidth = 5
-	}
-	if d.config.NodeHeight == 0 {
-		d.config.NodeHeight = 3
-	}
-	if d.config.Margin == 0 {
-		d.config.Margin = 2
-	}
-	if d.config.Border == 0 {
-		d.config.Border = 1
-	}
-
-	d.layout, err = NewLayoutFromConfig(cf, d.config)
+	layout, err := NewLayoutFromConfig(cf, d.config)
 	if err != nil {
 		return nil, err
 	}
+
+	d.layout = layout
 
 	return &d, nil
 }

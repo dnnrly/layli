@@ -44,8 +44,13 @@ func Execute() error {
 				output = fmt.Sprintf("%s.svg", output)
 			}
 
+			config, err := layli.NewConfigFromFile(f)
+			if err != nil {
+				return fmt.Errorf("creating config: %w", err)
+			}
+
 			d, err := layli.NewDiagramFromFile(
-				newPathFinder, f,
+				newPathFinder, config,
 				func(data string) error {
 					return os.WriteFile(output, []byte(data), 0644)
 				},
