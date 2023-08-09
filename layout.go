@@ -26,7 +26,7 @@ type Layout struct {
 	pathSpacing int // Length of a path unit in pixels
 }
 
-func NewLayoutFromConfig(finder CreateFinder, c Config) (*Layout, error) {
+func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 	numNodes := len(c.Nodes)
 
 	root := math.Sqrt(float64(numNodes))

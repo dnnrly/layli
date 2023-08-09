@@ -4,12 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func nilCreator(start, end dijkstra.Point) PathFinder { return nil }
 
 func TestNewConfigFromFile(t *testing.T) {
 	r := strings.NewReader(`
@@ -50,43 +47,4 @@ nodes:
 
 	_, err := NewConfigFromFile(r)
 	require.Error(t, err)
-}
-
-func Test_NewDiagramFromFile_Simple(t *testing.T) {
-	d, err := NewDiagramFromFile(nilCreator, &Config{
-		Nodes: ConfigNodes{
-			ConfigNode{
-				Id:       "node-1",
-				Contents: "Some content here",
-			},
-			ConfigNode{
-				Id:       "node-2",
-				Contents: "More contents",
-			},
-		},
-	}, func(output string) error {
-		return nil
-	}, false)
-
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(d.config.Nodes))
-}
-
-func Test_NewDiagramFromFile_GeneratesSimplestDiagram(t *testing.T) {
-	actualOutput := ""
-
-	d, _ := NewDiagramFromFile(nilCreator, &Config{
-		Nodes: ConfigNodes{
-			ConfigNode{
-				Id:       "node-1",
-				Contents: "A single box",
-			},
-		},
-	}, func(output string) error {
-		actualOutput = output
-		return nil
-	}, false)
-
-	assert.NoError(t, d.Draw())
-	assert.Contains(t, actualOutput, "A single box")
 }

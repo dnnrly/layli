@@ -40,7 +40,7 @@ func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 		gotStart = start
 		gotEnd = end
 		return finder
-	}, pathTestConfig)
+	}, &pathTestConfig)
 
 	require.NoError(t, l.AddPath("1", "2"))
 
@@ -75,7 +75,7 @@ func TestLayout_BuildVertexMap(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
 	l, _ := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
 		return finder
-	}, pathTestConfig)
+	}, &pathTestConfig)
 	vm := BuildVertexMap(l)
 
 	assert.Equal(t, strings.ReplaceAll(
@@ -96,7 +96,7 @@ func TestLayout_BuildVertexMapWithPaths(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
 	l, _ := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
 		return finder
-	}, pathTestConfig)
+	}, &pathTestConfig)
 	l.Paths = append(l.Paths, LayoutPath{
 		Points: Points{
 			Point{X: 5.5, Y: 5},

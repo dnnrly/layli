@@ -49,15 +49,18 @@ func Execute() error {
 				return fmt.Errorf("creating config: %w", err)
 			}
 
-			d, err := layli.NewDiagramFromFile(
-				newPathFinder, config,
-				func(data string) error {
+			layout, err := layli.NewLayoutFromConfig(newPathFinder, config)
+			if err != nil {
+				return fmt.Errorf("creating layout: %w", err)
+			}
+
+			d := layli.Diagram{
+				Output: func(data string) error {
 					return os.WriteFile(output, []byte(data), 0644)
 				},
-				showGrid,
-			)
-			if err != nil {
-				return fmt.Errorf("creating diagram: %w", err)
+				ShowGrid: showGrid,
+				Config:   *config,
+				Layout:   layout,
 			}
 
 			err = d.Draw()
