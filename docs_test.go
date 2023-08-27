@@ -3,7 +3,7 @@
 package layli_test
 
 import (
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"testing"
 
@@ -12,10 +12,10 @@ import (
 )
 
 func TestReadme_Updated(t *testing.T) {
-	readme, err := ioutil.ReadFile("README.md")
+	readme, err := os.ReadFile("README.md")
 	require.NoError(t, err)
 
-	demo, err := ioutil.ReadFile("demo.layli")
+	demo, err := os.ReadFile("demo.layli")
 	require.NoError(t, err)
 
 	assert.Contains(t, string(readme), string(demo))
