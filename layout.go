@@ -27,50 +27,14 @@ type Layout struct {
 }
 
 func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
-	numNodes := len(c.Nodes)
-
-	root := math.Sqrt(float64(numNodes))
-	size := int(math.Ceil(root))
-
-	if size < int(root) {
-		size++
-	}
-	if numNodes < 4 {
-		size = 2
-	}
-
 	l := &Layout{
-		Nodes:        LayoutNodes{},
+		Nodes:        LayoutFlowSquare(c),
 		CreateFinder: finder,
 
 		nodeWidth:    c.NodeWidth,
 		nodeHeight:   c.NodeHeight,
 		nodeMargin:   c.Margin,
 		layoutBorder: c.Border,
-	}
-
-	pos := 0
-	for y := 0; y < size && pos < numNodes; y++ {
-		for x := 0; x < size && pos < numNodes; x++ {
-			l.Nodes = append(
-				l.Nodes,
-				NewLayoutNode(
-					c.Nodes[pos].Id,
-					c.Nodes[pos].Contents,
-					l.layoutBorder+
-						l.nodeMargin+
-						(x*l.nodeWidth)+
-						(x*(l.nodeMargin*2)),
-					l.layoutBorder+
-						l.nodeMargin+
-						(y*l.nodeHeight)+
-						(y*(l.nodeMargin*2)),
-					l.nodeWidth, l.nodeHeight,
-				),
-			)
-
-			pos++
-		}
 	}
 
 	for _, p := range c.Edges {
