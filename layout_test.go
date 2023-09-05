@@ -57,7 +57,7 @@ func TestLayout_LayoutSize(t *testing.T) {
 
 	l.Nodes = make(LayoutNodes, 1)
 	assert.Equal(t, border*2+(width+margin*2), l.LayoutWidth(), "Expected width: 2 nodes")
-	assert.Equal(t, border*2+(height+2), l.LayoutHeight(), "Expected height: 1 node")
+	assert.Equal(t, border*2+(height+margin*2), l.LayoutHeight(), "Expected height: 1 node")
 
 	l.Nodes = make(LayoutNodes, 2)
 	assert.Equal(t, border*2+(width+margin*2)*2, l.LayoutWidth(), "Expected width: 2 nodes")
@@ -73,15 +73,15 @@ func TestLayout_LayoutSize(t *testing.T) {
 
 	l.Nodes = make(LayoutNodes, 8)
 	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
-	assert.Equal(t, border*2+(height+2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
+	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 
 	l.Nodes = make(LayoutNodes, 9)
 	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 
 	l.Nodes = make(LayoutNodes, 10)
-	assert.Equal(t, border*2+(width+2)*4, l.LayoutWidth(), "Expected width: 4 nodes")
-	assert.Equal(t, border*2+(height+2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
+	assert.Equal(t, border*2+(width+margin*2)*4, l.LayoutWidth(), "Expected width: 4 nodes")
+	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 }
 
 func TestLayoutFlowSquare(t *testing.T) {
@@ -122,6 +122,14 @@ func TestLayoutFlowSquare(t *testing.T) {
 		assert.EqualValues(t, LayoutNode{"4", "", 5, 3, 10, 12, 3, 7}, l[3])
 		assert.EqualValues(t, LayoutNode{"6", "", 5, 3, 10, 12, 21, 25}, l[5])
 		assert.EqualValues(t, LayoutNode{"8", "", 5, 3, 17, 19, 12, 16}, l[7])
+	}
+
+	{
+		l := LayoutFlowSquare(newConfig(4, 5, 4, 2, 2))
+
+		require.Len(t, l, 4)
+		assert.EqualValues(t, LayoutNode{"1", "", 5, 4, 3, 6, 3, 7}, l[0])
+		assert.EqualValues(t, LayoutNode{"4", "", 5, 4, 11, 14, 12, 16}, l[3])
 	}
 }
 
