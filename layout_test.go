@@ -1,6 +1,7 @@
 package layli
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -23,46 +24,105 @@ var layoutTestConfig = Config{
 	Border:     1,
 }
 
+func newConfig(nodes, width, height, margin, border int) *Config {
+	c := &Config{
+		Spacing:    20,
+		NodeWidth:  width,
+		NodeHeight: height,
+		Margin:     margin,
+		Border:     1,
+	}
+
+	for i := 0; i < nodes; i++ {
+		c.Nodes = append(c.Nodes, ConfigNode{Id: fmt.Sprintf("%d", i+1)})
+	}
+
+	return c
+}
+
 func TestLayout_LayoutSize(t *testing.T) {
 	width := 5
 	height := 4
+	margin := 1
+	border := 1
 	l := Layout{
 		pathSpacing: 20,
 
 		nodeWidth:  width,
 		nodeHeight: height,
-		nodeMargin: 1,
+		nodeMargin: margin,
 
-		layoutBorder: 1,
+		layoutBorder: border,
 	}
 
 	l.Nodes = make(LayoutNodes, 1)
-	assert.Equal(t, 1+(width+2)+1, l.LayoutWidth(), "Expected width: 2 nodes")
-	assert.Equal(t, 1+(height+2)+1, l.LayoutHeight(), "Expected height: 1 node")
+	assert.Equal(t, border*2+(width+margin*2), l.LayoutWidth(), "Expected width: 2 nodes")
+	assert.Equal(t, border*2+(height+2), l.LayoutHeight(), "Expected height: 1 node")
 
 	l.Nodes = make(LayoutNodes, 2)
-	assert.Equal(t, 1+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 2 nodes")
-	assert.Equal(t, 1+(height+2)+1, l.LayoutHeight(), "Expected height: 1 node")
+	assert.Equal(t, border*2+(width+margin*2)*2, l.LayoutWidth(), "Expected width: 2 nodes")
+	assert.Equal(t, border*2+(height+margin*2), l.LayoutHeight(), "Expected height: 1 node")
 
 	l.Nodes = make(LayoutNodes, 4)
-	assert.Equal(t, 1+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 2 nodes")
-	assert.Equal(t, 1+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 2 nodes")
+	assert.Equal(t, border*2+(width+margin*2)*2, l.LayoutWidth(), "Expected width: 2 nodes")
+	assert.Equal(t, border*2+(height+margin*2)*2, l.LayoutHeight(), "Expected height: 2 nodes")
 
 	l.Nodes = make(LayoutNodes, 5)
-	assert.Equal(t, 1+(width+2)+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 3 nodes")
-	assert.Equal(t, 1+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 2 nodes")
+	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
+	assert.Equal(t, border*2+(height+margin*2)*2, l.LayoutHeight(), "Expected height: 2 nodes")
 
 	l.Nodes = make(LayoutNodes, 8)
-	assert.Equal(t, 1+(width+2)+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 3 nodes")
-	assert.Equal(t, 1+(height+2)+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 3 nodes")
+	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
+	assert.Equal(t, border*2+(height+2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 
 	l.Nodes = make(LayoutNodes, 9)
-	assert.Equal(t, 1+(width+2)+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 3 nodes")
-	assert.Equal(t, 1+(height+2)+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 3 nodes")
+	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
+	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 
 	l.Nodes = make(LayoutNodes, 10)
-	assert.Equal(t, 1+(width+2)+(width+2)+(width+2)+(width+2)+1, l.LayoutWidth(), "Expected width: 3 nodes")
-	assert.Equal(t, 1+(height+2)+(height+2)+(height+2)+1, l.LayoutHeight(), "Expected height: 3 nodes")
+	assert.Equal(t, border*2+(width+2)*4, l.LayoutWidth(), "Expected width: 4 nodes")
+	assert.Equal(t, border*2+(height+2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
+}
+
+func TestLayoutFlowSquare(t *testing.T) {
+	{
+		l := LayoutFlowSquare(newConfig(2, 5, 3, 1, 1))
+
+		require.Len(t, l, 2)
+		assert.EqualValues(t, LayoutNode{"1", "", 5, 3, 2, 4, 2, 6}, l[0])
+		assert.EqualValues(t, LayoutNode{"2", "", 5, 3, 2, 4, 9, 13}, l[1])
+	}
+
+	{
+		l := LayoutFlowSquare(newConfig(4, 5, 3, 1, 1))
+
+		require.Len(t, l, 4)
+		assert.EqualValues(t, LayoutNode{"1", "", 5, 3, 2, 4, 2, 6}, l[0])
+		assert.EqualValues(t, LayoutNode{"2", "", 5, 3, 2, 4, 9, 13}, l[1])
+		assert.EqualValues(t, LayoutNode{"3", "", 5, 3, 7, 9, 2, 6}, l[2])
+		assert.EqualValues(t, LayoutNode{"4", "", 5, 3, 7, 9, 9, 13}, l[3])
+	}
+
+	{
+		l := LayoutFlowSquare(newConfig(4, 5, 3, 2, 1))
+
+		require.Len(t, l, 4)
+		assert.EqualValues(t, LayoutNode{"1", "", 5, 3, 3, 5, 3, 7}, l[0])
+		assert.EqualValues(t, LayoutNode{"2", "", 5, 3, 3, 5, 12, 16}, l[1])
+		assert.EqualValues(t, LayoutNode{"3", "", 5, 3, 10, 12, 3, 7}, l[2])
+		assert.EqualValues(t, LayoutNode{"4", "", 5, 3, 10, 12, 12, 16}, l[3])
+	}
+
+	{
+		l := LayoutFlowSquare(newConfig(8, 5, 3, 2, 1))
+
+		require.Len(t, l, 8)
+		assert.EqualValues(t, LayoutNode{"1", "", 5, 3, 3, 5, 3, 7}, l[0])
+		assert.EqualValues(t, LayoutNode{"3", "", 5, 3, 3, 5, 21, 25}, l[2])
+		assert.EqualValues(t, LayoutNode{"4", "", 5, 3, 10, 12, 3, 7}, l[3])
+		assert.EqualValues(t, LayoutNode{"6", "", 5, 3, 10, 12, 21, 25}, l[5])
+		assert.EqualValues(t, LayoutNode{"8", "", 5, 3, 17, 19, 12, 16}, l[7])
+	}
 }
 
 func TestLayoutNode_DrawNode(t *testing.T) {
