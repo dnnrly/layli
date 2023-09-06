@@ -55,31 +55,31 @@ func TestLayout_LayoutSize(t *testing.T) {
 		layoutBorder: border,
 	}
 
-	l.Nodes = make(LayoutNodes, 1)
-	assert.Equal(t, border*2+(width+margin*2), l.LayoutWidth(), "Expected width: 2 nodes")
-	assert.Equal(t, border*2+(height+margin*2), l.LayoutHeight(), "Expected height: 1 node")
+	l.Nodes = LayoutFlowSquare(newConfig(1, width, height, margin, margin))
+	assert.Equal(t, border*2+(width+margin*2*1), l.LayoutWidth(), "Expected width: 1 nodes")
+	assert.Equal(t, border*2+(height+margin*2)*1, l.LayoutHeight(), "Expected height: 1 node")
 
-	l.Nodes = make(LayoutNodes, 2)
+	l.Nodes = LayoutFlowSquare(newConfig(2, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*2, l.LayoutWidth(), "Expected width: 2 nodes")
 	assert.Equal(t, border*2+(height+margin*2), l.LayoutHeight(), "Expected height: 1 node")
 
-	l.Nodes = make(LayoutNodes, 4)
+	l.Nodes = LayoutFlowSquare(newConfig(4, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*2, l.LayoutWidth(), "Expected width: 2 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*2, l.LayoutHeight(), "Expected height: 2 nodes")
 
-	l.Nodes = make(LayoutNodes, 5)
+	l.Nodes = LayoutFlowSquare(newConfig(5, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*2, l.LayoutHeight(), "Expected height: 2 nodes")
 
-	l.Nodes = make(LayoutNodes, 8)
+	l.Nodes = LayoutFlowSquare(newConfig(8, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 
-	l.Nodes = make(LayoutNodes, 9)
+	l.Nodes = LayoutFlowSquare(newConfig(9, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 
-	l.Nodes = make(LayoutNodes, 10)
+	l.Nodes = LayoutFlowSquare(newConfig(10, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*4, l.LayoutWidth(), "Expected width: 4 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 }

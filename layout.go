@@ -2,7 +2,6 @@ package layli
 
 import (
 	"fmt"
-	"math"
 )
 
 type LayoutDrawer interface {
@@ -49,36 +48,26 @@ func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 
 // LayoutHeight is the height in path units
 func (l *Layout) LayoutHeight() int {
-	numNodes := len(l.Nodes)
-
-	root := math.Sqrt(float64(numNodes))
-	rows := 1
-	if numNodes > 2 {
-		columns := int(math.Ceil(root))
-		rows = numNodes / columns
-		if (numNodes % columns) != 0 {
-			rows++
+	maxBottom := 0
+	for _, n := range l.Nodes {
+		if maxBottom <= n.bottom {
+			maxBottom = n.bottom
 		}
 	}
 
-	return l.layoutBorder*2 +
-		(rows * l.nodeHeight) +
-		(rows * l.nodeMargin * 2)
+	return maxBottom + l.nodeMargin + 1 + l.layoutBorder
 }
 
 // LayoutWidth is the width in path units
 func (l *Layout) LayoutWidth() int {
-	numNodes := len(l.Nodes)
-	columns := numNodes
-
-	if numNodes >= 4 {
-		root := math.Sqrt(float64(numNodes))
-		columns = int(math.Ceil(root))
+	maxRight := 0
+	for _, n := range l.Nodes {
+		if maxRight <= n.right {
+			maxRight = n.right
+		}
 	}
 
-	return l.layoutBorder*2 +
-		(columns * l.nodeWidth) +
-		(columns * l.nodeMargin * 2)
+	return maxRight + l.nodeMargin + 1 + l.layoutBorder
 }
 
 func (l *Layout) InsideAny(x, y int) bool {
