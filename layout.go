@@ -27,7 +27,7 @@ type Layout struct {
 
 func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 	l := &Layout{
-		Nodes:        LayoutFlowSquare(c),
+		Nodes:        selectArrangement(c)(c),
 		CreateFinder: finder,
 
 		nodeWidth:    c.NodeWidth,

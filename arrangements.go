@@ -2,6 +2,24 @@ package layli
 
 import "math"
 
+// LayoutArrangementFunc returns a slice of nodes arranged according to the algorithm implemented
+type LayoutArrangementFunc func(c *Config) LayoutNodes
+
+func selectArrangement(c *Config) LayoutArrangementFunc {
+	switch c.Layout {
+	case "":
+		return LayoutFlowSquare
+
+	case "flow-square":
+		return LayoutFlowSquare
+
+	case "topo-sort":
+		return LayoutTopologicalSort
+	}
+
+	return nil
+}
+
 func LayoutFlowSquare(c *Config) LayoutNodes {
 	numNodes := len(c.Nodes)
 	nodes := make(LayoutNodes, numNodes)
@@ -38,4 +56,8 @@ func LayoutFlowSquare(c *Config) LayoutNodes {
 	}
 
 	return nodes
+}
+
+func LayoutTopologicalSort(c *Config) LayoutNodes {
+	return LayoutNodes{}
 }

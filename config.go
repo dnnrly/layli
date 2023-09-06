@@ -8,6 +8,7 @@ import (
 )
 
 type Config struct {
+	Layout  string      `yaml:"layout"`
 	Nodes   ConfigNodes `yaml:"nodes"`
 	Edges   ConfigEdges `yaml:"edges"`
 	Spacing int         `yaml:"-"`
