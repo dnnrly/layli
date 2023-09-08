@@ -26,6 +26,15 @@ type ConfigNode struct {
 
 type ConfigNodes []ConfigNode
 
+func (nodes ConfigNodes) ByID(id string) *ConfigNode {
+	for _, n := range nodes {
+		if n.Id == id {
+			return &n
+		}
+	}
+	return nil
+}
+
 type ConfigEdge struct {
 	From string `yaml:"from"`
 	To   string `yaml:"to"`

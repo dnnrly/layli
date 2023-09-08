@@ -1,6 +1,10 @@
 package layli
 
-import "math"
+import (
+	"math"
+
+	"github.com/dnnrly/layli/algorithms/topological"
+)
 
 // LayoutArrangementFunc returns a slice of nodes arranged according to the algorithm implemented
 type LayoutArrangementFunc func(c *Config) LayoutNodes
@@ -58,6 +62,33 @@ func LayoutFlowSquare(c *Config) LayoutNodes {
 	return nodes
 }
 
-func LayoutTopologicalSort(c *Config) LayoutNodes {
-	return LayoutNodes{}
+// LayoutTopologicalSort arranges nodes in a single row, sorted in topological order
+func LayoutTopologicalSort(config *Config) LayoutNodes {
+	layoutNodes := LayoutNodes{}
+	graph := topological.NewGraph()
+
+	for _, e := range config.Edges {
+		graph.AddEdge(e.From, e.To)
+	}
+
+	rankedNodes := graph.RankNodes()
+
+	for i, id := range rankedNodes {
+		c := config.Nodes.ByID(id)
+
+		layoutNodes = append(layoutNodes, NewLayoutNode(
+			id, c.Contents,
+			config.Border+
+				config.Margin+
+				(i*config.NodeWidth)+
+				(i*(config.Margin*2)),
+			config.Border+
+				config.Margin+
+				(0*config.NodeHeight)+
+				(0*(config.Margin*2)),
+			config.NodeWidth, config.NodeHeight,
+		))
+	}
+
+	return layoutNodes
 }

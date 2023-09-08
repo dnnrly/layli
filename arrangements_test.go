@@ -10,6 +10,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func assertLeftOf(t *testing.T, left, right LayoutNode) {
+	assert.Less(t, left.right, right.left, fmt.Sprintf("node '%s' is not left of node '%s'", left.Id, right.Id))
+}
+
+// func assertAbove(top, bottom LayoutNode) {
+// 	assert.Less(t, top.bottom, bottom.top, fmt.Sprintf("node '%s' is not above node '%s'", top.Id, bottom.Id))
+// }
+
+func assertSameRow(t *testing.T, n1, n2 LayoutNode) {
+	assert.Equal(t, n1.top, n2.top, fmt.Sprintf("node '%s' is not on the same row aw node '%s'", n1.Id, n2.Id))
+}
+
 func TestSelectArrangement(t *testing.T) {
 	a := func(expected, actual LayoutArrangementFunc) {
 		assert.Equal(t,
@@ -73,4 +85,22 @@ func TestLayoutFlowSquare(t *testing.T) {
 		assert.EqualValues(t, LayoutNode{"1", "", 5, 4, 3, 6, 3, 7}, l[0])
 		assert.EqualValues(t, LayoutNode{"4", "", 5, 4, 11, 14, 12, 16}, l[3])
 	}
+}
+
+func TestLayoutTopologicalSort_simpleLine(t *testing.T) {
+	nodes := LayoutTopologicalSort(&Config{
+		Nodes: ConfigNodes{ConfigNode{Id: "1"}, ConfigNode{Id: "2"}, ConfigNode{Id: "3"}},
+		Edges: ConfigEdges{
+			ConfigEdge{From: "1", To: "3"},
+			ConfigEdge{From: "3", To: "2"},
+		},
+	})
+
+	assert.Len(t, nodes, 3)
+
+	assertLeftOf(t, *nodes.ByID("1"), *nodes.ByID("3"))
+	assertLeftOf(t, *nodes.ByID("3"), *nodes.ByID("2"))
+
+	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("3"))
+	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("2"))
 }
