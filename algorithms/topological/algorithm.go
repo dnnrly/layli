@@ -1,7 +1,7 @@
 package topological
 
 type Graph struct {
-	Nodes     map[string]bool
+	Nodes     []string
 	Edges     map[string][]string
 	Visited   map[string]bool
 	NodeRanks map[string]int
@@ -10,7 +10,7 @@ type Graph struct {
 
 func NewGraph() *Graph {
 	return &Graph{
-		Nodes:     make(map[string]bool),
+		Nodes:     []string{},
 		Edges:     make(map[string][]string),
 		Visited:   make(map[string]bool),
 		NodeRanks: make(map[string]int),
@@ -19,12 +19,17 @@ func NewGraph() *Graph {
 }
 
 func (g *Graph) RankNodes() []string {
-	for node := range g.Nodes {
+	g.Nodes = removeDuplicates[string](g.Nodes)
+	for _, node := range g.Nodes {
 		if !g.Visited[node] {
 			g.dfs(node)
 		}
 	}
 	g.sortNodes()
+	for i, j := 0, len(g.Sorted)-1; i < j; i, j = i+1, j-1 {
+		g.Sorted[i], g.Sorted[j] = g.Sorted[j], g.Sorted[i]
+	}
+
 	return g.Sorted
 }
 
@@ -63,11 +68,25 @@ func (g *Graph) sortNodes() {
 }
 
 func (g *Graph) AddEdge(from, to string) {
-	g.Nodes[from] = true
-	g.Nodes[to] = true
+	g.Nodes = append(g.Nodes, from)
+	g.Nodes = append(g.Nodes, to)
 
 	if _, ok := g.Edges[from]; !ok {
 		g.Edges[from] = []string{}
 	}
 	g.Edges[from] = append(g.Edges[from], to)
+}
+
+func removeDuplicates[T comparable](slice []T) []T {
+	seen := make(map[T]bool)
+	uniqueSlice := []T{}
+
+	for _, element := range slice {
+		if !seen[element] {
+			uniqueSlice = append(uniqueSlice, element)
+			seen[element] = true
+		}
+	}
+
+	return uniqueSlice
 }
