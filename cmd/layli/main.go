@@ -26,6 +26,7 @@ var newPathFinder = func(start, end dijkstra.Point) layli.PathFinder {
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() error {
 	var output string
+	var layout string
 	var showGrid bool
 
 	var rootCmd = &cobra.Command{
@@ -73,6 +74,7 @@ func Execute() error {
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", "", "output file or directory/")
+	rootCmd.PersistentFlags().StringVarP(&layout, "layout", "l", "flow-square", "the layout algorithm")
 	rootCmd.PersistentFlags().BoolVar(&showGrid, "show-grid", false, "show the path grid dots (great for debugging)")
 
 	return rootCmd.Execute()

@@ -1,0 +1,25 @@
+nodes:
+  - id: node1
+    contents: "First Node"
+  - id: node2
+    contents: "Second Node"
+  - id: node3
+    contents: "Third Node"
+  - id: node4
+    contents: "Forth Node"
+  - id: node5
+    contents: "Fifth Node"
+
+layout: topo-sort
+
+edges:
+  - from: node1
+    to: node2
+  - from: node3
+    to: node2
+  - from: node3
+    to: node4
+  - from: node5
+    to: node3
+  - from: node2
+    to: node5
