@@ -1,6 +1,7 @@
 package layli
 
 import (
+	"errors"
 	"math"
 
 	"github.com/dnnrly/layli/algorithms/topological"
@@ -9,19 +10,19 @@ import (
 // LayoutArrangementFunc returns a slice of nodes arranged according to the algorithm implemented
 type LayoutArrangementFunc func(c *Config) LayoutNodes
 
-func selectArrangement(c *Config) LayoutArrangementFunc {
+func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 	switch c.Layout {
 	case "":
-		return LayoutFlowSquare
+		return LayoutFlowSquare, nil
 
 	case "flow-square":
-		return LayoutFlowSquare
+		return LayoutFlowSquare, nil
 
 	case "topo-sort":
-		return LayoutTopologicalSort
+		return LayoutTopologicalSort, nil
 	}
 
-	return nil
+	return nil, errors.New("do not understand layout " + c.Layout)
 }
 
 func LayoutFlowSquare(c *Config) LayoutNodes {

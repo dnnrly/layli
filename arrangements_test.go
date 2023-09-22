@@ -28,7 +28,9 @@ func assertSameRow(t *testing.T, n1, n2 LayoutNode) {
 }
 
 func TestSelectArrangement(t *testing.T) {
-	a := func(expected, actual LayoutArrangementFunc) {
+	a := func(expected LayoutArrangementFunc, config Config) {
+		actual, err := selectArrangement(&config)
+		assert.NoError(t, err)
 		assert.Equal(t,
 			reflect.ValueOf(expected).Pointer(), reflect.ValueOf(actual).Pointer(),
 			fmt.Sprintf("expected '%v' but got '%v'",
@@ -37,10 +39,13 @@ func TestSelectArrangement(t *testing.T) {
 			))
 	}
 
-	a(nil, selectArrangement(&Config{Layout: "unknown"}))
-	a(LayoutFlowSquare, selectArrangement(&Config{}))
-	a(LayoutFlowSquare, selectArrangement(&Config{Layout: "flow-square"}))
-	a(LayoutTopologicalSort, selectArrangement(&Config{Layout: "topo-sort"}))
+	a(LayoutFlowSquare, Config{})
+	a(LayoutFlowSquare, Config{Layout: "flow-square"})
+	a(LayoutTopologicalSort, Config{Layout: "topo-sort"})
+
+	actual, err := selectArrangement(&Config{Layout: "unknown"})
+	assert.Error(t, err)
+	assert.Nil(t, actual)
 }
 
 func TestLayoutFlowSquare(t *testing.T) {
