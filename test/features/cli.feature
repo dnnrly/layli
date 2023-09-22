@@ -70,8 +70,8 @@ Feature: Simple CLI commands
     Scenario: Generates an image with topological sorted nodes
         When the app runs with parameters "tmp/fixtures/inputs/topological.layli"
         Then the app exits without error
-        And a file "tmp/fixtures/inputs/9-nodes.svg" exists
-        And the number of nodes is 9
+        And a file "tmp/fixtures/inputs/topological.svg" exists
+        And the number of nodes is 5
         And in the SVG file, all node text fits inside the node boundaries
         And in the SVG file, nodes do not overlap
         And in the SVG file, all nodes fit on the image

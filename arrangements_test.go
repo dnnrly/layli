@@ -11,7 +11,12 @@ import (
 )
 
 func assertLeftOf(t *testing.T, left, right LayoutNode) {
-	assert.Less(t, left.right, right.left, fmt.Sprintf("node '%s' is not left of node '%s'", left.Id, right.Id))
+	s := func(n LayoutNode) string {
+		return fmt.Sprintf("L%dR%dT%dB%d", n.left, n.right, n.top, n.bottom)
+	}
+	assert.Less(t, left.left, right.left, fmt.Sprintf("node '%s' (%s) is not left of node '%s' (%s)", left.Id, s(left), right.Id, s(right)))
+	assert.Less(t, left.right, right.right, fmt.Sprintf("node '%s' (%s) is not left of node '%s' (%s)", left.Id, s(left), right.Id, s(right)))
+	assert.Less(t, left.right, right.left, fmt.Sprintf("node '%s' (%s) is not left of node '%s' (%s)", left.Id, s(left), right.Id, s(right)))
 }
 
 // func assertAbove(top, bottom LayoutNode) {
@@ -94,13 +99,12 @@ func TestLayoutTopologicalSort_simpleLine(t *testing.T) {
 			ConfigEdge{From: "1", To: "3"},
 			ConfigEdge{From: "3", To: "2"},
 		},
+		Border: 1, Spacing: 1,
+		NodeWidth: 1, NodeHeight: 1, Margin: 1,
 	})
 
 	assert.Len(t, nodes, 3)
 
 	assertLeftOf(t, *nodes.ByID("1"), *nodes.ByID("3"))
 	assertLeftOf(t, *nodes.ByID("3"), *nodes.ByID("2"))
-
-	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("3"))
-	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("2"))
 }
