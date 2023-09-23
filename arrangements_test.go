@@ -23,9 +23,9 @@ func assertLeftOf(t *testing.T, left, right LayoutNode) {
 // 	assert.Less(t, top.bottom, bottom.top, fmt.Sprintf("node '%s' is not above node '%s'", top.Id, bottom.Id))
 // }
 
-func assertSameRow(t *testing.T, n1, n2 LayoutNode) {
-	assert.Equal(t, n1.top, n2.top, fmt.Sprintf("node '%s' is not on the same row aw node '%s'", n1.Id, n2.Id))
-}
+// func assertSameRow(t *testing.T, n1, n2 LayoutNode) {
+// 	assert.Equal(t, n1.top, n2.top, fmt.Sprintf("node '%s' is not on the same row aw node '%s'", n1.Id, n2.Id))
+// }
 
 func TestSelectArrangement(t *testing.T) {
 	a := func(expected LayoutArrangementFunc, config Config) {
