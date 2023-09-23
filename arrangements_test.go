@@ -10,21 +10,24 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func s(n LayoutNode) string {
+	return fmt.Sprintf("L%d R%d T%d B%d", n.left, n.right, n.top, n.bottom)
+}
+
 func assertLeftOf(t *testing.T, left, right LayoutNode) {
-	s := func(n LayoutNode) string {
-		return fmt.Sprintf("L%dR%dT%dB%d", n.left, n.right, n.top, n.bottom)
-	}
-	assert.Less(t, left.left, right.left, fmt.Sprintf("node '%s' (%s) is not left of node '%s' (%s)", left.Id, s(left), right.Id, s(right)))
-	assert.Less(t, left.right, right.right, fmt.Sprintf("node '%s' (%s) is not left of node '%s' (%s)", left.Id, s(left), right.Id, s(right)))
 	assert.Less(t, left.right, right.left, fmt.Sprintf("node '%s' (%s) is not left of node '%s' (%s)", left.Id, s(left), right.Id, s(right)))
 }
 
-// func assertAbove(top, bottom LayoutNode) {
-// 	assert.Less(t, top.bottom, bottom.top, fmt.Sprintf("node '%s' is not above node '%s'", top.Id, bottom.Id))
-// }
+func assertAbove(t *testing.T, upper, lower LayoutNode) {
+	assert.Less(t, upper.bottom, lower.top, fmt.Sprintf("node '%s' (%s) is not above node '%s' (%s)", upper.Id, s(upper), lower.Id, s(lower)))
+}
 
 func assertSameRow(t *testing.T, n1, n2 LayoutNode) {
-	assert.Equal(t, n1.top, n2.top, fmt.Sprintf("node '%s' is not on the same row aw node '%s'", n1.Id, n2.Id))
+	assert.Equal(t, n1.top, n2.top, fmt.Sprintf("node '%s' (%s) is not on the same row as node '%s' (%s)", n1.Id, s(n1), n2.Id, s(n2)))
+}
+
+func assertSameColumn(t *testing.T, n1, n2 LayoutNode) {
+	assert.Equal(t, n1.left, n2.left, fmt.Sprintf("node '%s' (%s) is not on the same column as node '%s' (%s)", n1.Id, s(n1), n2.Id, s(n2)))
 }
 
 func TestSelectArrangement(t *testing.T) {
@@ -115,4 +118,32 @@ func TestLayoutTopologicalSort_simpleLine(t *testing.T) {
 
 	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("2"))
 	assertSameRow(t, *nodes.ByID("2"), *nodes.ByID("3"))
+}
+
+func TestLayoutTarjan(t *testing.T) {
+	nodes := LayoutTarjan(&Config{
+		Nodes: ConfigNodes{ConfigNode{Id: "1"}, ConfigNode{Id: "2"}, ConfigNode{Id: "3"}, ConfigNode{Id: "4"}, ConfigNode{Id: "5"}},
+		Edges: ConfigEdges{
+			ConfigEdge{From: "1", To: "2"},
+			ConfigEdge{From: "2", To: "3"},
+			ConfigEdge{From: "3", To: "4"},
+			ConfigEdge{From: "4", To: "5"},
+			ConfigEdge{From: "3", To: "5"},
+			ConfigEdge{From: "5", To: "4"},
+		},
+		Border: 1, Spacing: 1,
+		NodeWidth: 1, NodeHeight: 1, Margin: 1,
+	})
+
+	assertLeftOf(t, *nodes.ByID("1"), *nodes.ByID("2"))
+	assertLeftOf(t, *nodes.ByID("2"), *nodes.ByID("3"))
+	assertLeftOf(t, *nodes.ByID("3"), *nodes.ByID("4"))
+
+	assertAbove(t, *nodes.ByID("4"), *nodes.ByID("5"))
+
+	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("2"))
+	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("3"))
+	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("4"))
+
+	assertSameColumn(t, *nodes.ByID("4"), *nodes.ByID("5"))
 }

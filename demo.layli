@@ -1,3 +1,4 @@
+layout: flow-square
 nodes:
     - id: a
       contents: Node A

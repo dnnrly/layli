@@ -4,6 +4,7 @@ import (
 	"errors"
 	"math"
 
+	"github.com/dnnrly/layli/algorithms/tarjan"
 	"github.com/dnnrly/layli/algorithms/topological"
 )
 
@@ -14,6 +15,9 @@ func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 	switch c.Layout {
 	case "":
 		return LayoutFlowSquare, nil
+
+	case "tarjan":
+		return LayoutTarjan, nil
 
 	case "flow-square":
 		return LayoutFlowSquare, nil
@@ -89,6 +93,39 @@ func LayoutTopologicalSort(config *Config) LayoutNodes {
 				(0*(config.Margin*2)),
 			config.NodeWidth, config.NodeHeight,
 		))
+	}
+
+	return layoutNodes
+}
+
+// LayoutTarjan arranges nodes in multiple rows according to Tarhan's algorithm
+func LayoutTarjan(config *Config) LayoutNodes {
+	layoutNodes := LayoutNodes{}
+	graph := tarjan.NewGraph()
+
+	for _, e := range config.Edges {
+		graph.AddEdge(e.From, e.To)
+	}
+
+	nodes := graph.RankNodes()
+
+	for row, rNodes := range nodes {
+		for col, id := range rNodes {
+			c := config.Nodes.ByID(id)
+
+			layoutNodes = append(layoutNodes, NewLayoutNode(
+				id, c.Contents,
+				config.Border+
+					config.Margin+
+					(row*config.NodeWidth)+
+					(row*(config.Margin*2)),
+				config.Border+
+					config.Margin+
+					(col*config.NodeHeight)+
+					(col*(config.Margin*2)),
+				config.NodeWidth, config.NodeHeight,
+			))
+		}
 	}
 
 	return layoutNodes
