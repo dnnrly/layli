@@ -26,8 +26,14 @@ type Layout struct {
 }
 
 func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
+	arranger, err := selectArrangement(c)
+
+	if err != nil {
+		return nil, err
+	}
+
 	l := &Layout{
-		Nodes:        selectArrangement(c)(c),
+		Nodes:        arranger(c),
 		CreateFinder: finder,
 
 		nodeWidth:    c.NodeWidth,

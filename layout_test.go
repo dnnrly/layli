@@ -172,6 +172,12 @@ func TestLayoutNodes_ByID(t *testing.T) {
 	assert.Nil(t, nodes.ByID("unknown"))
 }
 
+func TestLayout_ErrorsOnBadLayoutName(t *testing.T) {
+	_, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return nil }, &Config{Layout: "bad name"})
+	require.Error(t, err)
+
+}
+
 func TestLayout_InsideAny(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
 	l, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, &layoutTestConfig)
