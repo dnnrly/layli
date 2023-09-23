@@ -11,10 +11,15 @@ jobs:
     name: Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v4
         with:
           go-version: '1.20'
+          cache: false
+
       - name: Install dependencies
         run: make deps
       - name: Unit test

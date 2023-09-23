@@ -1,54 +1,18 @@
 package layli
 
 import (
-	"fmt"
-	"io"
 	"strings"
 
 	svg "github.com/ajstarks/svgo"
-	"gopkg.in/yaml.v3"
 )
 
 type OutputFunc func(output string) error
 
 type Diagram struct {
-	output   OutputFunc
-	config   Config
-	layout   *Layout
-	showGrid bool
-}
-
-// NewDiagramFromFile reads the configuration and parses it in to a Diagram object
-func NewDiagramFromFile(cf CreateFinder, r io.ReadCloser, output OutputFunc, showGrid bool) (*Diagram, error) {
-	d := Diagram{
-		output:   output,
-		showGrid: showGrid,
-	}
-	err := yaml.NewDecoder(r).Decode(&d.config)
-	if err != nil {
-		return nil, fmt.Errorf("reading config file: %w", err)
-	}
-	d.config.Spacing = 20
-
-	if d.config.NodeWidth == 0 {
-		d.config.NodeWidth = 5
-	}
-	if d.config.NodeHeight == 0 {
-		d.config.NodeHeight = 3
-	}
-	if d.config.Margin == 0 {
-		d.config.Margin = 2
-	}
-	if d.config.Border == 0 {
-		d.config.Border = 1
-	}
-
-	d.layout, err = NewLayoutFromConfig(cf, d.config)
-	if err != nil {
-		return nil, err
-	}
-
-	return &d, nil
+	Output   OutputFunc
+	Config   Config
+	Layout   *Layout
+	ShowGrid bool
 }
 
 // Draw turns the diagram in to an image
@@ -57,8 +21,8 @@ func (d *Diagram) Draw() error {
 
 	canvas := svg.New(&w)
 	canvas.Start(
-		(d.layout.LayoutWidth()-1)*d.config.Spacing,
-		(d.layout.LayoutHeight()-1)*d.config.Spacing,
+		(d.Layout.LayoutWidth()-1)*d.Config.Spacing,
+		(d.Layout.LayoutHeight()-1)*d.Config.Spacing,
 		"style=\"background-color: white;\"",
 	)
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
@@ -71,14 +35,14 @@ func (d *Diagram) Draw() error {
 	canvas.MarkerEnd()
 	canvas.DefEnd()
 
-	if d.showGrid {
-		d.layout.ShowGrid(canvas, d.config.Spacing)
+	if d.ShowGrid {
+		d.Layout.ShowGrid(canvas, d.Config.Spacing)
 	}
 
-	d.layout.Draw(canvas, d.config.Spacing)
+	d.Layout.Draw(canvas, d.Config.Spacing)
 
 	canvas.Gend()
 
 	canvas.End()
-	return d.output(w.String())
+	return d.Output(w.String())
 }

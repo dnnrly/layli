@@ -25,3 +25,6 @@ share/
 dist/
 
 dist/
+
+# Development test files
+/test.layli

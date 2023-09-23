@@ -10,6 +10,12 @@ Feature: Simple CLI commands
         And the app output contains "Usage:"
 
     @Acceptance
+    Scenario: Prints on bad config
+        When the app runs with parameters "tmp/fixtures/inputs/bad-config.layli"
+        Then the app exits with an error
+        And the app output contains "creating config:"
+
+    @Acceptance
     Scenario: Non-existent file returns error
         When the app runs with parameters "non-existant.layli"
         Then the app exits with an error
@@ -61,6 +67,22 @@ Feature: Simple CLI commands
         And in the SVG file, all nodes fit on the image
 
     @Acceptance
+    Scenario: Generates an image with topological sorted nodes
+        When the app runs with parameters "tmp/fixtures/inputs/topological.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/topological.svg" exists
+        And the number of nodes is 5
+        And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap
+        And in the SVG file, all nodes fit on the image
+
+    @Acceptance
+    Scenario: Sets output file correctly
+        When the app runs with parameters "--output tmp/another-file.svg tmp/fixtures/inputs/2-nodes.layli"
+        Then the app exits without error
+        And a file "tmp/another-file.svg" exists
+
+    @Acceptance
     Scenario: Shows path grid positions
         When the app runs with parameters "--show-grid --output tmp/fixtures/inputs/2-nodes-with-grid.svg tmp/fixtures/inputs/2-nodes.layli"
         Then the app exits without error
@@ -69,15 +91,20 @@ Feature: Simple CLI commands
 
     @Acceptance
     Scenario: Corrects crossing lines without moving nodes
-        When the app runs with parameters "--show-grid --output tmp/fixtures/inputs/crossing-lines.svg tmp/fixtures/inputs/crossing-lines.layli"
+        When the app runs with parameters "tmp/fixtures/inputs/crossing-lines.layli"
         Then the app exits without error
         And a file "tmp/fixtures/inputs/crossing-lines.svg" exists
-        And in the SVG file, path grid dots are shown
         And the number of paths is 6
         And no paths cross
 
     @Acceptance
     Scenario: Errors when cannot find paths without crossing
-        When the app runs with parameters "--output tmp/fixtures/inputs/impossible-paths.svg tmp/fixtures/inputs/impossible-paths.layli"
+        When the app runs with parameters "tmp/fixtures/inputs/impossible-paths.layli"
         Then the app exits with an error
         And the app output contains "cannot find a path between node2 and node3"
+
+    @Acceptance
+    Scenario: Errors when cannot write output
+        When the app runs with parameters "--output / tmp/fixtures/inputs/2-nodes.layli"
+        Then the app exits with an error
+        And the app output contains "drawing diagram"

@@ -2,7 +2,6 @@ package layli
 
 import (
 	"fmt"
-	"math"
 )
 
 type LayoutDrawer interface {
@@ -26,51 +25,21 @@ type Layout struct {
 	pathSpacing int // Length of a path unit in pixels
 }
 
-func NewLayoutFromConfig(finder CreateFinder, c Config) (*Layout, error) {
-	numNodes := len(c.Nodes)
+func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
+	arranger, err := selectArrangement(c)
 
-	root := math.Sqrt(float64(numNodes))
-	size := int(math.Ceil(root))
-
-	if size < int(root) {
-		size++
-	}
-	if numNodes < 4 {
-		size = 2
+	if err != nil {
+		return nil, err
 	}
 
 	l := &Layout{
-		Nodes:        LayoutNodes{},
+		Nodes:        arranger(c),
 		CreateFinder: finder,
 
 		nodeWidth:    c.NodeWidth,
 		nodeHeight:   c.NodeHeight,
 		nodeMargin:   c.Margin,
 		layoutBorder: c.Border,
-	}
-
-	pos := 0
-	for y := 0; y < size && pos < numNodes; y++ {
-		for x := 0; x < size && pos < numNodes; x++ {
-			l.Nodes = append(
-				l.Nodes,
-				NewLayoutNode(
-					c.Nodes[pos].Id,
-					c.Nodes[pos].Contents,
-					l.layoutBorder+
-						l.nodeMargin+
-						(x*l.nodeWidth)+
-						(x*(l.nodeMargin*2)),
-					l.layoutBorder+
-						l.nodeMargin+
-						(y*l.nodeHeight)+
-						(y*(l.nodeMargin*2)),
-					l.nodeWidth, l.nodeHeight,
-				),
-			)
-
-			pos++
-		}
 	}
 
 	for _, p := range c.Edges {
@@ -85,36 +54,26 @@ func NewLayoutFromConfig(finder CreateFinder, c Config) (*Layout, error) {
 
 // LayoutHeight is the height in path units
 func (l *Layout) LayoutHeight() int {
-	numNodes := len(l.Nodes)
-
-	root := math.Sqrt(float64(numNodes))
-	rows := 1
-	if numNodes > 2 {
-		columns := int(math.Ceil(root))
-		rows = numNodes / columns
-		if (numNodes % columns) != 0 {
-			rows++
+	maxBottom := 0
+	for _, n := range l.Nodes {
+		if maxBottom <= n.bottom {
+			maxBottom = n.bottom
 		}
 	}
 
-	return l.layoutBorder*2 +
-		(rows * l.nodeHeight) +
-		(rows * l.nodeMargin * 2)
+	return maxBottom + l.nodeMargin + 1 + l.layoutBorder
 }
 
 // LayoutWidth is the width in path units
 func (l *Layout) LayoutWidth() int {
-	numNodes := len(l.Nodes)
-	columns := numNodes
-
-	if numNodes >= 4 {
-		root := math.Sqrt(float64(numNodes))
-		columns = int(math.Ceil(root))
+	maxRight := 0
+	for _, n := range l.Nodes {
+		if maxRight <= n.right {
+			maxRight = n.right
+		}
 	}
 
-	return l.layoutBorder*2 +
-		(columns * l.nodeWidth) +
-		(columns * l.nodeMargin * 2)
+	return maxRight + l.nodeMargin + 1 + l.layoutBorder
 }
 
 func (l *Layout) InsideAny(x, y int) bool {

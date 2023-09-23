@@ -26,6 +26,7 @@ var newPathFinder = func(start, end dijkstra.Point) layli.PathFinder {
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() error {
 	var output string
+	var layout string
 	var showGrid bool
 
 	var rootCmd = &cobra.Command{
@@ -44,15 +45,23 @@ func Execute() error {
 				output = fmt.Sprintf("%s.svg", output)
 			}
 
-			d, err := layli.NewDiagramFromFile(
-				newPathFinder, f,
-				func(data string) error {
+			config, err := layli.NewConfigFromFile(f)
+			if err != nil {
+				return fmt.Errorf("creating config: %w", err)
+			}
+
+			layout, err := layli.NewLayoutFromConfig(newPathFinder, config)
+			if err != nil {
+				return fmt.Errorf("creating layout: %w", err)
+			}
+
+			d := layli.Diagram{
+				Output: func(data string) error {
 					return os.WriteFile(output, []byte(data), 0644)
 				},
-				showGrid,
-			)
-			if err != nil {
-				return fmt.Errorf("creating diagram: %w", err)
+				ShowGrid: showGrid,
+				Config:   *config,
+				Layout:   layout,
 			}
 
 			err = d.Draw()
@@ -65,6 +74,7 @@ func Execute() error {
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", "", "output file or directory/")
+	rootCmd.PersistentFlags().StringVarP(&layout, "layout", "l", "flow-square", "the layout algorithm")
 	rootCmd.PersistentFlags().BoolVar(&showGrid, "show-grid", false, "show the path grid dots (great for debugging)")
 
 	return rootCmd.Execute()
