@@ -34,7 +34,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.txt,./coverage-merged.txt
+          files: tmp/coverage/ci-test.txt,tmp/coverage/acceptance.txt
           verbose: true
   check-release:
     name: Check release
