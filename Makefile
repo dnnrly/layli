@@ -80,10 +80,10 @@ acceptance-test: build ## run acceptance tests
 	rm -rf ./test/tmp
 	go build -cover -o layli ./cmd/layli
 	mkdir -p ./test/tmp/coverage
-	cd test && GOCOVERDIR=tmp/coverage go test -tags acceptance
+	cd test && GOCOVERDIR=tmp/coverage go test -timeout 5s -tags acceptance
 	
 .PHONY: coverage-report
 coverage-report: ## collate the coverage data
-	mkdir -p tmp/merged
-	go tool covdata merge -i=./tmp/coverage,./test/tmp/coverage -o tmp/merged
-	go tool covdata textfmt -i=tmp/merged -o coverage-merged.txt
+	mkdir -p tmp/coverage
+	go tool covdata textfmt -i=test/tmp/coverage -o ./tmp/coverage/acceptance.txt
+
