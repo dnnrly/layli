@@ -77,6 +77,12 @@ Feature: Simple CLI commands
         And in the SVG file, all nodes fit on the image
 
     @Acceptance
+    Scenario: Arranges paths to prevent blockages
+        When the app runs with parameters "tmp/fixtures/inputs/blocked.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/blocked.svg" exists
+
+    @Acceptance
     Scenario: Sets output file correctly
         When the app runs with parameters "--output tmp/another-file.svg tmp/fixtures/inputs/2-nodes.layli"
         Then the app exits without error
