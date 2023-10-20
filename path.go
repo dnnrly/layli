@@ -106,10 +106,10 @@ func (l *Layout) FindPath(from, to string) (*LayoutPath, error) {
 	return &path, nil
 }
 
-type PathStrategy func(edges ConfigEdges, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error
+type PathStrategy func(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error
 
 func selectPathStrategy(c *Config) (PathStrategy, error) {
-	switch c.Strategy {
+	switch c.Path.Strategy {
 	// Shortest first
 	case "random":
 		return findPathsRandomly, nil
@@ -118,12 +118,12 @@ func selectPathStrategy(c *Config) (PathStrategy, error) {
 	case "":
 		return findPathsInOrder, nil
 	default:
-		return nil, errors.New("cannot find path strategy " + c.Strategy)
+		return nil, errors.New("cannot find path strategy " + c.Path.Strategy)
 	}
 }
 
-func findPathsInOrder(edges ConfigEdges, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
-	for _, p := range edges {
+func findPathsInOrder(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
+	for _, p := range config.Edges {
 		path, err := find(p.From, p.To)
 		if err != nil {
 			return err
@@ -134,21 +134,17 @@ func findPathsInOrder(edges ConfigEdges, paths *LayoutPaths, find func(from, to 
 	return nil
 }
 
-func findPathsRandomly(edges ConfigEdges, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
-	count := 0
-	var err error
-
-	for count < 5 {
-		rand.Shuffle(len(edges), func(i, j int) { edges[i], edges[j] = edges[j], edges[i] })
-		err := findPathsInOrder(edges, paths, find)
+func findPathsRandomly(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
+	for count := 0; count < config.Path.Attempts; count++ {
+		rand.Shuffle(len(config.Edges), func(i, j int) { config.Edges[i], config.Edges[j] = config.Edges[j], config.Edges[i] })
+		err := findPathsInOrder(config, paths, find)
 		if err == nil {
 			return nil
 		}
 		if err != dijkstra.ErrNotFound {
 			return err
 		}
-
 	}
 
-	return err
+	return dijkstra.ErrNotFound
 }

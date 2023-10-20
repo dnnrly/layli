@@ -133,10 +133,10 @@ func Test_selectPathStrategy(t *testing.T) {
 		want    PathStrategy
 		wantErr bool
 	}{
-		{name: "unknown generates error", c: Config{Strategy: "unknown"}, want: nil, wantErr: true},
+		{name: "unknown generates error", c: Config{Path: ConfigPath{Strategy: "unknown"}}, want: nil, wantErr: true},
 		{name: "defaults to in-order", c: Config{}, want: findPathsInOrder, wantErr: false},
-		{name: "selects in-order", c: Config{Strategy: "in-order"}, want: findPathsInOrder, wantErr: false},
-		{name: "selects random", c: Config{Strategy: "random"}, want: findPathsRandomly, wantErr: false},
+		{name: "selects in-order", c: Config{Path: ConfigPath{Strategy: "in-order"}}, want: findPathsInOrder, wantErr: false},
+		{name: "selects random", c: Config{Path: ConfigPath{Strategy: "random"}}, want: findPathsRandomly, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -163,11 +163,13 @@ func Test_findPathsInOrder_runsInOrder(t *testing.T) {
 	}
 	paths := LayoutPaths{}
 	err := findPathsInOrder(
-		ConfigEdges{
-			{From: "a", To: "b"},
-			{From: "1", To: "2"},
-			{From: "2", To: "3"},
-			{From: "r", To: "t"},
+		Config{
+			Edges: ConfigEdges{
+				{From: "a", To: "b"},
+				{From: "1", To: "2"},
+				{From: "2", To: "3"},
+				{From: "r", To: "t"},
+			},
 		},
 		&paths,
 		func(from, to string) (*LayoutPath, error) {
@@ -196,11 +198,13 @@ func Test_findPathsInOrder_passesErrorThrough(t *testing.T) {
 
 	paths := LayoutPaths{}
 	err := findPathsInOrder(
-		ConfigEdges{
-			{From: "a", To: "b"},
-			{From: "1", To: "2"},
-			{From: "2", To: "3"},
-			{From: "r", To: "t"},
+		Config{
+			Edges: ConfigEdges{
+				{From: "a", To: "b"},
+				{From: "1", To: "2"},
+				{From: "2", To: "3"},
+				{From: "r", To: "t"},
+			},
 		},
 		&paths,
 		func(from, to string) (*LayoutPath, error) {
@@ -216,11 +220,16 @@ func Test_findPathsRandomly_addsAllPaths(t *testing.T) {
 	records := []record{}
 	paths := LayoutPaths{}
 	err := findPathsRandomly(
-		ConfigEdges{
-			{From: "a", To: "b"},
-			{From: "1", To: "2"},
-			{From: "2", To: "3"},
-			{From: "r", To: "t"},
+		Config{
+			Path: ConfigPath{
+				Attempts: 5,
+			},
+			Edges: ConfigEdges{
+				{From: "a", To: "b"},
+				{From: "1", To: "2"},
+				{From: "2", To: "3"},
+				{From: "r", To: "t"},
+			},
 		},
 		&paths,
 		func(from, to string) (*LayoutPath, error) {
@@ -242,23 +251,29 @@ func Test_findPathsRandomly_orderChanges(t *testing.T) {
 	records1 := []record{}
 	records2 := []record{}
 
-	edges := ConfigEdges{
-		{From: "a", To: "b"},
-		{From: "1", To: "2"},
-		{From: "2", To: "3"},
-		{From: "r", To: "t"},
-	}
+	config :=
+		Config{
+			Path: ConfigPath{
+				Attempts: 5,
+			},
+			Edges: ConfigEdges{
+				{From: "a", To: "b"},
+				{From: "1", To: "2"},
+				{From: "2", To: "3"},
+				{From: "r", To: "t"},
+			},
+		}
 	paths := LayoutPaths{}
 
 	_ = findPathsRandomly(
-		edges, &paths,
+		config, &paths,
 		func(from, to string) (*LayoutPath, error) {
 			records1 = append(records1, record{from: from, to: to})
 			return &LayoutPath{}, nil
 		},
 	)
 	_ = findPathsRandomly(
-		edges, &paths,
+		config, &paths,
 		func(from, to string) (*LayoutPath, error) {
 			records2 = append(records1, struct {
 				from string
@@ -277,11 +292,16 @@ func Test_findPathsRandomly_passesErrorThrough(t *testing.T) {
 
 	paths := LayoutPaths{}
 	err := findPathsRandomly(
-		ConfigEdges{
-			{From: "a", To: "b"},
-			{From: "1", To: "2"},
-			{From: "2", To: "3"},
-			{From: "r", To: "t"},
+		Config{
+			Path: ConfigPath{
+				Attempts: 5,
+			},
+			Edges: ConfigEdges{
+				{From: "a", To: "b"},
+				{From: "1", To: "2"},
+				{From: "2", To: "3"},
+				{From: "r", To: "t"},
+			},
 		},
 		&paths,
 		func(from, to string) (*LayoutPath, error) {
@@ -299,16 +319,21 @@ func Test_findPathsRandomly_retriesWhenStrugglingToFindPath(t *testing.T) {
 
 	paths := LayoutPaths{}
 	err := findPathsRandomly(
-		ConfigEdges{
-			{From: "a", To: "b"},
-			{From: "1", To: "2"},
-			{From: "2", To: "3"},
-			{From: "r", To: "t"},
+		Config{
+			Path: ConfigPath{
+				Attempts: 5,
+			},
+			Edges: ConfigEdges{
+				{From: "a", To: "b"},
+				{From: "1", To: "2"},
+				{From: "2", To: "3"},
+				{From: "r", To: "t"},
+			},
 		},
 		&paths,
 		func(from, to string) (*LayoutPath, error) {
 			count++
-			if count < 5 {
+			if count < 2 {
 				return nil, dijkstra.ErrNotFound
 			}
 			return &LayoutPath{}, nil
@@ -316,4 +341,27 @@ func Test_findPathsRandomly_retriesWhenStrugglingToFindPath(t *testing.T) {
 	)
 
 	assert.NoError(t, err)
+}
+
+func Test_findPathsRandomly_eventuallyGivesUp(t *testing.T) {
+	paths := LayoutPaths{}
+	err := findPathsRandomly(
+		Config{
+			Path: ConfigPath{
+				Attempts: 2,
+			},
+			Edges: ConfigEdges{
+				{From: "a", To: "b"},
+				{From: "1", To: "2"},
+				{From: "2", To: "3"},
+				{From: "r", To: "t"},
+			},
+		},
+		&paths,
+		func(from, to string) (*LayoutPath, error) {
+			return nil, dijkstra.ErrNotFound
+		},
+	)
+
+	assert.ErrorIs(t, err, dijkstra.ErrNotFound, "got error: %v", err)
 }

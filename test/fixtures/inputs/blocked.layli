@@ -1,3 +1,6 @@
+path:
+  strategy: random
+
 nodes:
   - id: node1
     contents: "Node 1"

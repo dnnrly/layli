@@ -46,7 +46,7 @@ func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 		layoutBorder: c.Border,
 	}
 
-	err = pathStrategy(c.Edges, &l.Paths, l.FindPath)
+	err = pathStrategy(*c, &l.Paths, l.FindPath)
 	if err != nil {
 		return nil, err
 	}
