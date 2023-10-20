@@ -7,8 +7,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type ConfigPath struct {
+	Attempts int    `yaml:"attempts"`
+	Strategy string `yaml:"strategy"`
+}
+
 type Config struct {
 	Layout  string      `yaml:"layout"`
+	Path    ConfigPath  `yaml:"path"`
 	Nodes   ConfigNodes `yaml:"nodes"`
 	Edges   ConfigEdges `yaml:"edges"`
 	Spacing int         `yaml:"-"`
@@ -49,6 +55,10 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 		return nil, fmt.Errorf("reading config file: %w", err)
 	}
 	config.Spacing = 20
+
+	if config.Path.Attempts == 0 {
+		config.Path.Attempts = 5
+	}
 
 	if config.NodeWidth == 0 {
 		config.NodeWidth = 5

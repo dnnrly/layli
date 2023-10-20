@@ -20,6 +20,9 @@ nodes:
 	config, err := NewConfigFromFile(r)
 	require.NoError(t, err)
 	assert.Equal(t, Config{
+		Path: ConfigPath{
+			Attempts: 5,
+		},
 		Nodes: ConfigNodes{
 			ConfigNode{
 				Id:       "node-1",

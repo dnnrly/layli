@@ -27,7 +27,11 @@ type Layout struct {
 
 func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 	arranger, err := selectArrangement(c)
+	if err != nil {
+		return nil, err
+	}
 
+	pathStrategy, err := selectPathStrategy(c)
 	if err != nil {
 		return nil, err
 	}
@@ -42,11 +46,9 @@ func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 		layoutBorder: c.Border,
 	}
 
-	for _, p := range c.Edges {
-		err := l.AddPath(p.From, p.To)
-		if err != nil {
-			return nil, err
-		}
+	err = pathStrategy(*c, &l.Paths, l.FindPath)
+	if err != nil {
+		return nil, err
 	}
 
 	return l, nil

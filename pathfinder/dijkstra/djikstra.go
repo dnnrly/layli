@@ -6,6 +6,10 @@ import (
 	"math"
 )
 
+var (
+	ErrNotFound = errors.New("no path found")
+)
+
 type CostFunction func(from, to Point) int64
 
 type PathFinder struct {
@@ -88,7 +92,7 @@ func (pf *PathFinder) BestPath() ([]Point, error) {
 		}
 	}
 
-	return nil, errors.New("no path found")
+	return nil, ErrNotFound
 }
 
 func (pf *PathFinder) reconstructPath(previous map[Point]Point) []Point {

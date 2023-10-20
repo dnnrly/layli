@@ -1,8 +1,10 @@
 package layli
 
 import (
+	"errors"
 	"fmt"
 	"math"
+	"math/rand"
 
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
@@ -51,7 +53,7 @@ func BuildVertexMap(l *Layout) VertexMap {
 	return vm
 }
 
-func (l *Layout) AddPath(from, to string) error {
+func (l *Layout) FindPath(from, to string) (*LayoutPath, error) {
 	nFrom := l.Nodes.ByID(from)
 	nTo := l.Nodes.ByID(to)
 
@@ -92,7 +94,7 @@ func (l *Layout) AddPath(from, to string) error {
 	points, err := finder.BestPath()
 	if err != nil {
 		// return fmt.Errorf("cannot find a path between %w", err)
-		return fmt.Errorf("cannot find a path between %s and %s", from, to)
+		return nil, fmt.Errorf("cannot find a path between %s and %s", from, to)
 	}
 
 	path := LayoutPath{}
@@ -101,7 +103,48 @@ func (l *Layout) AddPath(from, to string) error {
 		path.Points = append(path.Points, Point{X: x, Y: y})
 	}
 
-	l.Paths = append(l.Paths, path)
+	return &path, nil
+}
 
+type PathStrategy func(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error
+
+func selectPathStrategy(c *Config) (PathStrategy, error) {
+	switch c.Path.Strategy {
+	// Shortest first
+	case "random":
+		return findPathsRandomly, nil
+	case "in-order":
+		fallthrough
+	case "":
+		return findPathsInOrder, nil
+	default:
+		return nil, errors.New("cannot find path strategy " + c.Path.Strategy)
+	}
+}
+
+func findPathsInOrder(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
+	for _, p := range config.Edges {
+		path, err := find(p.From, p.To)
+		if err != nil {
+			return err
+		}
+
+		*paths = append(*paths, *path)
+	}
 	return nil
+}
+
+func findPathsRandomly(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
+	for count := 0; count < config.Path.Attempts; count++ {
+		rand.Shuffle(len(config.Edges), func(i, j int) { config.Edges[i], config.Edges[j] = config.Edges[j], config.Edges[i] })
+		err := findPathsInOrder(config, paths, find)
+		if err == nil {
+			return nil
+		}
+		if err != dijkstra.ErrNotFound {
+			return err
+		}
+	}
+
+	return dijkstra.ErrNotFound
 }
