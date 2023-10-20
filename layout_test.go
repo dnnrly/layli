@@ -178,6 +178,12 @@ func TestLayout_ErrorsOnBadLayoutName(t *testing.T) {
 
 }
 
+func TestLayout_ErrorsOnBadPathStrategy(t *testing.T) {
+	_, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return nil }, &Config{Path: ConfigPath{Strategy: "unknown"}})
+	require.Error(t, err)
+
+}
+
 func TestLayout_InsideAny(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
 	l, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return finder }, &layoutTestConfig)
