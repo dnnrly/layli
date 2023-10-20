@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/rand"
 
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
@@ -110,7 +111,10 @@ type PathStrategy func(edges ConfigEdges, paths *LayoutPaths, find func(from, to
 func selectPathStrategy(c *Config) (PathStrategy, error) {
 	switch c.Strategy {
 	// Shortest first
-	// Random strategy
+	case "random":
+		return findPathsRandomly, nil
+	case "in-order":
+		fallthrough
 	case "":
 		return findPathsInOrder, nil
 	default:
@@ -128,4 +132,23 @@ func findPathsInOrder(edges ConfigEdges, paths *LayoutPaths, find func(from, to 
 		*paths = append(*paths, *path)
 	}
 	return nil
+}
+
+func findPathsRandomly(edges ConfigEdges, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
+	count := 0
+	var err error
+
+	for count < 5 {
+		rand.Shuffle(len(edges), func(i, j int) { edges[i], edges[j] = edges[j], edges[i] })
+		err := findPathsInOrder(edges, paths, find)
+		if err == nil {
+			return nil
+		}
+		if err != dijkstra.ErrNotFound {
+			return err
+		}
+
+	}
+
+	return err
 }
