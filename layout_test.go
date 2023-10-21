@@ -262,3 +262,8 @@ func TestLayoutPaths_Draw(t *testing.T) {
 
 	drawer.AssertExpectations(t)
 }
+
+func TestLayoutPath_Length(t *testing.T) {
+	path := LayoutPath{Points: Points{Point{X: 5, Y: 4}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 12, Y: 3}}}
+	assert.Equal(t, 8.0, path.Length())
+}
