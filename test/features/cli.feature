@@ -107,7 +107,7 @@ Feature: Simple CLI commands
     Scenario: Errors when cannot find paths without crossing
         When the app runs with parameters "tmp/fixtures/inputs/impossible-paths.layli"
         Then the app exits with an error
-        And the app output contains "cannot find a path between node2 and node3"
+        And the app output contains "finding path between node2 and node3: no path found"
 
     @Acceptance
     Scenario: Errors when cannot write output

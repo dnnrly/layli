@@ -21,7 +21,7 @@ nodes:
 	require.NoError(t, err)
 	assert.Equal(t, Config{
 		Path: ConfigPath{
-			Attempts: 5,
+			Attempts: 20,
 		},
 		Nodes: ConfigNodes{
 			ConfigNode{

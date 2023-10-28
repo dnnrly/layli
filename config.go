@@ -57,7 +57,7 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 	config.Spacing = 20
 
 	if config.Path.Attempts == 0 {
-		config.Path.Attempts = 5
+		config.Path.Attempts = 20
 	}
 
 	if config.NodeWidth == 0 {

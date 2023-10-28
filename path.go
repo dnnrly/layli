@@ -93,8 +93,7 @@ func (l *Layout) FindPath(from, to string) (*LayoutPath, error) {
 
 	points, err := finder.BestPath()
 	if err != nil {
-		// return fmt.Errorf("cannot find a path between %w", err)
-		return nil, fmt.Errorf("cannot find a path between %s and %s", from, to)
+		return nil, fmt.Errorf("finding path between %s and %s: %w", from, to, err)
 	}
 
 	path := LayoutPath{}
@@ -135,16 +134,34 @@ func findPathsInOrder(config Config, paths *LayoutPaths, find func(from, to stri
 }
 
 func findPathsRandomly(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
+	shortest := LayoutPaths{LayoutPath{Points: []Point{
+		{X: 0.0, Y: 0.0},
+		{X: math.MaxFloat64, Y: math.MaxFloat64},
+	}}}
+
+	gotPath := false
+
 	for count := 0; count < config.Path.Attempts; count++ {
 		rand.Shuffle(len(config.Edges), func(i, j int) { config.Edges[i], config.Edges[j] = config.Edges[j], config.Edges[i] })
 		err := findPathsInOrder(config, paths, find)
+
 		if err == nil {
-			return nil
-		}
-		if err != dijkstra.ErrNotFound {
-			return err
+			if paths.Length() < shortest.Length() {
+				shortest = *paths
+			}
+			gotPath = true
+		} else {
+			if !errors.Is(err, dijkstra.ErrNotFound) {
+				return err
+			}
 		}
 	}
 
-	return dijkstra.ErrNotFound
+	if !gotPath {
+		return dijkstra.ErrNotFound
+	}
+
+	*paths = shortest
+
+	return nil
 }

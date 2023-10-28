@@ -3,6 +3,7 @@ package layli
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"reflect"
 	"runtime"
 	"strings"
@@ -62,18 +63,20 @@ func TestLayout_AddPath_BetweenAdjacentNodes(t *testing.T) {
 	}, *path)
 }
 
-// func TestLayout_AddPath_ErrorAddingPaths(t *testing.T) {
-// 	finder := mocks.NewPathFinder(t)
+func TestFindPath_returnsCorrectErrors(t *testing.T) {
+	finder := mocks.NewPathFinder(t)
+	expectedErr := errors.New("some error")
 
-// 	finder.On("AddConnection", mock.Anything, mock.Anything, mock.Anything)
-// 	finder.On("BestPath").Return([]dijkstra.Point{}, errors.New("not paths"))
+	finder.On("AddConnection", mock.Anything, mock.Anything, mock.Anything)
+	finder.On("BestPath").Return([]dijkstra.Point{}, expectedErr)
 
-// 	l := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
-// 		return finder
-// 	}, pathTestConfig)
+	l, _ := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
+		return finder
+	}, &pathTestConfig)
 
-// 	require.Error(t, l.AddPath("1", "2"))
-// }
+	_, err := l.FindPath("1", "2")
+	require.ErrorIs(t, err, expectedErr)
+}
 
 func TestLayout_BuildVertexMap(t *testing.T) {
 	finder := mocks.NewPathFinder(t)
@@ -286,6 +289,36 @@ func Test_findPathsRandomly_orderChanges(t *testing.T) {
 	assert.NotEqual(t, records1, records2)
 }
 
+func Test_findPathsRandomly_selectsShortestPath(t *testing.T) {
+	count := 0
+
+	paths := LayoutPaths{}
+	err := findPathsRandomly(
+		Config{
+			Path: ConfigPath{
+				Attempts: 20,
+			},
+			Edges: ConfigEdges{
+				{From: "a", To: "b"},
+			},
+		},
+		&paths,
+		func(from, to string) (*LayoutPath, error) {
+			count++
+			return &LayoutPath{
+				Points: Points{
+					Point{X: 1, Y: 0},
+					Point{X: 1, Y: float64(3 + rand.Intn(2))},
+				},
+			}, nil
+		},
+	)
+
+	assert.NoError(t, err)
+	assert.Equal(t, 20, count)
+	assert.Equal(t, 4.0, paths.Length())
+}
+
 func Test_findPathsRandomly_passesErrorThrough(t *testing.T) {
 	expectedErr := errors.New("an error")
 	count := 0
@@ -325,22 +358,25 @@ func Test_findPathsRandomly_retriesWhenStrugglingToFindPath(t *testing.T) {
 			},
 			Edges: ConfigEdges{
 				{From: "a", To: "b"},
-				{From: "1", To: "2"},
-				{From: "2", To: "3"},
-				{From: "r", To: "t"},
 			},
 		},
 		&paths,
 		func(from, to string) (*LayoutPath, error) {
 			count++
-			if count < 2 {
+			if count%2 == 0 {
 				return nil, dijkstra.ErrNotFound
 			}
-			return &LayoutPath{}, nil
+			return &LayoutPath{
+				Points: Points{
+					Point{X: 1, Y: 0},
+					Point{X: 1, Y: 2.0},
+				},
+			}, nil
 		},
 	)
 
 	assert.NoError(t, err)
+	assert.Equal(t, 2.0, paths.Length())
 }
 
 func Test_findPathsRandomly_eventuallyGivesUp(t *testing.T) {

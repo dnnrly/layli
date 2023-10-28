@@ -258,3 +258,11 @@ func (paths *LayoutPaths) Draw(canvas LayoutDrawer, spacing int) {
 		p.Draw(canvas, spacing)
 	}
 }
+
+func (paths LayoutPaths) Length() float64 {
+	totalLength := float64(0)
+	for _, p := range paths {
+		totalLength += p.Length()
+	}
+	return totalLength
+}
