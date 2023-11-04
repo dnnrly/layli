@@ -111,7 +111,7 @@ func selectPathStrategy(c *Config) (PathStrategy, error) {
 	switch c.Path.Strategy {
 	// Shortest first
 	case "random":
-		return findPathsRandomly, nil
+		return findPathsRandomlyByOrder, nil
 	case "in-order":
 		fallthrough
 	case "":
@@ -133,35 +133,41 @@ func findPathsInOrder(config Config, paths *LayoutPaths, find func(from, to stri
 	return nil
 }
 
-func findPathsRandomly(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
-	shortest := LayoutPaths{LayoutPath{Points: []Point{
-		{X: 0.0, Y: 0.0},
-		{X: math.MaxFloat64, Y: math.MaxFloat64},
-	}}}
+func findPathsRandomlyByOrder(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
+	return findPathsRandomly(findPathsInOrder)(config, paths, find)
+}
 
-	gotPath := false
+func findPathsRandomly(subStrategy PathStrategy) PathStrategy {
+	return func(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error {
+		shortest := LayoutPaths{LayoutPath{Points: []Point{
+			{X: 0.0, Y: 0.0},
+			{X: math.MaxFloat64, Y: math.MaxFloat64},
+		}}}
 
-	for count := 0; count < config.Path.Attempts; count++ {
-		rand.Shuffle(len(config.Edges), func(i, j int) { config.Edges[i], config.Edges[j] = config.Edges[j], config.Edges[i] })
-		err := findPathsInOrder(config, paths, find)
+		gotPath := false
 
-		if err == nil {
-			if paths.Length() < shortest.Length() {
-				shortest = *paths
-			}
-			gotPath = true
-		} else {
-			if !errors.Is(err, dijkstra.ErrNotFound) {
-				return err
+		for count := 0; count < config.Path.Attempts; count++ {
+			rand.Shuffle(len(config.Edges), func(i, j int) { config.Edges[i], config.Edges[j] = config.Edges[j], config.Edges[i] })
+			err := subStrategy(config, paths, find)
+
+			if err == nil {
+				if paths.Length() < shortest.Length() {
+					shortest = *paths
+				}
+				gotPath = true
+			} else {
+				if !errors.Is(err, dijkstra.ErrNotFound) {
+					return err
+				}
 			}
 		}
+
+		if !gotPath {
+			return dijkstra.ErrNotFound
+		}
+
+		*paths = shortest
+
+		return nil
 	}
-
-	if !gotPath {
-		return dijkstra.ErrNotFound
-	}
-
-	*paths = shortest
-
-	return nil
 }
