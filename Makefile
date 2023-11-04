@@ -63,7 +63,7 @@ lint: ## run linting
 
 .PHONY: test
 test: ## run unit tests
-	go test -race -cover -json ./... | tparse -all
+	go test -race -cover -count=1 -json ./... | tparse -all
 
 .PHONY: ci-test
 ci-test: ## ci target - run tests to generate coverage data

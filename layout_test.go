@@ -2,6 +2,7 @@ package layli
 
 import (
 	"fmt"
+	"math"
 	"strings"
 	"testing"
 
@@ -248,6 +249,16 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer.AssertExpectations(t)
 }
 
+func TestLayoutPath_Length(t *testing.T) {
+	path := LayoutPath{Points: Points{Point{X: 5, Y: 4}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 12, Y: 3}}}
+	assert.Equal(t, 8.0, path.Length())
+}
+
+func TestLayoutPath_Length_veryShort(t *testing.T) {
+	path := LayoutPath{Points: Points{Point{X: 5, Y: 4}}}
+	assert.Equal(t, 0.0, path.Length())
+}
+
 func TestLayoutPaths_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
@@ -261,4 +272,48 @@ func TestLayoutPaths_Draw(t *testing.T) {
 	p.Draw(drawer, 10)
 
 	drawer.AssertExpectations(t)
+}
+
+func TestLayoutPaths_Length(t *testing.T) {
+
+	t.Run("empty paths", func(t *testing.T) {
+		var paths LayoutPaths
+		length := paths.Length()
+		assert.Equal(t, 0.0, length)
+	})
+
+	t.Run("single empty path", func(t *testing.T) {
+		paths := LayoutPaths{LayoutPath{}}
+		length := paths.Length()
+		assert.Equal(t, 0.0, length)
+	})
+
+	t.Run("single path", func(t *testing.T) {
+		path := LayoutPath{
+			Points: Points{
+				{X: 0, Y: 0},
+				{X: 3, Y: 4},
+			},
+		}
+		paths := LayoutPaths{path}
+		length := paths.Length()
+
+		assert.Equal(t, 5.0, length)
+	})
+
+	t.Run("multiple paths", func(t *testing.T) {
+		paths := LayoutPaths{
+			{
+				Points: Points{{X: 0, Y: 0}, {X: 3, Y: 4}},
+			},
+			{
+				Points: Points{{X: 0, Y: 0}, {X: 1, Y: 1}},
+			},
+		}
+
+		length := paths.Length()
+
+		assert.Equal(t, 5+math.Sqrt(2), length)
+	})
+
 }

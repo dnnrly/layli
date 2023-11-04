@@ -235,10 +235,34 @@ func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
 	canvas.Path(p.Points.Path(spacing), `class="path-line"`, `marker-end="url(#arrow)"`)
 }
 
+func (paths *LayoutPath) Length() float64 {
+	if len(paths.Points) <= 1 {
+		return 0.0
+	}
+
+	length := 0.0
+	for i := 1; i < len(paths.Points); i++ {
+		a := paths.Points[i-1]
+		b := paths.Points[i]
+
+		length += a.Distance(b)
+	}
+
+	return length
+}
+
 type LayoutPaths []LayoutPath
 
 func (paths *LayoutPaths) Draw(canvas LayoutDrawer, spacing int) {
 	for _, p := range *paths {
 		p.Draw(canvas, spacing)
 	}
+}
+
+func (paths LayoutPaths) Length() float64 {
+	totalLength := float64(0)
+	for _, p := range paths {
+		totalLength += p.Length()
+	}
+	return totalLength
 }
