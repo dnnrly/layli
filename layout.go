@@ -1,7 +1,9 @@
 package layli
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 )
 
 type LayoutDrawer interface {
@@ -52,6 +54,26 @@ func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 	}
 
 	return l, nil
+}
+
+func (l *Layout) ConnectionDistances(connections ConfigEdges) (float64, error) {
+	dist := 0.0
+
+	for _, c := range connections {
+		f := l.Nodes.ByID(c.From)
+		if f == nil {
+			return 0, errors.New("cannot find node " + c.From)
+		}
+
+		to := l.Nodes.ByID(c.To)
+		if to == nil {
+			return 0, errors.New("cannot find node " + c.To)
+		}
+
+		dist += f.GetCentre().Distance(to.GetCentre())
+	}
+
+	return dist, nil
 }
 
 // LayoutHeight is the height in path units
@@ -130,6 +152,14 @@ type LayoutNode struct {
 }
 
 type LayoutNodes []LayoutNode
+
+func (nodes LayoutNodes) String() string {
+	var buf []string
+	for _, n := range nodes {
+		buf = append(buf, n.Id)
+	}
+	return fmt.Sprintf("[%s]", strings.Join(buf, ", "))
+}
 
 func (nodes LayoutNodes) ByID(id string) *LayoutNode {
 	for _, n := range nodes {

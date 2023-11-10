@@ -223,6 +223,43 @@ func TestLayout_IsAnyPort(t *testing.T) {
 		....................`, "	", ""), vm.String(), vm)
 }
 
+func TestLayout_ConnectionDistances_simple(t *testing.T) {
+	l := Layout{
+		Nodes: LayoutNodes{
+			NewLayoutNode("1", "contents", 1, 1, 3, 3),
+			NewLayoutNode("2", "contents", 1, 5, 3, 7),
+			NewLayoutNode("3", "contents", 1, 9, 3, 11),
+		},
+	}
+	e := func(f, t string) ConfigEdge {
+		return ConfigEdge{From: f, To: t}
+	}
+
+	dist, err := l.ConnectionDistances(ConfigEdges{e("1", "2"), e("2", "3"), e("3", "1")})
+
+	assert.NoError(t, err)
+	assert.Equal(t, 24.0, dist)
+}
+
+func TestLayout_ConnectionDistances_notFound(t *testing.T) {
+	l := Layout{
+		Nodes: LayoutNodes{
+			NewLayoutNode("1", "contents", 1, 1, 3, 3),
+			NewLayoutNode("2", "contents", 1, 5, 3, 7),
+			NewLayoutNode("3", "contents", 1, 9, 3, 11),
+		},
+	}
+	e := func(f, t string) ConfigEdge {
+		return ConfigEdge{From: f, To: t}
+	}
+
+	_, err := l.ConnectionDistances(ConfigEdges{e("1", "X"), e("2", "3"), e("3", "1")})
+	assert.Error(t, err)
+
+	_, err = l.ConnectionDistances(ConfigEdges{e("1", "2"), e("2", "3"), e("5", "1")})
+	assert.Error(t, err)
+}
+
 func TestLayoutPath_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 

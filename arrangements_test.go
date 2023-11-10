@@ -45,6 +45,7 @@ func TestSelectArrangement(t *testing.T) {
 	a(LayoutFlowSquare, Config{})
 	a(LayoutFlowSquare, Config{Layout: "flow-square"})
 	a(LayoutTopologicalSort, Config{Layout: "topo-sort"})
+	a(LayoutRandomShortestSquare, Config{Layout: "random-shortest-square"})
 
 	actual, err := selectArrangement(&Config{Layout: "unknown"})
 	assert.Error(t, err)
@@ -146,4 +147,30 @@ func TestLayoutTarjan(t *testing.T) {
 	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("4"))
 
 	assertSameColumn(t, *nodes.ByID("4"), *nodes.ByID("5"))
+}
+
+func TestLayoutRandomShortestSquare(t *testing.T) {
+	config := &Config{
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "1"},
+			ConfigNode{Id: "2"},
+			ConfigNode{Id: "3"},
+			ConfigNode{Id: "4"},
+			ConfigNode{Id: "5"},
+			ConfigNode{Id: "6"},
+			ConfigNode{Id: "7"},
+			ConfigNode{Id: "8"},
+			ConfigNode{Id: "9"},
+		},
+		Edges: ConfigEdges{
+			ConfigEdge{From: "1", To: "9"},
+		},
+		Border: 1, Spacing: 1, NodeWidth: 1, NodeHeight: 1, Margin: 1,
+	}
+
+	result := LayoutRandomShortestSquare(config)
+	expected := LayoutFlowSquare(config)
+
+	assert.NotNil(t, result)
+	assert.NotEqual(t, expected.String(), result.String(), "but got "+result.String())
 }
