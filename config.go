@@ -13,11 +13,12 @@ type ConfigPath struct {
 }
 
 type Config struct {
-	Layout  string      `yaml:"layout"`
-	Path    ConfigPath  `yaml:"path"`
-	Nodes   ConfigNodes `yaml:"nodes"`
-	Edges   ConfigEdges `yaml:"edges"`
-	Spacing int         `yaml:"-"`
+	Layout         string `yaml:"layout"`
+	LayoutAttempts int
+	Path           ConfigPath  `yaml:"path"`
+	Nodes          ConfigNodes `yaml:"nodes"`
+	Edges          ConfigEdges `yaml:"edges"`
+	Spacing        int         `yaml:"-"`
 
 	NodeWidth  int `yaml:"width"`
 	NodeHeight int `yaml:"height"`
@@ -71,6 +72,9 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 	}
 	if config.Border == 0 {
 		config.Border = 1
+	}
+	if config.LayoutAttempts == 0 {
+		config.LayoutAttempts = 10
 	}
 
 	return &config, nil

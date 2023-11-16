@@ -149,28 +149,42 @@ func TestLayoutTarjan(t *testing.T) {
 	assertSameColumn(t, *nodes.ByID("4"), *nodes.ByID("5"))
 }
 
-func TestLayoutRandomShortestSquare(t *testing.T) {
-	config := &Config{
+func shuffleConfig() *Config {
+	return &Config{
 		Nodes: ConfigNodes{
-			ConfigNode{Id: "1"},
-			ConfigNode{Id: "2"},
-			ConfigNode{Id: "3"},
-			ConfigNode{Id: "4"},
-			ConfigNode{Id: "5"},
-			ConfigNode{Id: "6"},
-			ConfigNode{Id: "7"},
-			ConfigNode{Id: "8"},
-			ConfigNode{Id: "9"},
+			ConfigNode{Id: "1"}, ConfigNode{Id: "2"}, ConfigNode{Id: "3"}, ConfigNode{Id: "4"},
+			ConfigNode{Id: "5"}, ConfigNode{Id: "6"}, ConfigNode{Id: "7"}, ConfigNode{Id: "8"},
+			ConfigNode{Id: "9"}, ConfigNode{Id: "A"}, ConfigNode{Id: "B"}, ConfigNode{Id: "C"},
+			ConfigNode{Id: "D"}, ConfigNode{Id: "9"}, ConfigNode{Id: "E"}, ConfigNode{Id: "F"},
+			ConfigNode{Id: "G"}, ConfigNode{Id: "H"}, ConfigNode{Id: "I"}, ConfigNode{Id: "J"},
+			ConfigNode{Id: "K"}, ConfigNode{Id: "L"}, ConfigNode{Id: "M"}, ConfigNode{Id: "N"},
 		},
+		LayoutAttempts: 10,
 		Edges: ConfigEdges{
 			ConfigEdge{From: "1", To: "9"},
 		},
+
 		Border: 1, Spacing: 1, NodeWidth: 1, NodeHeight: 1, Margin: 1,
 	}
+}
 
-	result := LayoutRandomShortestSquare(config)
-	expected := LayoutFlowSquare(config)
+func TestLayoutRandomShortestSquare(t *testing.T) {
+	result := LayoutRandomShortestSquare(shuffleConfig())
+	expected := LayoutFlowSquare(shuffleConfig())
 
 	assert.NotNil(t, result)
 	assert.NotEqual(t, expected.String(), result.String(), "but got "+result.String())
+}
+
+func TestShuffleNodes_shufflesNumTimes(t *testing.T) {
+	var count int
+	lastConfig := shuffleConfig()
+
+	_ = shuffleNodes(shuffleConfig(), func(config *Config) LayoutNodes {
+		assert.NotEqual(t, lastConfig, config)
+		count++
+		return LayoutNodes{NewLayoutNode("A", "c", 0, 0, 1, 1)}
+	})
+
+	assert.Equal(t, 10, count)
 }

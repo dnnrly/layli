@@ -137,9 +137,17 @@ func LayoutTarjan(config *Config) LayoutNodes {
 }
 
 func LayoutRandomShortestSquare(config *Config) LayoutNodes {
+	return shuffleNodes(config, LayoutFlowSquare)
+}
+
+func shuffleNodes(config *Config, arrange func(config *Config) LayoutNodes) LayoutNodes {
 	c := deepcopy.MustAnything(config).(*Config)
+	var last LayoutNodes
 
-	rand.Shuffle(len(c.Nodes), func(i, j int) { c.Nodes[i], c.Nodes[j] = c.Nodes[j], c.Nodes[i] })
+	for i := 0; i < config.LayoutAttempts; i++ {
+		rand.Shuffle(len(c.Nodes), func(i, j int) { c.Nodes[i], c.Nodes[j] = c.Nodes[j], c.Nodes[i] })
+		last = arrange(c)
+	}
 
-	return LayoutFlowSquare(c)
+	return last
 }
