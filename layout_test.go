@@ -173,6 +173,39 @@ func TestLayoutNodes_ByID(t *testing.T) {
 	assert.Nil(t, nodes.ByID("unknown"))
 }
 
+func TestLayoutNodes_ConnectionDistances_simple(t *testing.T) {
+	n := LayoutNodes{
+		NewLayoutNode("1", "contents", 1, 1, 3, 3),
+		NewLayoutNode("2", "contents", 1, 5, 3, 7),
+		NewLayoutNode("3", "contents", 1, 9, 3, 11),
+	}
+	e := func(f, t string) ConfigEdge {
+		return ConfigEdge{From: f, To: t}
+	}
+
+	dist, err := n.ConnectionDistances(ConfigEdges{e("1", "2"), e("2", "3"), e("3", "1")})
+
+	assert.NoError(t, err)
+	assert.Equal(t, 24.0, dist)
+}
+
+func TestLayoutNodes_ConnectionDistances_notFound(t *testing.T) {
+	n := LayoutNodes{
+		NewLayoutNode("1", "contents", 1, 1, 3, 3),
+		NewLayoutNode("2", "contents", 1, 5, 3, 7),
+		NewLayoutNode("3", "contents", 1, 9, 3, 11),
+	}
+	e := func(f, t string) ConfigEdge {
+		return ConfigEdge{From: f, To: t}
+	}
+
+	_, err := n.ConnectionDistances(ConfigEdges{e("1", "X"), e("2", "3"), e("3", "1")})
+	assert.Error(t, err)
+
+	_, err = n.ConnectionDistances(ConfigEdges{e("1", "2"), e("2", "3"), e("5", "1")})
+	assert.Error(t, err)
+}
+
 func TestLayout_ErrorsOnBadLayoutName(t *testing.T) {
 	_, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return nil }, &Config{Layout: "bad name"})
 	require.Error(t, err)
@@ -221,43 +254,6 @@ func TestLayout_IsAnyPort(t *testing.T) {
 		....................
 		....................
 		....................`, "	", ""), vm.String(), vm)
-}
-
-func TestLayout_ConnectionDistances_simple(t *testing.T) {
-	l := Layout{
-		Nodes: LayoutNodes{
-			NewLayoutNode("1", "contents", 1, 1, 3, 3),
-			NewLayoutNode("2", "contents", 1, 5, 3, 7),
-			NewLayoutNode("3", "contents", 1, 9, 3, 11),
-		},
-	}
-	e := func(f, t string) ConfigEdge {
-		return ConfigEdge{From: f, To: t}
-	}
-
-	dist, err := l.ConnectionDistances(ConfigEdges{e("1", "2"), e("2", "3"), e("3", "1")})
-
-	assert.NoError(t, err)
-	assert.Equal(t, 24.0, dist)
-}
-
-func TestLayout_ConnectionDistances_notFound(t *testing.T) {
-	l := Layout{
-		Nodes: LayoutNodes{
-			NewLayoutNode("1", "contents", 1, 1, 3, 3),
-			NewLayoutNode("2", "contents", 1, 5, 3, 7),
-			NewLayoutNode("3", "contents", 1, 9, 3, 11),
-		},
-	}
-	e := func(f, t string) ConfigEdge {
-		return ConfigEdge{From: f, To: t}
-	}
-
-	_, err := l.ConnectionDistances(ConfigEdges{e("1", "X"), e("2", "3"), e("3", "1")})
-	assert.Error(t, err)
-
-	_, err = l.ConnectionDistances(ConfigEdges{e("1", "2"), e("2", "3"), e("5", "1")})
-	assert.Error(t, err)
 }
 
 func TestLayoutPath_Draw(t *testing.T) {

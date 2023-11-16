@@ -56,26 +56,6 @@ func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 	return l, nil
 }
 
-func (l *Layout) ConnectionDistances(connections ConfigEdges) (float64, error) {
-	dist := 0.0
-
-	for _, c := range connections {
-		f := l.Nodes.ByID(c.From)
-		if f == nil {
-			return 0, errors.New("cannot find node " + c.From)
-		}
-
-		to := l.Nodes.ByID(c.To)
-		if to == nil {
-			return 0, errors.New("cannot find node " + c.To)
-		}
-
-		dist += f.GetCentre().Distance(to.GetCentre())
-	}
-
-	return dist, nil
-}
-
 // LayoutHeight is the height in path units
 func (l *Layout) LayoutHeight() int {
 	maxBottom := 0
@@ -168,6 +148,26 @@ func (nodes LayoutNodes) ByID(id string) *LayoutNode {
 		}
 	}
 	return nil
+}
+
+func (n LayoutNodes) ConnectionDistances(connections ConfigEdges) (float64, error) {
+	dist := 0.0
+
+	for _, c := range connections {
+		f := n.ByID(c.From)
+		if f == nil {
+			return 0, errors.New("cannot find node " + c.From)
+		}
+
+		to := n.ByID(c.To)
+		if to == nil {
+			return 0, errors.New("cannot find node " + c.To)
+		}
+
+		dist += f.GetCentre().Distance(to.GetCentre())
+	}
+
+	return dist, nil
 }
 
 func NewLayoutNode(id, contents string, left, top, width, height int) LayoutNode {
