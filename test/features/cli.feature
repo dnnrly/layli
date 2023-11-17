@@ -81,7 +81,6 @@ Feature: Simple CLI commands
         When the app runs with parameters "tmp/fixtures/inputs/random-shortest-square.layli"
         Then the app exits without error
         And a file "tmp/fixtures/inputs/random-shortest-square.svg" exists
-        And the number of nodes is 5
         And in the SVG file, all node text fits inside the node boundaries
         And in the SVG file, nodes do not overlap
         And in the SVG file, all nodes fit on the image

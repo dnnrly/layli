@@ -1,8 +1,9 @@
 path:
   strategy: random
-  attempts: 100
+  attempts: 1000
 
 layout: random-shortest-square
+layout-attempts: 1000
 
 nodes:
   - id: node1

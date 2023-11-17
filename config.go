@@ -13,8 +13,8 @@ type ConfigPath struct {
 }
 
 type Config struct {
-	Layout         string `yaml:"layout"`
-	LayoutAttempts int
+	Layout         string      `yaml:"layout"`
+	LayoutAttempts int         `yaml:"layout-attempts"`
 	Path           ConfigPath  `yaml:"path"`
 	Nodes          ConfigNodes `yaml:"nodes"`
 	Edges          ConfigEdges `yaml:"edges"`

@@ -188,3 +188,21 @@ func TestShuffleNodes_shufflesNumTimes(t *testing.T) {
 
 	assert.Equal(t, 10, count)
 }
+
+func TestShuffleNodes_selectsShortsConnectionDistances(t *testing.T) {
+	var count int
+	options := []LayoutNodes{
+		{NewLayoutNode("1", "", 0, 0, 1, 1), NewLayoutNode("9", "", 0, 25, 1, 29)},
+		{NewLayoutNode("1", "", 0, 0, 1, 1), NewLayoutNode("9", "", 0, 15, 1, 20)},
+		{NewLayoutNode("1", "", 0, 0, 1, 1), NewLayoutNode("9", "", 0, 45, 1, 50)},
+	}
+
+	c := shuffleConfig()
+	c.LayoutAttempts = 3
+	result := shuffleNodes(c, func(config *Config) LayoutNodes {
+		count++
+		return options[count-1]
+	})
+
+	assert.Equal(t, options[1], result)
+}

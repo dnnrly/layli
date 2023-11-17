@@ -142,12 +142,18 @@ func LayoutRandomShortestSquare(config *Config) LayoutNodes {
 
 func shuffleNodes(config *Config, arrange func(config *Config) LayoutNodes) LayoutNodes {
 	c := deepcopy.MustAnything(config).(*Config)
-	var last LayoutNodes
+	var shortest LayoutNodes
+	shortestDist := math.MaxFloat64
 
 	for i := 0; i < config.LayoutAttempts; i++ {
 		rand.Shuffle(len(c.Nodes), func(i, j int) { c.Nodes[i], c.Nodes[j] = c.Nodes[j], c.Nodes[i] })
-		last = arrange(c)
+		nodes := arrange(c)
+		dist, _ := nodes.ConnectionDistances(c.Edges)
+		if dist < shortestDist {
+			shortest = nodes
+			shortestDist = dist
+		}
 	}
 
-	return last
+	return shortest
 }
