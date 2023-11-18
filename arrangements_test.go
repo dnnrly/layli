@@ -45,6 +45,7 @@ func TestSelectArrangement(t *testing.T) {
 	a(LayoutFlowSquare, Config{})
 	a(LayoutFlowSquare, Config{Layout: "flow-square"})
 	a(LayoutTopologicalSort, Config{Layout: "topo-sort"})
+	a(LayoutRandomShortestSquare, Config{Layout: "random-shortest-square"})
 
 	actual, err := selectArrangement(&Config{Layout: "unknown"})
 	assert.Error(t, err)
@@ -146,4 +147,62 @@ func TestLayoutTarjan(t *testing.T) {
 	assertSameRow(t, *nodes.ByID("1"), *nodes.ByID("4"))
 
 	assertSameColumn(t, *nodes.ByID("4"), *nodes.ByID("5"))
+}
+
+func shuffleConfig() *Config {
+	return &Config{
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "1"}, ConfigNode{Id: "2"}, ConfigNode{Id: "3"}, ConfigNode{Id: "4"},
+			ConfigNode{Id: "5"}, ConfigNode{Id: "6"}, ConfigNode{Id: "7"}, ConfigNode{Id: "8"},
+			ConfigNode{Id: "9"}, ConfigNode{Id: "A"}, ConfigNode{Id: "B"}, ConfigNode{Id: "C"},
+			ConfigNode{Id: "D"}, ConfigNode{Id: "9"}, ConfigNode{Id: "E"}, ConfigNode{Id: "F"},
+			ConfigNode{Id: "G"}, ConfigNode{Id: "H"}, ConfigNode{Id: "I"}, ConfigNode{Id: "J"},
+			ConfigNode{Id: "K"}, ConfigNode{Id: "L"}, ConfigNode{Id: "M"}, ConfigNode{Id: "N"},
+		},
+		LayoutAttempts: 10,
+		Edges: ConfigEdges{
+			ConfigEdge{From: "1", To: "9"},
+		},
+
+		Border: 1, Spacing: 1, NodeWidth: 1, NodeHeight: 1, Margin: 1,
+	}
+}
+
+func TestLayoutRandomShortestSquare(t *testing.T) {
+	result := LayoutRandomShortestSquare(shuffleConfig())
+	expected := LayoutFlowSquare(shuffleConfig())
+
+	assert.NotNil(t, result)
+	assert.NotEqual(t, expected.String(), result.String(), "but got "+result.String())
+}
+
+func TestShuffleNodes_shufflesNumTimes(t *testing.T) {
+	var count int
+	lastConfig := shuffleConfig()
+
+	_ = shuffleNodes(shuffleConfig(), func(config *Config) LayoutNodes {
+		assert.NotEqual(t, lastConfig, config)
+		count++
+		return LayoutNodes{NewLayoutNode("A", "c", 0, 0, 1, 1)}
+	})
+
+	assert.Equal(t, 10, count)
+}
+
+func TestShuffleNodes_selectsShortsConnectionDistances(t *testing.T) {
+	var count int
+	options := []LayoutNodes{
+		{NewLayoutNode("1", "", 0, 0, 1, 1), NewLayoutNode("9", "", 0, 25, 1, 29)},
+		{NewLayoutNode("1", "", 0, 0, 1, 1), NewLayoutNode("9", "", 0, 15, 1, 20)},
+		{NewLayoutNode("1", "", 0, 0, 1, 1), NewLayoutNode("9", "", 0, 45, 1, 50)},
+	}
+
+	c := shuffleConfig()
+	c.LayoutAttempts = 3
+	result := shuffleNodes(c, func(config *Config) LayoutNodes {
+		count++
+		return options[count-1]
+	})
+
+	assert.Equal(t, options[1], result)
 }

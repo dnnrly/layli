@@ -77,6 +77,15 @@ Feature: Simple CLI commands
         And in the SVG file, all nodes fit on the image
 
     @Acceptance
+    Scenario: Generates an image with random shortest square nodes
+        When the app runs with parameters "tmp/fixtures/inputs/random-shortest-square.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/random-shortest-square.svg" exists
+        And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap
+        And in the SVG file, all nodes fit on the image
+
+    @Acceptance
     Scenario: Arranges paths to prevent blockages
         When the app runs with parameters "tmp/fixtures/inputs/blocked.layli"
         Then the app exits without error

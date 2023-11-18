@@ -33,11 +33,12 @@ nodes:
 				Contents: "C2",
 			},
 		},
-		Spacing:    20,
-		Border:     1,
-		Margin:     2,
-		NodeWidth:  5,
-		NodeHeight: 3,
+		LayoutAttempts: 10,
+		Spacing:        20,
+		Border:         1,
+		Margin:         2,
+		NodeWidth:      5,
+		NodeHeight:     3,
 	}, *config)
 }
 

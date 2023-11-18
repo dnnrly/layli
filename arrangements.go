@@ -3,7 +3,9 @@ package layli
 import (
 	"errors"
 	"math"
+	"math/rand"
 
+	"github.com/barkimedes/go-deepcopy"
 	"github.com/dnnrly/layli/algorithms/tarjan"
 	"github.com/dnnrly/layli/algorithms/topological"
 )
@@ -24,6 +26,9 @@ func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 
 	case "topo-sort":
 		return LayoutTopologicalSort, nil
+
+	case "random-shortest-square":
+		return LayoutRandomShortestSquare, nil
 	}
 
 	return nil, errors.New("do not understand layout " + c.Layout)
@@ -129,4 +134,26 @@ func LayoutTarjan(config *Config) LayoutNodes {
 	}
 
 	return layoutNodes
+}
+
+func LayoutRandomShortestSquare(config *Config) LayoutNodes {
+	return shuffleNodes(config, LayoutFlowSquare)
+}
+
+func shuffleNodes(config *Config, arrange func(config *Config) LayoutNodes) LayoutNodes {
+	c := deepcopy.MustAnything(config).(*Config)
+	var shortest LayoutNodes
+	shortestDist := math.MaxFloat64
+
+	for i := 0; i < config.LayoutAttempts; i++ {
+		rand.Shuffle(len(c.Nodes), func(i, j int) { c.Nodes[i], c.Nodes[j] = c.Nodes[j], c.Nodes[i] })
+		nodes := arrange(c)
+		dist, _ := nodes.ConnectionDistances(c.Edges)
+		if dist < shortestDist {
+			shortest = nodes
+			shortestDist = dist
+		}
+	}
+
+	return shortest
 }
