@@ -1,0 +1,44 @@
+nodes:
+    - id: a
+      contents: Node 1
+    - id: b
+      contents: Node 2
+    - id: c
+      contents: Node 3
+    - id: f
+      contents: Node 4
+    - id: d
+      contents: Node 5
+    - id: e
+      contents: Node 6
+    - id: g
+      contents: Node 7
+    - id: h
+      contents: Node 8
+    - id: i
+      contents: Node 9
+
+edges:
+    - from: a
+      to: b
+    - from: b
+      to: c
+    - from: c
+      to: d
+    - from: d
+      to: e
+    - from: c
+      to: e
+    - from: e
+      to: d
+    - from: d
+      to: f
+    - from: f
+      to: g
+    - from: f
+      to: h
+    - from: g
+      to: i
+
+width: 7
+height: 4
