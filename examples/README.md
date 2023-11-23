@@ -12,7 +12,7 @@ The Flow Square layout arranges the nodes in a square grid, in the order that th
 
 <img src="/examples/simple-flow-square.svg" alt="Simple Flow Square example image" />
 
-<detail>
+<details>
 <summary>Simple flow-square example</summary>
 
 ```yaml
@@ -61,7 +61,7 @@ edges:
 width: 7
 height: 4
 ```
-</detail>
+</details>
 
 ### Topological Sort
 
@@ -69,7 +69,7 @@ This layout uses an algorithm to analyse the edges in the graph to arrange the n
 
 <img src="/examples/topological-sort.svg" alt="Topological sort example image" />
 
-<detail>
+<details>
 <summary>Topological sort example</summary>
 
 ```yaml
@@ -100,7 +100,7 @@ edges:
     to: node5
 
 ```
-</detail>
+</details>
 
 ### Tarjan's Algorithm
 
@@ -109,7 +109,7 @@ This is an implementation of the [Tarjan's algorithm](https://en.wikipedia.org/w
 
 <img src="/examples/tarjan.svg" alt="Tarjan's algorithm example image" />
 
-<detail>
+<details>
 <summary>Tarjan's algorithm example</summary>
 
 ```yaml
@@ -158,7 +158,7 @@ edges:
       to: h
 
 ```
-</detail>
+</details>
 
 ### Random Shortest Square
 
@@ -166,7 +166,7 @@ This algorithm attempts to arrange the nodes in a square grid, but it does this 
 
 <img src="/examples/random-shortest-square.svg" alt="Random Shortest Square example image" />
 
-<detail>
+<details>
 <summary>Random Shortest Square example</summary>
 
 ```yaml
@@ -223,7 +223,7 @@ edges:
   - from: node6
     to: node12
 ```
-</detail>
+</details>
 
 ## Paths
 
@@ -243,7 +243,7 @@ Notice that in this example, the layout can be specified too.
 
 <img src="/examples/random-paths.svg" alt="Random paths example image" />
 
-<detail>
+<details>
 <summary>Random paths example</summary>
 
 ```yaml
@@ -295,7 +295,7 @@ edges:
     - from: f
       to: h
 ```
-</detail>
+</details>
 
 ## Size and spacing
 
@@ -303,11 +303,10 @@ It is possible to specify the size of nodes and the spacing between them. It's a
 
 <img src="/examples/size-and-spacing.svg" alt="Size and spacing example image" />
 
-<detail>
+<details>
 <summary>Size and spacing example</summary>
 
 ```yaml
-
 width: 7
 height: 4
 margin: 3
@@ -330,4 +329,4 @@ edges:
     - from: c
       to: d
 ```
-</detail>
+</details>
