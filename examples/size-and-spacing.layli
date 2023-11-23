@@ -1,0 +1,24 @@
+width: 7
+height: 6
+margin: 3
+border: 2
+
+nodes:
+    - id: a
+      contents: Node 1
+    - id: b
+      contents: Node 2
+    - id: c
+      contents: Node 3
+    - id: d
+      contents: Node 4
+
+edges:
+    - from: a
+      to: b
+    - from: b
+      to: c
+    - from: c
+      to: d
+    - from: d
+      to: a
