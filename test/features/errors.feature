@@ -8,3 +8,9 @@ Feature: Error handling
         When the app runs with parameters "tmp/fixtures/inputs/impossible-paths.layli"
         Then the app exits with an error
         And the app output contains "finding path between node2 and node3: no path found"
+
+    @Acceptance
+    Scenario: Errors when overlapping absolute nodes defined
+        When the app runs with parameters "tmp/fixtures/inputs/absolute-layout-overlap.layli"
+        Then the app exits with an error
+        And the app output contains "laying out nodes: b and c overlap"

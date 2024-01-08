@@ -1,0 +1,21 @@
+nodes:
+    - id: a
+      contents: Node 1
+      position: {x: 5, y: 5}
+    - id: b
+      contents: Node 2
+      position: {x: 5, y: 15}
+    - id: c
+      contents: Node 3
+      position: {x: 6, y: 12}
+
+layout: absolute
+
+edges:
+    - from: a
+      to: b
+    - from: b
+      to: c
+
+width: 4
+height: 4
