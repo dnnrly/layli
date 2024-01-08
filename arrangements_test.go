@@ -55,7 +55,7 @@ func TestSelectArrangement(t *testing.T) {
 
 func TestLayoutFlowSquare(t *testing.T) {
 	{
-		l := LayoutFlowSquare(newConfig(2, 5, 3, 1, 1))
+		l, _ := LayoutFlowSquare(newConfig(2, 5, 3, 1, 1))
 
 		require.Len(t, l, 2)
 		assert.EqualValues(t, LayoutNode{"1", "", 5, 3, 2, 4, 2, 6}, l[0])
@@ -63,7 +63,7 @@ func TestLayoutFlowSquare(t *testing.T) {
 	}
 
 	{
-		l := LayoutFlowSquare(newConfig(4, 5, 3, 1, 1))
+		l, _ := LayoutFlowSquare(newConfig(4, 5, 3, 1, 1))
 
 		require.Len(t, l, 4)
 		assert.EqualValues(t, LayoutNode{"1", "", 5, 3, 2, 4, 2, 6}, l[0])
@@ -73,7 +73,7 @@ func TestLayoutFlowSquare(t *testing.T) {
 	}
 
 	{
-		l := LayoutFlowSquare(newConfig(4, 5, 3, 2, 1))
+		l, _ := LayoutFlowSquare(newConfig(4, 5, 3, 2, 1))
 
 		require.Len(t, l, 4)
 		assert.EqualValues(t, LayoutNode{"1", "", 5, 3, 3, 5, 3, 7}, l[0])
@@ -83,7 +83,7 @@ func TestLayoutFlowSquare(t *testing.T) {
 	}
 
 	{
-		l := LayoutFlowSquare(newConfig(8, 5, 3, 2, 1))
+		l, _ := LayoutFlowSquare(newConfig(8, 5, 3, 2, 1))
 
 		require.Len(t, l, 8)
 		assert.EqualValues(t, LayoutNode{"1", "", 5, 3, 3, 5, 3, 7}, l[0])
@@ -94,7 +94,7 @@ func TestLayoutFlowSquare(t *testing.T) {
 	}
 
 	{
-		l := LayoutFlowSquare(newConfig(4, 5, 4, 2, 2))
+		l, _ := LayoutFlowSquare(newConfig(4, 5, 4, 2, 2))
 
 		require.Len(t, l, 4)
 		assert.EqualValues(t, LayoutNode{"1", "", 5, 4, 3, 6, 3, 7}, l[0])
@@ -103,7 +103,7 @@ func TestLayoutFlowSquare(t *testing.T) {
 }
 
 func TestLayoutTopologicalSort_simpleLine(t *testing.T) {
-	nodes := LayoutTopologicalSort(&Config{
+	nodes, err := LayoutTopologicalSort(&Config{
 		Nodes: ConfigNodes{ConfigNode{Id: "1"}, ConfigNode{Id: "2"}, ConfigNode{Id: "3"}},
 		Edges: ConfigEdges{
 			ConfigEdge{From: "1", To: "3"},
@@ -112,6 +112,8 @@ func TestLayoutTopologicalSort_simpleLine(t *testing.T) {
 		Border: 1, Spacing: 1,
 		NodeWidth: 1, NodeHeight: 1, Margin: 1,
 	})
+
+	assert.NoError(t, err)
 
 	assert.Len(t, nodes, 3)
 
@@ -123,7 +125,7 @@ func TestLayoutTopologicalSort_simpleLine(t *testing.T) {
 }
 
 func TestLayoutTarjan(t *testing.T) {
-	nodes := LayoutTarjan(&Config{
+	nodes, err := LayoutTarjan(&Config{
 		Nodes: ConfigNodes{ConfigNode{Id: "1"}, ConfigNode{Id: "2"}, ConfigNode{Id: "3"}, ConfigNode{Id: "4"}, ConfigNode{Id: "5"}},
 		Edges: ConfigEdges{
 			ConfigEdge{From: "1", To: "2"},
@@ -136,6 +138,8 @@ func TestLayoutTarjan(t *testing.T) {
 		Border: 1, Spacing: 1,
 		NodeWidth: 1, NodeHeight: 1, Margin: 1,
 	})
+
+	assert.NoError(t, err)
 
 	assertLeftOf(t, *nodes.ByID("1"), *nodes.ByID("2"))
 	assertLeftOf(t, *nodes.ByID("2"), *nodes.ByID("3"))
@@ -170,8 +174,8 @@ func shuffleConfig() *Config {
 }
 
 func TestLayoutRandomShortestSquare(t *testing.T) {
-	result := LayoutRandomShortestSquare(shuffleConfig())
-	expected := LayoutFlowSquare(shuffleConfig())
+	result, _ := LayoutRandomShortestSquare(shuffleConfig())
+	expected, _ := LayoutFlowSquare(shuffleConfig())
 
 	assert.NotNil(t, result)
 	assert.NotEqual(t, expected.String(), result.String(), "but got "+result.String())
@@ -181,10 +185,10 @@ func TestShuffleNodes_shufflesNumTimes(t *testing.T) {
 	var count int
 	lastConfig := shuffleConfig()
 
-	_ = shuffleNodes(shuffleConfig(), func(config *Config) LayoutNodes {
+	_, _ = shuffleNodes(shuffleConfig(), func(config *Config) (LayoutNodes, error) {
 		assert.NotEqual(t, lastConfig, config)
 		count++
-		return LayoutNodes{NewLayoutNode("A", "c", 0, 0, 1, 1)}
+		return LayoutNodes{NewLayoutNode("A", "c", 0, 0, 1, 1)}, nil
 	})
 
 	assert.Equal(t, 10, count)
@@ -200,23 +204,24 @@ func TestShuffleNodes_selectsShortsConnectionDistances(t *testing.T) {
 
 	c := shuffleConfig()
 	c.LayoutAttempts = 3
-	result := shuffleNodes(c, func(config *Config) LayoutNodes {
+	result, err := shuffleNodes(c, func(config *Config) (LayoutNodes, error) {
 		count++
-		return options[count-1]
+		return options[count-1], nil
 	})
 
 	assert.Equal(t, options[1], result)
+	assert.NoError(t, err)
 }
 
 func TestAbsoluteArrangement(t *testing.T) {
-	l := LayoutAbsolute(&Config{
+	l, err := LayoutAbsolute(&Config{
 		Layout: "absolute",
 		Nodes: ConfigNodes{
-			ConfigNode{Id: "1", Position: Position{X: 5, Y: 1}},
-			ConfigNode{Id: "2", Position: Position{X: 4, Y: 2}},
-			ConfigNode{Id: "3", Position: Position{X: 3, Y: 3}},
-			ConfigNode{Id: "4", Position: Position{X: 2, Y: 4}},
-			ConfigNode{Id: "5", Position: Position{X: 1, Y: 5}},
+			ConfigNode{Id: "1", Position: Position{X: 50, Y: 10}},
+			ConfigNode{Id: "2", Position: Position{X: 40, Y: 20}},
+			ConfigNode{Id: "3", Position: Position{X: 30, Y: 30}},
+			ConfigNode{Id: "4", Position: Position{X: 20, Y: 40}},
+			ConfigNode{Id: "5", Position: Position{X: 10, Y: 50}},
 		},
 
 		Spacing:    1,
@@ -226,10 +231,34 @@ func TestAbsoluteArrangement(t *testing.T) {
 		Border:     1,
 	})
 
+	require.NoError(t, err)
 	require.Equal(t, 5, len(l))
-	assert.EqualValues(t, LayoutNode{"1", "", 5, 4, 1, 4, 5, 9}, l[0])
-	assert.EqualValues(t, LayoutNode{"2", "", 5, 4, 2, 5, 4, 8}, l[1])
-	assert.EqualValues(t, LayoutNode{"3", "", 5, 4, 3, 6, 3, 7}, l[2])
-	assert.EqualValues(t, LayoutNode{"4", "", 5, 4, 4, 7, 2, 6}, l[3])
-	assert.EqualValues(t, LayoutNode{"5", "", 5, 4, 5, 8, 1, 5}, l[4])
+	assert.EqualValues(t, LayoutNode{"1", "", 5, 4, 10, 13, 50, 54}, l[0])
+	assert.EqualValues(t, LayoutNode{"2", "", 5, 4, 20, 23, 40, 44}, l[1])
+	assert.EqualValues(t, LayoutNode{"3", "", 5, 4, 30, 33, 30, 34}, l[2])
+	assert.EqualValues(t, LayoutNode{"4", "", 5, 4, 40, 43, 20, 24}, l[3])
+	assert.EqualValues(t, LayoutNode{"5", "", 5, 4, 50, 53, 10, 14}, l[4])
+}
+
+func TestAbsoluteArrangement_ErrorsOnOverlaps(t *testing.T) {
+	_, err := LayoutAbsolute(&Config{
+		Layout: "absolute",
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "1", Position: Position{X: 50, Y: 10}},
+			ConfigNode{Id: "2", Position: Position{X: 40, Y: 20}},
+			ConfigNode{Id: "3", Position: Position{X: 30, Y: 30}},
+			ConfigNode{Id: "4", Position: Position{X: 20, Y: 40}},
+			ConfigNode{Id: "5", Position: Position{X: 10, Y: 50}},
+			ConfigNode{Id: "6", Position: Position{X: 50, Y: 8}},
+		},
+
+		Spacing:    1,
+		NodeWidth:  5,
+		NodeHeight: 4,
+		Margin:     2,
+		Border:     1,
+	})
+
+	require.Error(t, err)
+	assert.Equal(t, "nodes 1 and 6 overlap", err.Error())
 }

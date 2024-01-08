@@ -12,7 +12,7 @@ import (
 )
 
 // LayoutArrangementFunc returns a slice of nodes arranged according to the algorithm implemented
-type LayoutArrangementFunc func(c *Config) LayoutNodes
+type LayoutArrangementFunc func(c *Config) (LayoutNodes, error)
 
 func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 	switch c.Layout {
@@ -38,7 +38,7 @@ func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 	return nil, errors.New("do not understand layout " + c.Layout)
 }
 
-func LayoutFlowSquare(c *Config) LayoutNodes {
+func LayoutFlowSquare(c *Config) (LayoutNodes, error) {
 	numNodes := len(c.Nodes)
 	nodes := make(LayoutNodes, numNodes)
 
@@ -73,11 +73,11 @@ func LayoutFlowSquare(c *Config) LayoutNodes {
 		}
 	}
 
-	return nodes
+	return nodes, nil
 }
 
 // LayoutTopologicalSort arranges nodes in a single row, sorted in topological order
-func LayoutTopologicalSort(config *Config) LayoutNodes {
+func LayoutTopologicalSort(config *Config) (LayoutNodes, error) {
 	layoutNodes := LayoutNodes{}
 	graph := topological.NewGraph()
 
@@ -104,11 +104,11 @@ func LayoutTopologicalSort(config *Config) LayoutNodes {
 		))
 	}
 
-	return layoutNodes
+	return layoutNodes, nil
 }
 
 // LayoutTarjan arranges nodes in multiple rows according to Tarhan's algorithm
-func LayoutTarjan(config *Config) LayoutNodes {
+func LayoutTarjan(config *Config) (LayoutNodes, error) {
 	layoutNodes := LayoutNodes{}
 	graph := tarjan.NewGraph()
 
@@ -137,21 +137,21 @@ func LayoutTarjan(config *Config) LayoutNodes {
 		}
 	}
 
-	return layoutNodes
+	return layoutNodes, nil
 }
 
-func LayoutRandomShortestSquare(config *Config) LayoutNodes {
+func LayoutRandomShortestSquare(config *Config) (LayoutNodes, error) {
 	return shuffleNodes(config, LayoutFlowSquare)
 }
 
-func shuffleNodes(config *Config, arrange func(config *Config) LayoutNodes) LayoutNodes {
+func shuffleNodes(config *Config, arrange LayoutArrangementFunc) (LayoutNodes, error) {
 	c := deepcopy.MustAnything(config).(*Config)
 	var shortest LayoutNodes
 	shortestDist := math.MaxFloat64
 
 	for i := 0; i < config.LayoutAttempts; i++ {
 		rand.Shuffle(len(c.Nodes), func(i, j int) { c.Nodes[i], c.Nodes[j] = c.Nodes[j], c.Nodes[i] })
-		nodes := arrange(c)
+		nodes, _ := arrange(c)
 		dist, _ := nodes.ConnectionDistances(c.Edges)
 		if dist < shortestDist {
 			shortest = nodes
@@ -159,10 +159,10 @@ func shuffleNodes(config *Config, arrange func(config *Config) LayoutNodes) Layo
 		}
 	}
 
-	return shortest
+	return shortest, nil
 }
 
-func LayoutAbsolute(c *Config) LayoutNodes {
+func LayoutAbsolute(c *Config) (LayoutNodes, error) {
 	numNodes := len(c.Nodes)
 	nodes := make(LayoutNodes, numNodes)
 
@@ -173,8 +173,22 @@ func LayoutAbsolute(c *Config) LayoutNodes {
 			n.Position.Y,
 			c.NodeWidth, c.NodeHeight,
 		)
-		fmt.Printf("node %s at %+v\n", n.Id, nodes[i])
 	}
 
-	return nodes
+	nodesOverlap := func(node1, node2 LayoutNode) bool {
+		return !(node1.right <= node2.left ||
+			node1.left >= node2.right ||
+			node1.bottom <= node2.top ||
+			node1.top >= node2.bottom)
+	}
+
+	for i, node1 := range nodes {
+		for j, node2 := range nodes {
+			if i != j && nodesOverlap(node1, node2) {
+				return nil, fmt.Errorf("nodes %s and %s overlap", node1.Id, node2.Id)
+			}
+		}
+	}
+
+	return nodes, nil
 }
