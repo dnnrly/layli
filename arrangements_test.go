@@ -46,6 +46,7 @@ func TestSelectArrangement(t *testing.T) {
 	a(LayoutFlowSquare, Config{Layout: "flow-square"})
 	a(LayoutTopologicalSort, Config{Layout: "topo-sort"})
 	a(LayoutRandomShortestSquare, Config{Layout: "random-shortest-square"})
+	a(LayoutAbsolute, Config{Layout: "absolute"})
 
 	actual, err := selectArrangement(&Config{Layout: "unknown"})
 	assert.Error(t, err)
@@ -205,4 +206,30 @@ func TestShuffleNodes_selectsShortsConnectionDistances(t *testing.T) {
 	})
 
 	assert.Equal(t, options[1], result)
+}
+
+func TestAbsoluteArrangement(t *testing.T) {
+	l := LayoutAbsolute(&Config{
+		Layout: "absolute",
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "1", Position: Position{X: 5, Y: 1}},
+			ConfigNode{Id: "2", Position: Position{X: 4, Y: 2}},
+			ConfigNode{Id: "3", Position: Position{X: 3, Y: 3}},
+			ConfigNode{Id: "4", Position: Position{X: 2, Y: 4}},
+			ConfigNode{Id: "5", Position: Position{X: 1, Y: 5}},
+		},
+
+		Spacing:    1,
+		NodeWidth:  5,
+		NodeHeight: 4,
+		Margin:     2,
+		Border:     1,
+	})
+
+	require.Equal(t, 5, len(l))
+	assert.EqualValues(t, LayoutNode{"1", "", 5, 4, 1, 4, 5, 9}, l[0])
+	assert.EqualValues(t, LayoutNode{"2", "", 5, 4, 2, 5, 4, 8}, l[1])
+	assert.EqualValues(t, LayoutNode{"3", "", 5, 4, 3, 6, 3, 7}, l[2])
+	assert.EqualValues(t, LayoutNode{"4", "", 5, 4, 4, 7, 2, 6}, l[3])
+	assert.EqualValues(t, LayoutNode{"5", "", 5, 4, 5, 8, 1, 5}, l[4])
 }

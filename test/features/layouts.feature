@@ -87,3 +87,11 @@ Feature: Layout behaviour
         And a file "tmp/fixtures/inputs/crossing-lines.svg" exists
         And the number of paths is 6
         And no paths cross
+
+    @Acceptance
+    Scenario: Generates layout with absolute positions
+        When the app runs with parameters "tmp/fixtures/inputs/absolute-layout.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/absolute-layout.svg" exists
+        And in the SVG file, nodes do not overlap
+        And no paths cross

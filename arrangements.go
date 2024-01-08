@@ -2,6 +2,7 @@ package layli
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"math/rand"
 
@@ -29,6 +30,9 @@ func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 
 	case "random-shortest-square":
 		return LayoutRandomShortestSquare, nil
+
+	case "absolute":
+		return LayoutAbsolute, nil
 	}
 
 	return nil, errors.New("do not understand layout " + c.Layout)
@@ -156,4 +160,21 @@ func shuffleNodes(config *Config, arrange func(config *Config) LayoutNodes) Layo
 	}
 
 	return shortest
+}
+
+func LayoutAbsolute(c *Config) LayoutNodes {
+	numNodes := len(c.Nodes)
+	nodes := make(LayoutNodes, numNodes)
+
+	for i, n := range c.Nodes {
+		nodes[i] = NewLayoutNode(
+			n.Id, n.Contents,
+			n.Position.X,
+			n.Position.Y,
+			c.NodeWidth, c.NodeHeight,
+		)
+		fmt.Printf("node %s at %+v\n", n.Id, nodes[i])
+	}
+
+	return nodes
 }
