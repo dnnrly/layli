@@ -13,4 +13,4 @@ Feature: Error handling
     Scenario: Errors when overlapping absolute nodes defined
         When the app runs with parameters "tmp/fixtures/inputs/absolute-layout-overlap.layli"
         Then the app exits with an error
-        And the app output contains "arranging nodes: nodes a and c overlap"
+        And the app output contains "arranging nodes: nodes a and b margins overlap"

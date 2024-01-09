@@ -262,3 +262,112 @@ func TestAbsoluteArrangement_ErrorsOnOverlaps(t *testing.T) {
 	require.Error(t, err)
 	assert.Equal(t, "nodes 1 and 6 overlap", err.Error())
 }
+
+func TestAbsoluteArrangement_BorderAndNodeOverlap(t *testing.T) {
+	_, err := LayoutAbsolute(&Config{
+		Layout: "absolute",
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "2", Position: Position{X: 40, Y: 20}},
+			ConfigNode{Id: "3", Position: Position{X: 30, Y: 30}},
+			ConfigNode{Id: "4", Position: Position{X: 20, Y: 40}},
+			ConfigNode{Id: "6", Position: Position{X: 50, Y: 8}},
+		},
+
+		Spacing:    1,
+		NodeWidth:  5,
+		NodeHeight: 4,
+		Margin:     2,
+		Border:     10,
+	})
+
+	require.Error(t, err)
+	assert.Equal(t, "node 6 overlaps border", err.Error())
+}
+
+func TestAbsoluteArrangement_BorderAndMarginOverlap(t *testing.T) {
+	_, err := LayoutAbsolute(&Config{
+		Layout: "absolute",
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "2", Position: Position{X: 40, Y: 20}},
+			ConfigNode{Id: "3", Position: Position{X: 30, Y: 30}},
+			ConfigNode{Id: "4", Position: Position{X: 20, Y: 40}},
+			ConfigNode{Id: "6", Position: Position{X: 50, Y: 11}},
+		},
+
+		Spacing:    1,
+		NodeWidth:  5,
+		NodeHeight: 4,
+		Margin:     2,
+		Border:     10,
+	})
+
+	require.Error(t, err)
+	assert.Equal(t, "node 6 margin overlaps border", err.Error())
+}
+
+func TestAbsoluteArrangement_MarginOverlap(t *testing.T) {
+	_, err := LayoutAbsolute(&Config{
+		Layout: "absolute",
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "1", Position: Position{X: 10, Y: 10}},
+			ConfigNode{Id: "2", Position: Position{X: 10, Y: 15}},
+		},
+
+		Spacing:    1,
+		NodeWidth:  5,
+		NodeHeight: 4,
+		Margin:     2,
+		Border:     1,
+	})
+
+	require.Error(t, err)
+	assert.Equal(t, "nodes 1 and 2 margins overlap", err.Error())
+}
+
+func TestNodesOverlapWithMargin(t *testing.T) {
+	tests := []struct {
+		name    string
+		node1   LayoutNode
+		node2   LayoutNode
+		margin  int
+		overlap bool
+	}{
+		{
+			name:    "Nodes overlap with margin",
+			node1:   NewLayoutNode("A", "Node A", 0, 0, 50, 30),
+			node2:   NewLayoutNode("B", "Node B", 10, 20, 40, 20),
+			margin:  5,
+			overlap: true,
+		},
+		{
+			name:    "Nodes do not overlap with margin",
+			node1:   NewLayoutNode("A", "Node A", 0, 0, 50, 30),
+			node2:   NewLayoutNode("B", "Node B", 30, 40, 40, 20),
+			margin:  5,
+			overlap: false,
+		},
+		{
+			name:    "Nodes overlap with zero margin",
+			node1:   NewLayoutNode("A", "Node A", 0, 0, 50, 30),
+			node2:   NewLayoutNode("B", "Node B", 10, 20, 40, 20),
+			margin:  0,
+			overlap: true,
+		},
+		{
+			name:    "Nodes overlap with large margin",
+			node1:   NewLayoutNode("A", "Node A", 0, 0, 50, 30),
+			node2:   NewLayoutNode("B", "Node B", 10, 20, 40, 20),
+			margin:  50,
+			overlap: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := marginsOverlap(tt.node1, tt.node2, tt.margin)
+			if result != tt.overlap {
+				t.Errorf("Expected overlap: %v, Got overlap: %v", tt.overlap, result)
+			}
+		})
+	}
+}

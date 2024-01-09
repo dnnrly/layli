@@ -16,7 +16,7 @@ nodes:
       position: {x: 15, y: 25}
     - id: e
       contents: Node 6
-      position: {x: 10, y: 15}
+      position: {x: 10, y: 20}
     - id: g
       contents: Node 7
       position: {x: 20, y: 5}
@@ -53,3 +53,4 @@ edges:
 
 width: 4
 height: 4
+margin: 1

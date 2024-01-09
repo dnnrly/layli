@@ -167,6 +167,12 @@ func LayoutAbsolute(c *Config) (LayoutNodes, error) {
 	nodes := make(LayoutNodes, numNodes)
 
 	for i, n := range c.Nodes {
+		if n.Position.X < c.Border || n.Position.Y < c.Border {
+			return nil, fmt.Errorf("node %s overlaps border", n.Id)
+		}
+		if n.Position.X < c.Border+c.Margin || n.Position.Y < c.Border+c.Margin {
+			return nil, fmt.Errorf("node %s margin overlaps border", n.Id)
+		}
 		nodes[i] = NewLayoutNode(
 			n.Id, n.Contents,
 			n.Position.X,
@@ -175,20 +181,32 @@ func LayoutAbsolute(c *Config) (LayoutNodes, error) {
 		)
 	}
 
-	nodesOverlap := func(node1, node2 LayoutNode) bool {
-		return !(node1.right <= node2.left ||
-			node1.left >= node2.right ||
-			node1.bottom <= node2.top ||
-			node1.top >= node2.bottom)
-	}
-
 	for i, node1 := range nodes {
 		for j, node2 := range nodes {
-			if i != j && nodesOverlap(node1, node2) {
-				return nil, fmt.Errorf("nodes %s and %s overlap", node1.Id, node2.Id)
+			if i != j {
+				if nodesOverlap(node1, node2) {
+					return nil, fmt.Errorf("nodes %s and %s overlap", node1.Id, node2.Id)
+				}
+				if marginsOverlap(node1, node2, c.Margin) {
+					return nil, fmt.Errorf("nodes %s and %s margins overlap", node1.Id, node2.Id)
+				}
 			}
 		}
 	}
 
 	return nodes, nil
+}
+
+func nodesOverlap(node1, node2 LayoutNode) bool {
+	return !(node1.right <= node2.left ||
+		node1.left >= node2.right ||
+		node1.bottom <= node2.top ||
+		node1.top >= node2.bottom)
+}
+
+func marginsOverlap(node1, node2 LayoutNode, margin int) bool {
+	return !(node1.right+margin <= node2.left-margin ||
+		node1.left-margin >= node2.right+margin ||
+		node1.bottom+margin <= node2.top-margin ||
+		node1.top-margin >= node2.bottom+margin)
 }
