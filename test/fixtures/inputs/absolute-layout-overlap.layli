@@ -17,5 +17,5 @@ edges:
     - from: b
       to: c
 
-width: 4
-height: 4
+width: 10
+height: 10

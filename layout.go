@@ -38,7 +38,10 @@ func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 		return nil, err
 	}
 
-	nodes, _ := arranger(c)
+	nodes, err := arranger(c)
+	if err != nil {
+		return nil, fmt.Errorf("arranging nodes: %w", err)
+	}
 
 	l := &Layout{
 		Nodes:        nodes,
