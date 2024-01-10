@@ -21,6 +21,13 @@ Feature: Validate CLI configuration
         Then the app exits without error
         And a file "tmp/another-file.svg" exists
 
+    
+    @Acceptance
+    Scenario: Non-existent file returns error
+        When the app runs with parameters "non-existant.layli"
+        Then the app exits with an error
+        And the app output contains "opening input: open non-existant.layli: no such file or directory"
+
     @Acceptance
     Scenario: Errors when cannot write output
         When the app runs with parameters "--output / tmp/fixtures/inputs/2-nodes.layli"
