@@ -26,9 +26,15 @@ type Config struct {
 	Margin     int `yaml:"margin"`
 }
 
+type Position struct {
+	X int `yaml:"x"`
+	Y int `yaml:"y"`
+}
+
 type ConfigNode struct {
-	Id       string `yaml:"id"`
-	Contents string `yaml:"contents"`
+	Id       string   `yaml:"id"`
+	Contents string   `yaml:"contents"`
+	Position Position `yaml:"position"`
 }
 
 type ConfigNodes []ConfigNode

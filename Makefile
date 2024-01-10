@@ -63,6 +63,7 @@ lint: ## run linting
 
 .PHONY: test
 test: ## run unit tests
+	go test -run COMPILE_ONLY
 	go test -race -cover -count=1 -json ./... | tparse -all
 
 .PHONY: ci-test

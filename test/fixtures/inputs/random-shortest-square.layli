@@ -26,14 +26,6 @@ nodes:
     contents: "Node 9"
   - id: node10
     contents: "Node 10"
-  - id: node11
-    contents: "Node 11"
-  - id: node12
-    contents: "Node 12"
-  - id: node13
-    contents: "Node 13"
-  - id: node14
-    contents: "Node 14"
 
 edges:
   - from: node1
@@ -43,8 +35,6 @@ edges:
   - from: node3
     to: node7
   - from: node7
-    to: node11
-  - from: node11
     to: node10
   - from: node10
     to: node9
@@ -53,4 +43,8 @@ edges:
   - from: node5
     to: node1
   - from: node6
-    to: node12
+    to: node8
+  - from: node6
+    to: node4
+  - from: node6
+    to: node8

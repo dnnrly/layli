@@ -84,6 +84,7 @@ There are currently 3 different layout styles:
 * `flow-square` - nodes are arranged into rows and columns, much the way you read words on a page
 * `topo-sort` - nodes are sorted in order of the edges, all in a single row
 * `tarjan` - uses [Tarjan's Algorithm](https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm) to arrange the nodes an a 'pleasing' way
+* `absolute` - lets you specify where you want nodes to appear on the diagram
 
 ### An example diagram
 

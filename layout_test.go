@@ -56,31 +56,31 @@ func TestLayout_LayoutSize(t *testing.T) {
 		layoutBorder: border,
 	}
 
-	l.Nodes = LayoutFlowSquare(newConfig(1, width, height, margin, margin))
+	l.Nodes, _ = LayoutFlowSquare(newConfig(1, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2*1), l.LayoutWidth(), "Expected width: 1 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*1, l.LayoutHeight(), "Expected height: 1 node")
 
-	l.Nodes = LayoutFlowSquare(newConfig(2, width, height, margin, margin))
+	l.Nodes, _ = LayoutFlowSquare(newConfig(2, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*2, l.LayoutWidth(), "Expected width: 2 nodes")
 	assert.Equal(t, border*2+(height+margin*2), l.LayoutHeight(), "Expected height: 1 node")
 
-	l.Nodes = LayoutFlowSquare(newConfig(4, width, height, margin, margin))
+	l.Nodes, _ = LayoutFlowSquare(newConfig(4, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*2, l.LayoutWidth(), "Expected width: 2 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*2, l.LayoutHeight(), "Expected height: 2 nodes")
 
-	l.Nodes = LayoutFlowSquare(newConfig(5, width, height, margin, margin))
+	l.Nodes, _ = LayoutFlowSquare(newConfig(5, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*2, l.LayoutHeight(), "Expected height: 2 nodes")
 
-	l.Nodes = LayoutFlowSquare(newConfig(8, width, height, margin, margin))
+	l.Nodes, _ = LayoutFlowSquare(newConfig(8, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 
-	l.Nodes = LayoutFlowSquare(newConfig(9, width, height, margin, margin))
+	l.Nodes, _ = LayoutFlowSquare(newConfig(9, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*3, l.LayoutWidth(), "Expected width: 3 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 
-	l.Nodes = LayoutFlowSquare(newConfig(10, width, height, margin, margin))
+	l.Nodes, _ = LayoutFlowSquare(newConfig(10, width, height, margin, margin))
 	assert.Equal(t, border*2+(width+margin*2)*4, l.LayoutWidth(), "Expected width: 4 nodes")
 	assert.Equal(t, border*2+(height+margin*2)*3, l.LayoutHeight(), "Expected height: 3 nodes")
 }
@@ -215,7 +215,27 @@ func TestLayout_ErrorsOnBadLayoutName(t *testing.T) {
 func TestLayout_ErrorsOnBadPathStrategy(t *testing.T) {
 	_, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return nil }, &Config{Path: ConfigPath{Strategy: "unknown"}})
 	require.Error(t, err)
+}
 
+func TestLayout_PassesArrangementErrorsBack(t *testing.T) {
+	// Not too happy with this, it relies on the implementation of a single arrangement algorithm to generate the error.
+	// It'll do for now...
+	config := &Config{
+		Layout: "absolute",
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "1", Position: Position{X: 10, Y: 10}},
+			ConfigNode{Id: "2", Position: Position{X: 10, Y: 10}},
+		},
+
+		Spacing:    1,
+		NodeWidth:  5,
+		NodeHeight: 4,
+		Margin:     2,
+		Border:     1,
+	}
+	_, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder { return nil }, config)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "arranging nodes")
 }
 
 func TestLayout_InsideAny(t *testing.T) {

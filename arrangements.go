@@ -2,6 +2,7 @@ package layli
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"math/rand"
 
@@ -11,7 +12,7 @@ import (
 )
 
 // LayoutArrangementFunc returns a slice of nodes arranged according to the algorithm implemented
-type LayoutArrangementFunc func(c *Config) LayoutNodes
+type LayoutArrangementFunc func(c *Config) (LayoutNodes, error)
 
 func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 	switch c.Layout {
@@ -29,12 +30,15 @@ func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 
 	case "random-shortest-square":
 		return LayoutRandomShortestSquare, nil
+
+	case "absolute":
+		return LayoutAbsolute, nil
 	}
 
 	return nil, errors.New("do not understand layout " + c.Layout)
 }
 
-func LayoutFlowSquare(c *Config) LayoutNodes {
+func LayoutFlowSquare(c *Config) (LayoutNodes, error) {
 	numNodes := len(c.Nodes)
 	nodes := make(LayoutNodes, numNodes)
 
@@ -69,11 +73,11 @@ func LayoutFlowSquare(c *Config) LayoutNodes {
 		}
 	}
 
-	return nodes
+	return nodes, nil
 }
 
 // LayoutTopologicalSort arranges nodes in a single row, sorted in topological order
-func LayoutTopologicalSort(config *Config) LayoutNodes {
+func LayoutTopologicalSort(config *Config) (LayoutNodes, error) {
 	layoutNodes := LayoutNodes{}
 	graph := topological.NewGraph()
 
@@ -100,11 +104,11 @@ func LayoutTopologicalSort(config *Config) LayoutNodes {
 		))
 	}
 
-	return layoutNodes
+	return layoutNodes, nil
 }
 
 // LayoutTarjan arranges nodes in multiple rows according to Tarhan's algorithm
-func LayoutTarjan(config *Config) LayoutNodes {
+func LayoutTarjan(config *Config) (LayoutNodes, error) {
 	layoutNodes := LayoutNodes{}
 	graph := tarjan.NewGraph()
 
@@ -133,21 +137,21 @@ func LayoutTarjan(config *Config) LayoutNodes {
 		}
 	}
 
-	return layoutNodes
+	return layoutNodes, nil
 }
 
-func LayoutRandomShortestSquare(config *Config) LayoutNodes {
+func LayoutRandomShortestSquare(config *Config) (LayoutNodes, error) {
 	return shuffleNodes(config, LayoutFlowSquare)
 }
 
-func shuffleNodes(config *Config, arrange func(config *Config) LayoutNodes) LayoutNodes {
+func shuffleNodes(config *Config, arrange LayoutArrangementFunc) (LayoutNodes, error) {
 	c := deepcopy.MustAnything(config).(*Config)
 	var shortest LayoutNodes
 	shortestDist := math.MaxFloat64
 
 	for i := 0; i < config.LayoutAttempts; i++ {
 		rand.Shuffle(len(c.Nodes), func(i, j int) { c.Nodes[i], c.Nodes[j] = c.Nodes[j], c.Nodes[i] })
-		nodes := arrange(c)
+		nodes, _ := arrange(c)
 		dist, _ := nodes.ConnectionDistances(c.Edges)
 		if dist < shortestDist {
 			shortest = nodes
@@ -155,5 +159,54 @@ func shuffleNodes(config *Config, arrange func(config *Config) LayoutNodes) Layo
 		}
 	}
 
-	return shortest
+	return shortest, nil
+}
+
+func LayoutAbsolute(c *Config) (LayoutNodes, error) {
+	numNodes := len(c.Nodes)
+	nodes := make(LayoutNodes, numNodes)
+
+	for i, n := range c.Nodes {
+		if n.Position.X < c.Border || n.Position.Y < c.Border {
+			return nil, fmt.Errorf("node %s overlaps border", n.Id)
+		}
+		if n.Position.X < c.Border+c.Margin || n.Position.Y < c.Border+c.Margin {
+			return nil, fmt.Errorf("node %s margin overlaps border", n.Id)
+		}
+		nodes[i] = NewLayoutNode(
+			n.Id, n.Contents,
+			n.Position.X,
+			n.Position.Y,
+			c.NodeWidth, c.NodeHeight,
+		)
+	}
+
+	for i, node1 := range nodes {
+		for j, node2 := range nodes {
+			if i != j {
+				if nodesOverlap(node1, node2) {
+					return nil, fmt.Errorf("nodes %s and %s overlap", node1.Id, node2.Id)
+				}
+				if marginsOverlap(node1, node2, c.Margin) {
+					return nil, fmt.Errorf("nodes %s and %s margins overlap", node1.Id, node2.Id)
+				}
+			}
+		}
+	}
+
+	return nodes, nil
+}
+
+func nodesOverlap(node1, node2 LayoutNode) bool {
+	return !(node1.right <= node2.left ||
+		node1.left >= node2.right ||
+		node1.bottom <= node2.top ||
+		node1.top >= node2.bottom)
+}
+
+func marginsOverlap(node1, node2 LayoutNode, margin int) bool {
+	return !(node1.right+margin <= node2.left-margin ||
+		node1.left-margin >= node2.right+margin ||
+		node1.bottom+margin <= node2.top-margin ||
+		node1.top-margin >= node2.bottom+margin)
 }

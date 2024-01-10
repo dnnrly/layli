@@ -225,6 +225,74 @@ edges:
 ```
 </details>
 
+### Absolute
+
+This is a fairly straight forward layout, you specify where you would like the nodes to appear on the image and layli will look after the paths. Watch out though, you layli will fail if nodes are too close to the border or each other.
+
+<img src="/examples/absolute.svg" alt="Absolute example image" />
+
+<details>
+<summary>Absolute example</summary>
+
+```yaml
+nodes:
+    - id: a
+      contents: Node 1
+      position: {x: 5, y: 5}
+    - id: b
+      contents: Node 2
+      position: {x: 5, y: 15}
+    - id: c
+      contents: Node 3
+      position: {x: 5, y: 25}
+    - id: f
+      contents: Node 4
+      position: {x: 15, y: 3}
+    - id: d
+      contents: Node 5
+      position: {x: 12, y: 10}
+    - id: e
+      contents: Node 6
+      position: {x: 12, y: 22}
+    - id: g
+      contents: Node 7
+      position: {x: 20, y: 15}
+    - id: h
+      contents: Node 8
+      position: {x: 20, y: 25}
+    - id: i
+      contents: Node 9
+      position: {x: 25, y: 5}
+
+layout: absolute
+
+edges:
+    - from: a
+      to: b
+    - from: b
+      to: c
+    - from: c
+      to: d
+    - from: d
+      to: e
+    - from: c
+      to: e
+    - from: e
+      to: d
+    - from: d
+      to: f
+    - from: f
+      to: g
+    - from: f
+      to: h
+    - from: g
+      to: i
+
+width: 4
+height: 4
+```
+</details>
+
 ## Paths
 
 Paths are defined by selecting a `from` node an a `to` node in the `edges` configuration. To generate the path, `layli` uses [Dijkstr's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) to find the shortest path across a grid of points that are not covered by a node. You can see this grid by using the `--show-grid` option when you run the command.

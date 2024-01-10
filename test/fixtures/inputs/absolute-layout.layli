@@ -1,0 +1,56 @@
+nodes:
+    - id: a
+      contents: Node 1
+      position: {x: 5, y: 5}
+    - id: b
+      contents: Node 2
+      position: {x: 5, y: 15}
+    - id: c
+      contents: Node 3
+      position: {x: 5, y: 25}
+    - id: f
+      contents: Node 4
+      position: {x: 15, y: 5}
+    - id: d
+      contents: Node 5
+      position: {x: 15, y: 25}
+    - id: e
+      contents: Node 6
+      position: {x: 10, y: 20}
+    - id: g
+      contents: Node 7
+      position: {x: 20, y: 5}
+    - id: h
+      contents: Node 8
+      position: {x: 20, y: 30}
+    - id: i
+      contents: Node 9
+      position: {x: 25, y: 5}
+
+layout: absolute
+
+edges:
+    - from: a
+      to: b
+    - from: b
+      to: c
+    - from: c
+      to: d
+    - from: d
+      to: e
+    - from: c
+      to: e
+    - from: e
+      to: d
+    - from: d
+      to: f
+    - from: f
+      to: g
+    - from: f
+      to: h
+    - from: g
+      to: i
+
+width: 4
+height: 4
+margin: 1
