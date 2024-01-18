@@ -68,7 +68,7 @@ test: ## run unit tests
 
 .PHONY: fuzz
 fuzz: ## run fuzz tests
-	go test -run Fuzz -fuzz=Fuzz./...
+	go test -fuzz=FuzzDrawing
 
 .PHONY: ci-test
 ci-test: ## ci target - run tests to generate coverage data
