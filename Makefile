@@ -66,6 +66,10 @@ test: ## run unit tests
 	go test -run COMPILE_ONLY
 	go test -race -cover -count=1 -json ./... | tparse -all
 
+.PHONY: fuzz
+fuzz: ## run fuzz tests
+	go test -run Fuzz -fuzz=Fuzz./...
+
 .PHONY: ci-test
 ci-test: ## ci target - run tests to generate coverage data
 	rm -rf ./tmp/coverage/ci-test.txt
