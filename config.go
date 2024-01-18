@@ -83,5 +83,21 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 		config.LayoutAttempts = 10
 	}
 
+	for _, n := range config.Nodes {
+		if n.Id == "" {
+			return nil, fmt.Errorf("all nodes must have an id")
+		}
+	}
+
+	for _, e := range config.Edges {
+		if e.From == "" || e.To == "" {
+			return nil, fmt.Errorf("all edges must have a from and a to")
+		}
+
+		if config.Nodes.ByID(e.From) == nil || config.Nodes.ByID(e.To) == nil {
+			return nil, fmt.Errorf("all edges must have a from and a to that are valid node ids")
+		}
+	}
+
 	return &config, nil
 }
