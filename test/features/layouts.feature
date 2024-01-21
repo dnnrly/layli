@@ -95,3 +95,16 @@ Feature: Layout behaviour
         And a file "tmp/fixtures/inputs/absolute-layout.svg" exists
         And in the SVG file, nodes do not overlap
         And no paths cross
+
+    @Acceptance
+    Scenario: Generates layout with styles
+        When the app runs with parameters "tmp/fixtures/inputs/styles.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/styles.svg" exists
+        And in the SVG file, element "a" has style "fill:cyan; stroke:red;"
+        And in the SVG file, element "b" has class "class-2"
+        And in the SVG file, element "c" has style "fill:cyan; stroke:red;"
+        And in the SVG file, element "c" has class "class-2"
+        And in the SVG file, element "p1" has style "stroke:green;"
+        And in the SVG file, element "p1" has class "path-line class-1"
+        

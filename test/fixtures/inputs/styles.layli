@@ -1,0 +1,30 @@
+nodes:
+    - id: a
+      contents: Node 1
+      style: "fill:cyan; stroke:red;"
+    - id: b
+      contents: Node 2
+      stereotype: stereo-1
+    - id: c
+      contents: Node 3
+      style: "fill:cyan; stroke:red;"
+      class: stereo-1
+    - id: d
+      contents: Node 4
+
+edges:
+    - id: p1
+      from: a
+      to: b
+      class: class-1
+    - id: p2
+      from: b
+      to: c
+      style: stroke:green
+    - id: p3
+      from: c
+      to: d
+
+styles:
+    class-1: stroke-width:3
+    class-2: stroke:green
