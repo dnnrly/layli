@@ -3,6 +3,9 @@ package layli
 import (
 	"fmt"
 	"io"
+	"regexp"
+	"sort"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -10,6 +13,26 @@ import (
 type ConfigPath struct {
 	Attempts int    `yaml:"attempts"`
 	Strategy string `yaml:"strategy"`
+	Class    string `yaml:"class"`
+}
+
+type ConfigStyles map[string]string
+
+func (styles ConfigStyles) toCSS() string {
+	keys := make([]string, 0, len(styles))
+	for k := range styles {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	pattern := regexp.MustCompile(`\n[\r\t ]*`)
+	css := []string{}
+	for _, k := range keys {
+		s := pattern.Split(styles[k], -1)
+		css = append(css, fmt.Sprintf("%s { %s }", k, strings.Join(s, " ")))
+	}
+
+	return strings.Join(css, "\n")
 }
 
 type Config struct {
@@ -24,6 +47,8 @@ type Config struct {
 	NodeHeight int `yaml:"height"`
 	Border     int `yaml:"border"`
 	Margin     int `yaml:"margin"`
+
+	Styles ConfigStyles `yaml:"styles"`
 }
 
 type Position struct {
@@ -35,6 +60,7 @@ type ConfigNode struct {
 	Id       string   `yaml:"id"`
 	Contents string   `yaml:"contents"`
 	Position Position `yaml:"position"`
+	Class    string   `yaml:"class"`
 }
 
 type ConfigNodes []ConfigNode
@@ -49,8 +75,9 @@ func (nodes ConfigNodes) ByID(id string) *ConfigNode {
 }
 
 type ConfigEdge struct {
-	From string `yaml:"from"`
-	To   string `yaml:"to"`
+	From  string `yaml:"from"`
+	To    string `yaml:"to"`
+	Class string `yaml:"class"`
 }
 
 type ConfigEdges []ConfigEdge
@@ -100,6 +127,11 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 		if n.Id == "" {
 			return nil, fmt.Errorf("all nodes must have an id")
 		}
+		if n.Class != "" {
+			if _, ok := config.Styles[n.Class]; !ok {
+				return nil, fmt.Errorf("node %s uses unknown class '%s'", n.Id, n.Class)
+			}
+		}
 	}
 
 	for _, e := range config.Edges {
@@ -112,6 +144,11 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 
 		if config.Nodes.ByID(e.From) == nil || config.Nodes.ByID(e.To) == nil {
 			return nil, fmt.Errorf("all edges must have a from and a to that are valid node ids")
+		}
+		if e.Class != "" {
+			if _, ok := config.Styles[e.Class]; !ok {
+				return nil, fmt.Errorf("path %s to %s uses unknown class '%s'", e.From, e.To, e.Class)
+			}
 		}
 	}
 

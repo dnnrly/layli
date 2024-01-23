@@ -5,7 +5,69 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+func TestConfigStyles_toCSS(t *testing.T) {
+	styles := ConfigStyles{
+		".c1": "fill: black; stroke: white;",
+		".c2": `stroke: black;
+	stroke-width: 2;`,
+		"#id-1": "fill: red;",
+		"rect":  "stroke-width: 5;",
+	}
+	expected := `#id-1 { fill: red; }
+.c1 { fill: black; stroke: white; }
+.c2 { stroke: black; stroke-width: 2; }
+rect { stroke-width: 5; }`
+
+	assert.Equal(t, expected, styles.toCSS())
+}
+
+func TestNewConfigFromFile(t *testing.T) {
+	r := strings.NewReader(`
+nodes:
+  - id: node-1
+    contents: "C1"
+  - id: node-2
+    contents: "C2"
+`)
+
+	config, err := NewConfigFromFile(r)
+	require.NoError(t, err)
+	assert.Equal(t, Config{
+		Path: ConfigPath{
+			Attempts: 20,
+		},
+		Nodes: ConfigNodes{
+			ConfigNode{
+				Id:       "node-1",
+				Contents: "C1",
+			},
+			ConfigNode{
+				Id:       "node-2",
+				Contents: "C2",
+			},
+		},
+		LayoutAttempts: 10,
+		Spacing:        20,
+		Border:         1,
+		Margin:         2,
+		NodeWidth:      5,
+		NodeHeight:     3,
+	}, *config)
+}
+
+func TestNewConfigFromFile_FailsOnBadYaml(t *testing.T) {
+	r := strings.NewReader(`
+nodes:
+  - id: node-1
+-
+  `)
+
+	_, err := NewConfigFromFile(r)
+	require.Error(t, err)
+}
 
 func TestConfig_validate(t *testing.T) {
 	check := func(t *testing.T, config string, contained string) {
@@ -92,5 +154,54 @@ edges:
 		check(t, `margin: 20
 nodes:
   - id: a`, "margin cannot be larger than 10")
+	})
+
+	t.Run("Styles", func(t *testing.T) {
+		t.Run("Missing node class definition", func(t *testing.T) {
+			check(t, `
+nodes:
+    - id: a
+      contents: Node 1
+      style: fill:blue
+    - id: b
+      contents: Node 2
+      class: c1
+    - id: c
+      contents: Node 3
+      class: missing
+    - id: d
+      contents: Node 4
+
+edges:
+    - from: a
+      to: b
+      style: stroke:red
+    - from: b
+      to: c
+      class: c2
+    - from: c
+      to: d
+
+styles:
+    c1: fill:red
+    c2: stroke-width:2`, "node c uses unknown class 'missing'")
+		})
+		t.Run("Missing path class definition", func(t *testing.T) {
+			check(t, `
+nodes:
+    - id: a
+      contents: Node 1
+    - id: b
+      contents: Node 2
+
+edges:
+    - from: a
+      to: b
+      class: missing
+
+styles:
+    c1: fill:red
+    c2: stroke-width:2`, "path a to b uses unknown class 'missing'")
+		})
 	})
 }
