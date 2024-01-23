@@ -101,6 +101,8 @@ Feature: Layout behaviour
         When the app runs with parameters "tmp/fixtures/inputs/styles.layli"
         Then the app exits without error
         And a file "tmp/fixtures/inputs/styles.svg" exists
+        And in the SVG file, style class "class-1" exists
+        And in the SVG file, style class "class-2" exists
         And in the SVG file, element "a" has style "fill:cyan; stroke:red;"
         And in the SVG file, element "b" has class "class-2"
         And in the SVG file, element "c" has style "fill:cyan; stroke:red;"

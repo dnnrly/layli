@@ -304,6 +304,13 @@ func (c *testContext) inTheSVGFilePathGridDotsAreShown() error {
 	return c.err
 }
 
+func (c *testContext) inTheSVGFileStyleClassExists(class string) error {
+	elem := xmlquery.FindOne(c.svgOutput.doc, "//class")
+	assert.Contains(c, elem.InnerText(), class+" {\n")
+
+	return c.err
+}
+
 func (c *testContext) inTheSVGFileElementHasClass(id, class string) error {
 	elem := xmlquery.FindOne(c.svgOutput.doc, "//*[starts-with(@id, '"+id+"')]")
 	assert.Equal(c, class, elem.SelectAttr("class"))

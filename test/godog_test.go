@@ -60,6 +60,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^in the SVG file, all nodes fit on the image$`, tc.inTheSVGFileAllNodesFitOnTheImage)
 	ctx.Step(`^in the SVG file, grid dots are not shown$`, tc.inTheSVGFileGridDotsAreNotShown)
 	ctx.Step(`^in the SVG file, path grid dots are shown$`, tc.inTheSVGFilePathGridDotsAreShown)
+	ctx.Step(`^in the SVG file, style class "([^"]*)" exists$`, tc.inTheSVGFileStyleClassExists)
 	ctx.Step(`^in the SVG file, element "([^"]*)" has class "([^"]*)"$`, tc.inTheSVGFileElementHasClass)
 	ctx.Step(`^in the SVG file, element "([^"]*)" has style "([^"]*)"$`, tc.inTheSVGFileElementHasStyle)
 }
