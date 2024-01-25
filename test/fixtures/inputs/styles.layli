@@ -4,11 +4,11 @@ nodes:
       style: "fill:cyan; stroke:red;"
     - id: b
       contents: Node 2
-      stereotype: stereo-1
+      stereotype: class-1
     - id: c
       contents: Node 3
       style: "fill:cyan; stroke:red;"
-      class: stereo-1
+      class: class-1
     - id: d
       contents: Node 4
 
