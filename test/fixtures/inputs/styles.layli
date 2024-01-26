@@ -4,7 +4,7 @@ nodes:
       style: "fill:cyan; stroke:red;"
     - id: b
       contents: Node 2
-      stereotype: class-1
+      class: class-2
     - id: c
       contents: Node 3
       style: "fill:cyan; stroke:red;"
@@ -26,5 +26,5 @@ edges:
       to: d
 
 styles:
-    class-1: stroke-width:3
-    class-2: stroke:green
+    .class-1: stroke-width:3
+    .class-2: stroke:green

@@ -35,6 +35,15 @@ func (styles ConfigStyles) toCSS() string {
 	return strings.Join(css, "\n")
 }
 
+func (styles ConfigStyles) gotStyle(item string) bool {
+	for k, _ := range styles {
+		if strings.Contains(item, k) {
+			return true
+		}
+	}
+	return false
+}
+
 type Config struct {
 	Layout         string      `yaml:"layout"`
 	LayoutAttempts int         `yaml:"layout-attempts"`
@@ -127,11 +136,6 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 		if n.Id == "" {
 			return nil, fmt.Errorf("all nodes must have an id")
 		}
-		if n.Class != "" {
-			if _, ok := config.Styles[n.Class]; !ok {
-				return nil, fmt.Errorf("node %s uses unknown class '%s'", n.Id, n.Class)
-			}
-		}
 	}
 
 	for _, e := range config.Edges {
@@ -144,11 +148,6 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 
 		if config.Nodes.ByID(e.From) == nil || config.Nodes.ByID(e.To) == nil {
 			return nil, fmt.Errorf("all edges must have a from and a to that are valid node ids")
-		}
-		if e.Class != "" {
-			if _, ok := config.Styles[e.Class]; !ok {
-				return nil, fmt.Errorf("path %s to %s uses unknown class '%s'", e.From, e.To, e.Class)
-			}
 		}
 	}
 

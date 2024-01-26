@@ -103,10 +103,10 @@ Feature: Layout behaviour
         And a file "tmp/fixtures/inputs/styles.svg" exists
         And in the SVG file, style class "class-1" exists
         And in the SVG file, style class "class-2" exists
-        And in the SVG file, element "a" has style "fill:cyan; stroke:red;"
         And in the SVG file, element "b" has class "class-2"
+        And in the SVG file, element "c" has class "class-1"
+        And in the SVG file, element "a" has style "fill:cyan; stroke:red;"
         And in the SVG file, element "c" has style "fill:cyan; stroke:red;"
-        And in the SVG file, element "c" has class "class-2"
-        And in the SVG file, element "p1" has style "stroke:green;"
         And in the SVG file, element "p1" has class "path-line class-1"
+        And in the SVG file, element "p1" has style "stroke:green;"
         

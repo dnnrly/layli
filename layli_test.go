@@ -33,6 +33,7 @@ func TestDiagram_DrawWithStyleClass(t *testing.T) {
 </style>
 <g`) // Make sure that the style occurs BEFORE the g tag
 }
+
 func TestDiagram_DrawWithoutStyleClass(t *testing.T) {
 	output := ""
 	d := Diagram{
@@ -44,6 +45,23 @@ func TestDiagram_DrawWithoutStyleClass(t *testing.T) {
 	err := d.Draw()
 	assert.NoError(t, err)
 	assert.NotContains(t, output, `<style type="text/css"`)
+}
+
+func TestDiagram_DrawNodeWithClass(t *testing.T) {
+	output := ""
+	d := Diagram{
+		Output: func(data string) error { output = data; return nil },
+		Layout: &Layout{
+			Nodes: LayoutNodes{
+				NewLayoutNode("node-1", "Text", 10, 10, 20, 20, ".c1"),
+			},
+		},
+		ShowGrid: false,
+	}
+
+	err := d.Draw()
+	assert.NoError(t, err)
+	assert.Regexp(t, `<rect.+id="node-1".+class=".c1".+/>`, output)
 }
 
 func TestLayliFullFlow(t *testing.T) {

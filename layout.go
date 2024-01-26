@@ -134,6 +134,8 @@ type LayoutNode struct {
 	bottom int
 	left   int
 	right  int
+
+	class string
 }
 
 type LayoutNodes []LayoutNode
@@ -175,7 +177,7 @@ func (n LayoutNodes) ConnectionDistances(connections ConfigEdges) (float64, erro
 	return dist, nil
 }
 
-func NewLayoutNode(id, contents string, left, top, width, height int) LayoutNode {
+func NewLayoutNode(id, contents string, left, top, width, height int, class string) LayoutNode {
 	return LayoutNode{
 		Id:       id,
 		Contents: contents,
@@ -187,6 +189,8 @@ func NewLayoutNode(id, contents string, left, top, width, height int) LayoutNode
 		bottom: top + height - 1,
 		left:   left,
 		right:  left + width - 1,
+
+		class: class,
 	}
 }
 
@@ -246,11 +250,16 @@ func (n *LayoutNode) GetCentre() Point {
 }
 
 func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
+	class := ""
+	if n.class != "" {
+		class = fmt.Sprintf(`class="%s"`, n.class)
+	}
 	d.Roundrect(
 		n.left*spacing, n.top*spacing,
 		(n.width-1)*spacing, (n.height-1)*spacing,
 		3, 3,
 		fmt.Sprintf(`id="%s"`, n.Id),
+		class,
 	)
 	d.Textspan(
 		n.left*spacing+(((n.width-1)*spacing)/2),
