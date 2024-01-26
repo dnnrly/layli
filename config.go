@@ -35,15 +35,6 @@ func (styles ConfigStyles) toCSS() string {
 	return strings.Join(css, "\n")
 }
 
-func (styles ConfigStyles) gotStyle(item string) bool {
-	for k, _ := range styles {
-		if strings.Contains(item, k) {
-			return true
-		}
-	}
-	return false
-}
-
 type Config struct {
 	Layout         string      `yaml:"layout"`
 	LayoutAttempts int         `yaml:"layout-attempts"`
