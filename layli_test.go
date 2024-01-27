@@ -53,7 +53,7 @@ func TestDiagram_DrawNodeWithClass(t *testing.T) {
 		Output: func(data string) error { output = data; return nil },
 		Layout: &Layout{
 			Nodes: LayoutNodes{
-				NewLayoutNode("node-1", "Text", 10, 10, 20, 20, ".c1"),
+				NewLayoutNode("node-1", "Text", 10, 10, 20, 20, "c1", ""),
 			},
 		},
 		ShowGrid: false,
@@ -61,7 +61,7 @@ func TestDiagram_DrawNodeWithClass(t *testing.T) {
 
 	err := d.Draw()
 	assert.NoError(t, err)
-	assert.Regexp(t, `<rect.+id="node-1".+class=".c1".+/>`, output)
+	assert.Regexp(t, `<rect.+id="node-1".+class="c1".+/>`, output)
 }
 
 func TestLayliFullFlow(t *testing.T) {

@@ -61,6 +61,7 @@ type ConfigNode struct {
 	Contents string   `yaml:"contents"`
 	Position Position `yaml:"position"`
 	Class    string   `yaml:"class"`
+	Style    string   `yaml:"style"`
 }
 
 type ConfigNodes []ConfigNode

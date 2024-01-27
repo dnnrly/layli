@@ -68,6 +68,7 @@ func LayoutFlowSquare(c *Config) (LayoutNodes, error) {
 					(y*(c.Margin*2)),
 				c.NodeWidth, c.NodeHeight,
 				c.Nodes[pos].Class,
+				c.Nodes[pos].Style,
 			)
 
 			pos++
@@ -103,6 +104,7 @@ func LayoutTopologicalSort(config *Config) (LayoutNodes, error) {
 				(0*(config.Margin*2)),
 			config.NodeWidth, config.NodeHeight,
 			c.Class,
+			c.Style,
 		))
 	}
 
@@ -136,6 +138,7 @@ func LayoutTarjan(config *Config) (LayoutNodes, error) {
 					(col*(config.Margin*2)),
 				config.NodeWidth, config.NodeHeight,
 				c.Class,
+				c.Style,
 			))
 		}
 	}
@@ -182,6 +185,7 @@ func LayoutAbsolute(c *Config) (LayoutNodes, error) {
 			n.Position.Y,
 			c.NodeWidth, c.NodeHeight,
 			n.Class,
+			n.Style,
 		)
 	}
 
