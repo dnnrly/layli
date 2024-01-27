@@ -25,6 +25,9 @@ func (d *Diagram) Draw() error {
 		(d.Layout.LayoutHeight()-1)*d.Config.Spacing,
 		"style=\"background-color: white;\"",
 	)
+	if len(d.Config.Styles) != 0 {
+		canvas.Style("text/css", d.Config.Styles.toCSS())
+	}
 	canvas.Gstyle("text-anchor:middle;font-family:sans;fill:none;stroke:black")
 	canvas.Def()
 	canvas.Marker("arrow", 10, 5, 7, 7,

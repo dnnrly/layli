@@ -5,7 +5,113 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+func TestConfigStyles_toCSS(t *testing.T) {
+	styles := ConfigStyles{
+		".c1": "fill: black; stroke: white;",
+		".c2": `stroke: black;
+	stroke-width: 2;`,
+		"#id-1": "fill: red;",
+		"rect":  "stroke-width: 5;",
+	}
+	expected := `#id-1 { fill: red; }
+.c1 { fill: black; stroke: white; }
+.c2 { stroke: black; stroke-width: 2; }
+rect { stroke-width: 5; }`
+
+	assert.Equal(t, expected, styles.toCSS())
+}
+
+func TestNewConfigFromFile(t *testing.T) {
+	r := strings.NewReader(`
+nodes:
+  - id: node-1
+    contents: "C1"
+  - id: node-2
+    contents: "C2"
+`)
+
+	config, err := NewConfigFromFile(r)
+	require.NoError(t, err)
+	assert.Equal(t, Config{
+		Path: ConfigPath{
+			Attempts: 20,
+		},
+		Nodes: ConfigNodes{
+			ConfigNode{
+				Id:       "node-1",
+				Contents: "C1",
+			},
+			ConfigNode{
+				Id:       "node-2",
+				Contents: "C2",
+			},
+		},
+		LayoutAttempts: 10,
+		Spacing:        20,
+		Border:         1,
+		Margin:         2,
+		NodeWidth:      5,
+		NodeHeight:     3,
+	}, *config)
+}
+
+func TestNewConfigFromFile_pathData(t *testing.T) {
+	r := strings.NewReader(`
+nodes:
+  - id: node-1
+    contents: "C1"
+  - id: node-2
+    contents: "C2"
+  - id: node-3
+    contents: "C3"
+
+edges:
+  - from: node-1
+    to: node-2
+    class: a-class
+  - id: 2-to-3
+    from: node-2
+    to: node-3
+    style: some-style
+  - from: node-3
+    to: node-1
+`)
+
+	config, err := NewConfigFromFile(r)
+	require.NoError(t, err)
+	assert.Len(t, config.Edges, 3)
+	assert.Equal(t, ConfigEdge{
+		ID:    "edge-1",
+		From:  "node-1",
+		To:    "node-2",
+		Class: "a-class",
+	}, config.Edges[0])
+	assert.Equal(t, ConfigEdge{
+		ID:    "2-to-3",
+		From:  "node-2",
+		To:    "node-3",
+		Style: "some-style",
+	}, config.Edges[1])
+	assert.Equal(t, ConfigEdge{
+		ID:   "edge-3",
+		From: "node-3",
+		To:   "node-1",
+	}, config.Edges[2])
+}
+
+func TestNewConfigFromFile_FailsOnBadYaml(t *testing.T) {
+	r := strings.NewReader(`
+nodes:
+  - id: node-1
+-
+  `)
+
+	_, err := NewConfigFromFile(r)
+	require.Error(t, err)
+}
 
 func TestConfig_validate(t *testing.T) {
 	check := func(t *testing.T, config string, contained string) {

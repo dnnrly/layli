@@ -3,6 +3,9 @@ package layli
 import (
 	"fmt"
 	"io"
+	"regexp"
+	"sort"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -10,6 +13,26 @@ import (
 type ConfigPath struct {
 	Attempts int    `yaml:"attempts"`
 	Strategy string `yaml:"strategy"`
+	Class    string `yaml:"class"`
+}
+
+type ConfigStyles map[string]string
+
+func (styles ConfigStyles) toCSS() string {
+	keys := make([]string, 0, len(styles))
+	for k := range styles {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	pattern := regexp.MustCompile(`\n[\r\t ]*`)
+	css := []string{}
+	for _, k := range keys {
+		s := pattern.Split(styles[k], -1)
+		css = append(css, fmt.Sprintf("%s { %s }", k, strings.Join(s, " ")))
+	}
+
+	return strings.Join(css, "\n")
 }
 
 type Config struct {
@@ -24,6 +47,8 @@ type Config struct {
 	NodeHeight int `yaml:"height"`
 	Border     int `yaml:"border"`
 	Margin     int `yaml:"margin"`
+
+	Styles ConfigStyles `yaml:"styles"`
 }
 
 type Position struct {
@@ -35,6 +60,8 @@ type ConfigNode struct {
 	Id       string   `yaml:"id"`
 	Contents string   `yaml:"contents"`
 	Position Position `yaml:"position"`
+	Class    string   `yaml:"class"`
+	Style    string   `yaml:"style"`
 }
 
 type ConfigNodes []ConfigNode
@@ -49,8 +76,11 @@ func (nodes ConfigNodes) ByID(id string) *ConfigNode {
 }
 
 type ConfigEdge struct {
-	From string `yaml:"from"`
-	To   string `yaml:"to"`
+	ID    string `yaml:"id"`
+	From  string `yaml:"from"`
+	To    string `yaml:"to"`
+	Class string `yaml:"class"`
+	Style string `yaml:"style"`
 }
 
 type ConfigEdges []ConfigEdge
@@ -102,7 +132,10 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 		}
 	}
 
-	for _, e := range config.Edges {
+	for i, e := range config.Edges {
+		if e.ID == "" {
+			config.Edges[i].ID = fmt.Sprintf("edge-%d", i+1)
+		}
 		if e.From == "" || e.To == "" {
 			return nil, fmt.Errorf("all edges must have a from and a to")
 		}

@@ -9,49 +9,59 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewConfigFromFile(t *testing.T) {
-	r := strings.NewReader(`
-nodes:
-  - id: node-1
-    contents: "C1"
-  - id: node-2
-    contents: "C2"
-`)
+func TestDiagram_DrawWithStyleClass(t *testing.T) {
+	output := ""
+	d := Diagram{
+		Output: func(data string) error { output = data; return nil },
+		Config: Config{
+			Styles: map[string]string{
+				".c1": "fill: black; stroke: white;",
+				".c2": `stroke: black;
+	stroke-width: 2;`},
+		},
+		Layout:   &Layout{},
+		ShowGrid: false,
+	}
 
-	config, err := NewConfigFromFile(r)
-	require.NoError(t, err)
-	assert.Equal(t, Config{
-		Path: ConfigPath{
-			Attempts: 20,
-		},
-		Nodes: ConfigNodes{
-			ConfigNode{
-				Id:       "node-1",
-				Contents: "C1",
-			},
-			ConfigNode{
-				Id:       "node-2",
-				Contents: "C2",
-			},
-		},
-		LayoutAttempts: 10,
-		Spacing:        20,
-		Border:         1,
-		Margin:         2,
-		NodeWidth:      5,
-		NodeHeight:     3,
-	}, *config)
+	err := d.Draw()
+	assert.NoError(t, err)
+	assert.Contains(t, output, `<style type="text/css">
+<![CDATA[
+.c1 { fill: black; stroke: white; }
+.c2 { stroke: black; stroke-width: 2; }
+]]>
+</style>
+<g`) // Make sure that the style occurs BEFORE the g tag
 }
 
-func TestNewConfigFromFile_FailsOnBadYaml(t *testing.T) {
-	r := strings.NewReader(`
-nodes:
-  - id: node-1
--
-  `)
+func TestDiagram_DrawWithoutStyleClass(t *testing.T) {
+	output := ""
+	d := Diagram{
+		Output:   func(data string) error { output = data; return nil },
+		Layout:   &Layout{},
+		ShowGrid: false,
+	}
 
-	_, err := NewConfigFromFile(r)
-	require.Error(t, err)
+	err := d.Draw()
+	assert.NoError(t, err)
+	assert.NotContains(t, output, `<style type="text/css"`)
+}
+
+func TestDiagram_DrawNodeWithClass(t *testing.T) {
+	output := ""
+	d := Diagram{
+		Output: func(data string) error { output = data; return nil },
+		Layout: &Layout{
+			Nodes: LayoutNodes{
+				NewLayoutNode("node-1", "Text", 10, 10, 20, 20, "c1", ""),
+			},
+		},
+		ShowGrid: false,
+	}
+
+	err := d.Draw()
+	assert.NoError(t, err)
+	assert.Regexp(t, `<rect.+id="node-1".+class="c1".+/>`, output)
 }
 
 func TestLayliFullFlow(t *testing.T) {
@@ -118,5 +128,37 @@ edges:
       to: d
     - from: d
       to: a `, "")
+	})
+
+	t.Run("Styles", func(t *testing.T) {
+		check(t, `width: 7
+height: 7
+margin: 2
+
+nodes:
+    - id: a
+      contents: Node 1
+      style: fill:blue
+    - id: b
+      contents: Node 2
+      class: c1
+    - id: c
+      contents: Noe 3
+    - id: d
+      contents: Node 4
+
+edges:
+    - from: a
+      to: b
+      style: stroke:red
+    - from: b
+      to: c
+      class: c2
+    - from: c
+      to: d
+
+styles:
+    c1: fill:red
+    c2: stroke-width:2`, "")
 	})
 }

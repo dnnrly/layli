@@ -99,7 +99,57 @@ func TestLayoutNode_DrawNode(t *testing.T) {
 		height: 3,
 	}
 
-	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`).Once()
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", "").Once()
+	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
+	drawer.On("TextEnd").Once()
+
+	n.Draw(drawer, 40)
+
+	drawer.AssertExpectations(t)
+}
+
+func TestLayoutNode_DrawNodeWithClass(t *testing.T) {
+	drawer := mocks.NewLayoutDrawer(t)
+
+	n := LayoutNode{
+		Id:       "nodeA",
+		Contents: "some contents",
+
+		left: 4,
+		top:  5,
+
+		width:  3,
+		height: 3,
+
+		class: "some class",
+	}
+
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, `class="some class"`, "").Once()
+	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
+	drawer.On("TextEnd").Once()
+
+	n.Draw(drawer, 40)
+
+	drawer.AssertExpectations(t)
+}
+
+func TestLayoutNode_DrawNodeWithStyle(t *testing.T) {
+	drawer := mocks.NewLayoutDrawer(t)
+
+	n := LayoutNode{
+		Id:       "nodeA",
+		Contents: "some contents",
+
+		left: 4,
+		top:  5,
+
+		width:  3,
+		height: 3,
+
+		style: "some style",
+	}
+
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", `style="some style"`).Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
@@ -109,7 +159,7 @@ func TestLayoutNode_DrawNode(t *testing.T) {
 }
 
 func TestLayoutNode_IsInside(t *testing.T) {
-	n := NewLayoutNode("id", "contents", 3, 3, 5, 3)
+	n := NewLayoutNode("id", "contents", 3, 3, 5, 3, "", "")
 
 	// ...........
 	// ...........
@@ -128,7 +178,7 @@ func TestLayoutNode_IsInside(t *testing.T) {
 }
 
 func TestLayoutNode_IsPort(t *testing.T) {
-	n := NewLayoutNode("id", "contents", 3, 3, 5, 3)
+	n := NewLayoutNode("id", "contents", 3, 3, 5, 3, "", "")
 
 	// ...........
 	// ...........
@@ -157,27 +207,27 @@ func TestLayoutNode_IsPort(t *testing.T) {
 }
 
 func TestLayoutNode_GetCentre(t *testing.T) {
-	n := NewLayoutNode("id", "contents", 3, 3, 5, 3)
+	n := NewLayoutNode("id", "contents", 3, 3, 5, 3, "", "")
 
 	assert.Equal(t, Point{X: 5.5, Y: 4.5}, n.GetCentre())
 }
 
 func TestLayoutNodes_ByID(t *testing.T) {
 	nodes := LayoutNodes{
-		NewLayoutNode("1", "contents", 3, 7, 5, 3),
-		NewLayoutNode("2", "contents", 10, 12, 5, 3),
+		NewLayoutNode("1", "contents", 3, 7, 5, 3, "", ""),
+		NewLayoutNode("2", "contents", 10, 12, 5, 3, "", ""),
 	}
 
-	assert.Equal(t, NewLayoutNode("1", "contents", 3, 7, 5, 3), *nodes.ByID("1"))
-	assert.Equal(t, NewLayoutNode("2", "contents", 10, 12, 5, 3), *nodes.ByID("2"))
+	assert.Equal(t, NewLayoutNode("1", "contents", 3, 7, 5, 3, "", ""), *nodes.ByID("1"))
+	assert.Equal(t, NewLayoutNode("2", "contents", 10, 12, 5, 3, "", ""), *nodes.ByID("2"))
 	assert.Nil(t, nodes.ByID("unknown"))
 }
 
 func TestLayoutNodes_ConnectionDistances_simple(t *testing.T) {
 	n := LayoutNodes{
-		NewLayoutNode("1", "contents", 1, 1, 3, 3),
-		NewLayoutNode("2", "contents", 1, 5, 3, 7),
-		NewLayoutNode("3", "contents", 1, 9, 3, 11),
+		NewLayoutNode("1", "contents", 1, 1, 3, 3, "", ""),
+		NewLayoutNode("2", "contents", 1, 5, 3, 7, "", ""),
+		NewLayoutNode("3", "contents", 1, 9, 3, 11, "", ""),
 	}
 	e := func(f, t string) ConfigEdge {
 		return ConfigEdge{From: f, To: t}
@@ -191,9 +241,9 @@ func TestLayoutNodes_ConnectionDistances_simple(t *testing.T) {
 
 func TestLayoutNodes_ConnectionDistances_notFound(t *testing.T) {
 	n := LayoutNodes{
-		NewLayoutNode("1", "contents", 1, 1, 3, 3),
-		NewLayoutNode("2", "contents", 1, 5, 3, 7),
-		NewLayoutNode("3", "contents", 1, 9, 3, 11),
+		NewLayoutNode("1", "contents", 1, 1, 3, 3, "", ""),
+		NewLayoutNode("2", "contents", 1, 5, 3, 7, "", ""),
+		NewLayoutNode("3", "contents", 1, 9, 3, 11, "", ""),
 	}
 	e := func(f, t string) ConfigEdge {
 		return ConfigEdge{From: f, To: t}
@@ -280,6 +330,7 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPath{
+		ID: "id",
 		Points: Points{
 			Point{X: 5.5, Y: 4.5},
 			Point{X: 8, Y: 4},
@@ -293,7 +344,9 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer.On(
 		"Path",
 		"M 80 40 L 100 40 L 100 50 L 120 50",
+		`id="id"`,
 		`class="path-line"`,
+		"",
 		`marker-end="url(#arrow)"`,
 	).Once()
 
@@ -316,11 +369,14 @@ func TestLayoutPaths_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPaths{
-		LayoutPath{Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
-		LayoutPath{Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "1", Class: "some-class", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "2", Style: "a-style", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "3", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
 	}
 
-	drawer.On("Path", mock.Anything, `class="path-line"`, `marker-end="url(#arrow)"`).Twice()
+	drawer.On("Path", mock.Anything, `id="1"`, `class="path-line some-class"`, "", `marker-end="url(#arrow)"`)
+	drawer.On("Path", mock.Anything, `id="2"`, `class="path-line"`, `style="a-style"`, `marker-end="url(#arrow)"`)
+	drawer.On("Path", mock.Anything, `id="3"`, `class="path-line"`, "", `marker-end="url(#arrow)"`)
 
 	p.Draw(drawer, 10)
 

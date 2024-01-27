@@ -68,13 +68,13 @@ test: ## run unit tests
 
 .PHONY: fuzz
 fuzz: ## run fuzz tests
-	go test -fuzz=FuzzDrawing
+	go test -tags fuzz -fuzz=FuzzDrawing
 
 .PHONY: ci-test
 ci-test: ## ci target - run tests to generate coverage data
 	rm -rf ./tmp/coverage/ci-test.txt
 	mkdir -p ./tmp/coverage
-	go test -coverprofile=./tmp/coverage/ci-test.txt -covermode=set ./...
+	go test -tags fuzz -coverprofile=./tmp/coverage/ci-test.txt -covermode=set ./...
 
 .PHONY: check-docs
 check-docs: build ## make sure that the documentation is up to date

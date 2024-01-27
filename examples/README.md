@@ -408,3 +408,54 @@ edges:
       to: d
 ```
 </details>
+
+## Adding styles
+
+It is possible to add style details to edges and nodes. You an do this in 2 ways:
+
+1. Using the `style` property on the node or edge
+2. CSS styles using ID and class that you can speficy on the node or edge
+
+You may also specify a CSS style sheet that will be embedded in the SVG file. You an use elements, classes and IDs in the same way as you would in HTML. Remember to add `;` to the end of each style parameter!
+
+<img src="/examples/style.svg" alt="Stylr" />
+
+<details>
+<summary>Adding style</summary>
+
+```yaml
+nodes:
+    - id: a
+      contents: Node 1
+      style: "fill:cyan; stroke:red;"
+    - id: b
+      contents: Node 2
+      style: "fill:cyan; stroke:magenta;"
+      class: class-2
+    - id: c
+      contents: Node 3
+      class: class-1
+    - id: d
+      contents: Node 4
+
+edges:
+    - id: p1
+      from: a
+      to: b
+      class: class-1
+    - id: p2
+      from: b
+      to: c
+      style: stroke:green
+    - id: p3
+      from: c
+      to: d
+
+styles:
+    .class-1: >
+      fill: azure
+      stroke: blue
+      stroke-width: 3
+    .class-2: stroke:green
+```
+</details>

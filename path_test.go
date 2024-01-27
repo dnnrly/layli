@@ -195,6 +195,45 @@ func Test_findPathsInOrder_runsInOrder(t *testing.T) {
 	}, record)
 }
 
+func Test_findPathsInOrder_addsIdCorrectly(t *testing.T) {
+	var record []struct {
+		from, to string
+	}
+	paths := LayoutPaths{}
+	err := findPathsInOrder(
+		Config{
+			Edges: ConfigEdges{
+				{From: "a", To: "b", ID: "1", Class: "a class"},
+				{From: "1", To: "2", ID: "2", Style: "some style"},
+				{From: "2", To: "3", ID: "3"},
+				{From: "r", To: "t", ID: "4"},
+			},
+		},
+		&paths,
+		func(from, to string) (*LayoutPath, error) {
+			record = append(record, struct {
+				from string
+				to   string
+			}{from: from, to: to})
+			return &LayoutPath{}, nil
+		},
+	)
+
+	assert.NoError(t, err)
+	assert.Len(t, paths, 4)
+	assert.Equal(t, "1", paths[0].ID)
+	assert.Equal(t, "a class", paths[0].Class)
+	assert.Empty(t, paths[0].Style)
+
+	assert.Equal(t, "2", paths[1].ID)
+	assert.Empty(t, paths[1].Class)
+	assert.Equal(t, "some style", paths[1].Style)
+
+	assert.Equal(t, "3", paths[2].ID)
+	assert.Empty(t, paths[2].Class)
+	assert.Empty(t, paths[2].Style)
+}
+
 func Test_findPathsInOrder_passesErrorThrough(t *testing.T) {
 	expectedErr := errors.New("an error")
 

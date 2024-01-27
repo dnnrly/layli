@@ -134,6 +134,9 @@ type LayoutNode struct {
 	bottom int
 	left   int
 	right  int
+
+	class string
+	style string
 }
 
 type LayoutNodes []LayoutNode
@@ -175,7 +178,7 @@ func (n LayoutNodes) ConnectionDistances(connections ConfigEdges) (float64, erro
 	return dist, nil
 }
 
-func NewLayoutNode(id, contents string, left, top, width, height int) LayoutNode {
+func NewLayoutNode(id, contents string, left, top, width, height int, class, style string) LayoutNode {
 	return LayoutNode{
 		Id:       id,
 		Contents: contents,
@@ -187,6 +190,9 @@ func NewLayoutNode(id, contents string, left, top, width, height int) LayoutNode
 		bottom: top + height - 1,
 		left:   left,
 		right:  left + width - 1,
+
+		class: class,
+		style: style,
 	}
 }
 
@@ -246,11 +252,21 @@ func (n *LayoutNode) GetCentre() Point {
 }
 
 func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
+	class := ""
+	if n.class != "" {
+		class = fmt.Sprintf(`class="%s"`, n.class)
+	}
+	style := ""
+	if n.style != "" {
+		style = fmt.Sprintf(`style="%s"`, n.style)
+	}
 	d.Roundrect(
 		n.left*spacing, n.top*spacing,
 		(n.width-1)*spacing, (n.height-1)*spacing,
 		3, 3,
 		fmt.Sprintf(`id="%s"`, n.Id),
+		class,
+		style,
 	)
 	d.Textspan(
 		n.left*spacing+(((n.width-1)*spacing)/2),
@@ -263,11 +279,22 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 }
 
 type LayoutPath struct {
+	ID     string
 	Points Points
+	Class  string
+	Style  string
 }
 
 func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
-	canvas.Path(p.Points.Path(spacing), `class="path-line"`, `marker-end="url(#arrow)"`)
+	class := "path-line"
+	if p.Class != "" {
+		class += " " + p.Class
+	}
+	style := ""
+	if p.Style != "" {
+		style = "style=\"" + p.Style + "\""
+	}
+	canvas.Path(p.Points.Path(spacing), `id="`+p.ID+`"`, `class="`+class+`"`, style, `marker-end="url(#arrow)"`)
 }
 
 func (paths *LayoutPath) Length() float64 {
