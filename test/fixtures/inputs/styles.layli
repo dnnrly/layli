@@ -18,10 +18,10 @@ edges:
       class: class-1
     - from: b
       to: c
-      style: stroke:green
+      style: stroke:green;
     - from: c
       to: d
 
 styles:
-    .class-1: stroke-width:3
-    .class-2: stroke:green
+    .class-1: stroke-width:3;
+    .class-2: stroke:green;

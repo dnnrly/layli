@@ -58,7 +58,7 @@ nodes:
 	}, *config)
 }
 
-func TestNewConfigFromFile_pathIDsSet(t *testing.T) {
+func TestNewConfigFromFile_pathData(t *testing.T) {
 	r := strings.NewReader(`
 nodes:
   - id: node-1
@@ -71,9 +71,11 @@ nodes:
 edges:
   - from: node-1
     to: node-2
+    class: a-class
   - id: 2-to-3
     from: node-2
     to: node-3
+    style: some-style
   - from: node-3
     to: node-1
 `)
@@ -81,9 +83,23 @@ edges:
 	config, err := NewConfigFromFile(r)
 	require.NoError(t, err)
 	assert.Len(t, config.Edges, 3)
-	assert.Equal(t, "edge-1", config.Edges[0].ID)
-	assert.Equal(t, "2-to-3", config.Edges[1].ID)
-	assert.Equal(t, "edge-3", config.Edges[2].ID)
+	assert.Equal(t, ConfigEdge{
+		ID:    "edge-1",
+		From:  "node-1",
+		To:    "node-2",
+		Class: "a-class",
+	}, config.Edges[0])
+	assert.Equal(t, ConfigEdge{
+		ID:    "2-to-3",
+		From:  "node-2",
+		To:    "node-3",
+		Style: "some-style",
+	}, config.Edges[1])
+	assert.Equal(t, ConfigEdge{
+		ID:   "edge-3",
+		From: "node-3",
+		To:   "node-1",
+	}, config.Edges[2])
 }
 
 func TestNewConfigFromFile_FailsOnBadYaml(t *testing.T) {

@@ -80,6 +80,7 @@ type ConfigEdge struct {
 	From  string `yaml:"from"`
 	To    string `yaml:"to"`
 	Class string `yaml:"class"`
+	Style string `yaml:"style"`
 }
 
 type ConfigEdges []ConfigEdge
