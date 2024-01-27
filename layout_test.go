@@ -330,6 +330,7 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPath{
+		ID: "id",
 		Points: Points{
 			Point{X: 5.5, Y: 4.5},
 			Point{X: 8, Y: 4},
@@ -343,6 +344,7 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer.On(
 		"Path",
 		"M 80 40 L 100 40 L 100 50 L 120 50",
+		`id="id"`,
 		`class="path-line"`,
 		`marker-end="url(#arrow)"`,
 	).Once()
@@ -366,11 +368,11 @@ func TestLayoutPaths_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPaths{
-		LayoutPath{Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
-		LayoutPath{Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "1", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "2", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
 	}
 
-	drawer.On("Path", mock.Anything, `class="path-line"`, `marker-end="url(#arrow)"`).Twice()
+	drawer.On("Path", mock.Anything, mock.Anything, `class="path-line"`, `marker-end="url(#arrow)"`).Twice()
 
 	p.Draw(drawer, 10)
 

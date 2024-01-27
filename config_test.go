@@ -58,6 +58,34 @@ nodes:
 	}, *config)
 }
 
+func TestNewConfigFromFile_pathIDsSet(t *testing.T) {
+	r := strings.NewReader(`
+nodes:
+  - id: node-1
+    contents: "C1"
+  - id: node-2
+    contents: "C2"
+  - id: node-3
+    contents: "C3"
+
+edges:
+  - from: node-1
+    to: node-2
+  - id: 2-to-3
+    from: node-2
+    to: node-3
+  - from: node-3
+    to: node-1
+`)
+
+	config, err := NewConfigFromFile(r)
+	require.NoError(t, err)
+	assert.Len(t, config.Edges, 3)
+	assert.Equal(t, "edge-1", config.Edges[0].ID)
+	assert.Equal(t, "2-to-3", config.Edges[1].ID)
+	assert.Equal(t, "edge-3", config.Edges[2].ID)
+}
+
 func TestNewConfigFromFile_FailsOnBadYaml(t *testing.T) {
 	r := strings.NewReader(`
 nodes:

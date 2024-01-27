@@ -13,16 +13,13 @@ nodes:
       contents: Node 4
 
 edges:
-    - id: p1
-      from: a
+    - from: a
       to: b
       class: class-1
-    - id: p2
-      from: b
+    - from: b
       to: c
       style: stroke:green
-    - id: p3
-      from: c
+    - from: c
       to: d
 
 styles:

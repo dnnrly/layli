@@ -76,6 +76,7 @@ func (nodes ConfigNodes) ByID(id string) *ConfigNode {
 }
 
 type ConfigEdge struct {
+	ID    string `yaml:"id"`
 	From  string `yaml:"from"`
 	To    string `yaml:"to"`
 	Class string `yaml:"class"`
@@ -130,7 +131,10 @@ func NewConfigFromFile(r io.Reader) (*Config, error) {
 		}
 	}
 
-	for _, e := range config.Edges {
+	for i, e := range config.Edges {
+		if e.ID == "" {
+			config.Edges[i].ID = fmt.Sprintf("edge-%d", i+1)
+		}
 		if e.From == "" || e.To == "" {
 			return nil, fmt.Errorf("all edges must have a from and a to")
 		}

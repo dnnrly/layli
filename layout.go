@@ -279,11 +279,12 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 }
 
 type LayoutPath struct {
+	ID     string
 	Points Points
 }
 
 func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
-	canvas.Path(p.Points.Path(spacing), `class="path-line"`, `marker-end="url(#arrow)"`)
+	canvas.Path(p.Points.Path(spacing), `id="`+p.ID+`"`, `class="path-line"`, `marker-end="url(#arrow)"`)
 }
 
 func (paths *LayoutPath) Length() float64 {

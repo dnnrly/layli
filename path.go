@@ -127,6 +127,7 @@ func findPathsInOrder(config Config, paths *LayoutPaths, find func(from, to stri
 		if err != nil {
 			return err
 		}
+		path.ID = p.ID
 
 		*paths = append(*paths, *path)
 	}
