@@ -111,8 +111,8 @@ func (l *Layout) ShowGrid(canvas LayoutDrawer, spacing int) {
 }
 
 func (l *Layout) Draw(canvas LayoutDrawer, spacing int) {
-	for _, n := range l.Nodes {
-		n.Draw(canvas, spacing)
+	for i, n := range l.Nodes {
+		n.Draw(canvas, spacing, i)
 	}
 
 	for _, p := range l.Paths {
@@ -251,7 +251,7 @@ func (n *LayoutNode) GetCentre() Point {
 	}
 }
 
-func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
+func (n *LayoutNode) Draw(d LayoutDrawer, spacing, order int) {
 	class := ""
 	if n.class != "" {
 		class = fmt.Sprintf(`class="%s"`, n.class)
@@ -267,6 +267,11 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 		fmt.Sprintf(`id="%s"`, n.Id),
 		class,
 		style,
+		fmt.Sprintf("data-order=\"%d\"", order),
+		fmt.Sprintf("data-pos-x=\"%d\"", n.left),
+		fmt.Sprintf("data-pos-y=\"%d\"", n.top),
+		fmt.Sprintf("data-width=\"%d\"", n.width),
+		fmt.Sprintf("data-height=\"%d\"", n.height),
 	)
 	d.Textspan(
 		n.left*spacing+(((n.width-1)*spacing)/2),

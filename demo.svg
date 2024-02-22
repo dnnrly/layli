@@ -532,23 +532,23 @@
 <circle cx="680" cy="460" r="1" class="path-dot" />
 <circle cx="680" cy="480" r="1" class="path-dot" />
 <circle cx="680" cy="500" r="1" class="path-dot" />
-<rect x="80" y="80" width="120" height="60" rx="3" ry="3" id="a"   />
+<rect x="80" y="80" width="120" height="60" rx="3" ry="3" id="a"   data-order="0" data-pos-x="4" data-pos-y="4" />
 <text x="140" y="110" id="a-text" style="font-size:10px" >Node A</text>
-<rect x="300" y="80" width="120" height="60" rx="3" ry="3" id="b"   />
+<rect x="300" y="80" width="120" height="60" rx="3" ry="3" id="b"   data-order="1" data-pos-x="15" data-pos-y="4" />
 <text x="360" y="110" id="b-text" style="font-size:10px" >Node B</text>
-<rect x="520" y="80" width="120" height="60" rx="3" ry="3" id="c"   />
+<rect x="520" y="80" width="120" height="60" rx="3" ry="3" id="c"   data-order="2" data-pos-x="26" data-pos-y="4" />
 <text x="580" y="110" id="c-text" style="font-size:10px" >Node C</text>
-<rect x="80" y="240" width="120" height="60" rx="3" ry="3" id="d"   />
+<rect x="80" y="240" width="120" height="60" rx="3" ry="3" id="d"   data-order="3" data-pos-x="4" data-pos-y="12" />
 <text x="140" y="270" id="d-text" style="font-size:10px" >Node D</text>
-<rect x="300" y="240" width="120" height="60" rx="3" ry="3" id="e"   />
+<rect x="300" y="240" width="120" height="60" rx="3" ry="3" id="e"   data-order="4" data-pos-x="15" data-pos-y="12" />
 <text x="360" y="270" id="e-text" style="font-size:10px" >Node E</text>
-<rect x="520" y="240" width="120" height="60" rx="3" ry="3" id="f"   />
+<rect x="520" y="240" width="120" height="60" rx="3" ry="3" id="f"   data-order="5" data-pos-x="26" data-pos-y="12" />
 <text x="580" y="270" id="f-text" style="font-size:10px" >Node F</text>
-<rect x="80" y="400" width="120" height="60" rx="3" ry="3" id="g"   />
+<rect x="80" y="400" width="120" height="60" rx="3" ry="3" id="g"   data-order="6" data-pos-x="4" data-pos-y="20" />
 <text x="140" y="430" id="g-text" style="font-size:10px" >Node G</text>
-<rect x="300" y="400" width="120" height="60" rx="3" ry="3" id="h"   />
+<rect x="300" y="400" width="120" height="60" rx="3" ry="3" id="h"   data-order="7" data-pos-x="15" data-pos-y="20" />
 <text x="360" y="430" id="h-text" style="font-size:10px" >Node H</text>
-<rect x="520" y="400" width="120" height="60" rx="3" ry="3" id="i"   />
+<rect x="520" y="400" width="120" height="60" rx="3" ry="3" id="i"   data-order="8" data-pos-x="26" data-pos-y="20" />
 <text x="580" y="430" id="i-text" style="font-size:10px" >Node J</text>
 <path d="M 200 120 L 300 120" id="edge-1" class="path-line"  marker-end="url(#arrow)" />
 <path d="M 420 120 L 520 120" id="edge-2" class="path-line"  marker-end="url(#arrow)" />

@@ -99,11 +99,13 @@ func TestLayoutNode_DrawNode(t *testing.T) {
 		height: 3,
 	}
 
-	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", "").Once()
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", "",
+		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
-	n.Draw(drawer, 40)
+	n.Draw(drawer, 40, 3)
 
 	drawer.AssertExpectations(t)
 }
@@ -124,11 +126,13 @@ func TestLayoutNode_DrawNodeWithClass(t *testing.T) {
 		class: "some class",
 	}
 
-	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, `class="some class"`, "").Once()
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, `class="some class"`, "",
+		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
-	n.Draw(drawer, 40)
+	n.Draw(drawer, 40, 3)
 
 	drawer.AssertExpectations(t)
 }
@@ -149,11 +153,13 @@ func TestLayoutNode_DrawNodeWithStyle(t *testing.T) {
 		style: "some style",
 	}
 
-	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", `style="some style"`).Once()
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", `style="some style"`,
+		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
-	n.Draw(drawer, 40)
+	n.Draw(drawer, 40, 3)
 
 	drawer.AssertExpectations(t)
 }

@@ -115,12 +115,12 @@ Feature: Layout behaviour
         When the app runs with parameters "tmp/fixtures/inputs/9-nodes.layli"
         Then the app exits without error
         And a file "tmp/fixtures/inputs/9-nodes.svg" exists
+        And in the SVG file, element "a" has attribute "data-pos-x" with value "3"
+        And in the SVG file, element "a" has attribute "data-pos-y" with value "3"
         And in the SVG file, element "a" has attribute "data-order" with value "0"
-        And in the SVG file, element "a" has attribute "data-pos-x" with value "3"
-        And in the SVG file, element "a" has attribute "data-pos-x" with value "3"
         And in the SVG file, element "a" has attribute "data-width" with value "7"
         And in the SVG file, element "a" has attribute "data-height" with value "4"
-        And in the SVG file, element "f" has attribute "data-order" with value "5"
-        And in the SVG file, element "edge-2" has attribute "data-rank" with value "2"
+        And in the SVG file, element "g" has attribute "data-order" with value "6"
+        And in the SVG file, element "edge-2" has attribute "data-order" with value "2"
         And in the SVG file, element "edge-2" has attribute "data-from" with value "b"
         And in the SVG file, element "edge-2" has attribute "data-to" with value "c"
