@@ -532,33 +532,33 @@
 <circle cx="680" cy="460" r="1" class="path-dot" />
 <circle cx="680" cy="480" r="1" class="path-dot" />
 <circle cx="680" cy="500" r="1" class="path-dot" />
-<rect x="80" y="80" width="120" height="60" rx="3" ry="3" id="a"   />
+<rect x="80" y="80" width="120" height="60" rx="3" ry="3" id="a"   data-order="0" data-pos-x="4" data-pos-y="4" data-width="7" data-height="4" />
 <text x="140" y="110" id="a-text" style="font-size:10px" >Node A</text>
-<rect x="300" y="80" width="120" height="60" rx="3" ry="3" id="b"   />
+<rect x="300" y="80" width="120" height="60" rx="3" ry="3" id="b"   data-order="1" data-pos-x="15" data-pos-y="4" data-width="7" data-height="4" />
 <text x="360" y="110" id="b-text" style="font-size:10px" >Node B</text>
-<rect x="520" y="80" width="120" height="60" rx="3" ry="3" id="c"   />
+<rect x="520" y="80" width="120" height="60" rx="3" ry="3" id="c"   data-order="2" data-pos-x="26" data-pos-y="4" data-width="7" data-height="4" />
 <text x="580" y="110" id="c-text" style="font-size:10px" >Node C</text>
-<rect x="80" y="240" width="120" height="60" rx="3" ry="3" id="d"   />
+<rect x="80" y="240" width="120" height="60" rx="3" ry="3" id="d"   data-order="3" data-pos-x="4" data-pos-y="12" data-width="7" data-height="4" />
 <text x="140" y="270" id="d-text" style="font-size:10px" >Node D</text>
-<rect x="300" y="240" width="120" height="60" rx="3" ry="3" id="e"   />
+<rect x="300" y="240" width="120" height="60" rx="3" ry="3" id="e"   data-order="4" data-pos-x="15" data-pos-y="12" data-width="7" data-height="4" />
 <text x="360" y="270" id="e-text" style="font-size:10px" >Node E</text>
-<rect x="520" y="240" width="120" height="60" rx="3" ry="3" id="f"   />
+<rect x="520" y="240" width="120" height="60" rx="3" ry="3" id="f"   data-order="5" data-pos-x="26" data-pos-y="12" data-width="7" data-height="4" />
 <text x="580" y="270" id="f-text" style="font-size:10px" >Node F</text>
-<rect x="80" y="400" width="120" height="60" rx="3" ry="3" id="g"   />
+<rect x="80" y="400" width="120" height="60" rx="3" ry="3" id="g"   data-order="6" data-pos-x="4" data-pos-y="20" data-width="7" data-height="4" />
 <text x="140" y="430" id="g-text" style="font-size:10px" >Node G</text>
-<rect x="300" y="400" width="120" height="60" rx="3" ry="3" id="h"   />
+<rect x="300" y="400" width="120" height="60" rx="3" ry="3" id="h"   data-order="7" data-pos-x="15" data-pos-y="20" data-width="7" data-height="4" />
 <text x="360" y="430" id="h-text" style="font-size:10px" >Node H</text>
-<rect x="520" y="400" width="120" height="60" rx="3" ry="3" id="i"   />
+<rect x="520" y="400" width="120" height="60" rx="3" ry="3" id="i"   data-order="8" data-pos-x="26" data-pos-y="20" data-width="7" data-height="4" />
 <text x="580" y="430" id="i-text" style="font-size:10px" >Node J</text>
-<path d="M 200 120 L 300 120" id="edge-1" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 420 120 L 520 120" id="edge-2" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 540 140 L 540 160 L 180 160 L 180 240" id="edge-3" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 200 280 L 300 280" id="edge-4" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 560 140 L 560 180 L 400 180 L 400 240" id="edge-5" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 300 260 L 200 260" id="edge-6" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 180 300 L 180 320 L 540 320 L 540 300" id="edge-7" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 560 300 L 560 340 L 180 340 L 180 400" id="edge-8" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 580 300 L 580 360 L 400 360 L 400 400" id="edge-9" class="path-line"  marker-end="url(#arrow)" />
-<path d="M 180 460 L 180 480 L 540 480 L 540 460" id="edge-10" class="path-line"  marker-end="url(#arrow)" />
+<path d="M 200 120 L 300 120" id="edge-1" class="path-line"  marker-end="url(#arrow)" data-from="a" data-to="b" data-order="0" />
+<path d="M 420 120 L 520 120" id="edge-2" class="path-line"  marker-end="url(#arrow)" data-from="b" data-to="c" data-order="1" />
+<path d="M 540 140 L 540 160 L 180 160 L 180 240" id="edge-3" class="path-line"  marker-end="url(#arrow)" data-from="c" data-to="d" data-order="2" />
+<path d="M 200 280 L 300 280" id="edge-4" class="path-line"  marker-end="url(#arrow)" data-from="d" data-to="e" data-order="3" />
+<path d="M 560 140 L 560 180 L 400 180 L 400 240" id="edge-5" class="path-line"  marker-end="url(#arrow)" data-from="c" data-to="e" data-order="4" />
+<path d="M 300 260 L 200 260" id="edge-6" class="path-line"  marker-end="url(#arrow)" data-from="e" data-to="d" data-order="5" />
+<path d="M 180 300 L 180 320 L 540 320 L 540 300" id="edge-7" class="path-line"  marker-end="url(#arrow)" data-from="d" data-to="f" data-order="6" />
+<path d="M 560 300 L 560 340 L 180 340 L 180 400" id="edge-8" class="path-line"  marker-end="url(#arrow)" data-from="f" data-to="g" data-order="7" />
+<path d="M 580 300 L 580 360 L 400 360 L 400 400" id="edge-9" class="path-line"  marker-end="url(#arrow)" data-from="f" data-to="h" data-order="8" />
+<path d="M 180 460 L 180 480 L 540 480 L 540 460" id="edge-10" class="path-line"  marker-end="url(#arrow)" data-from="g" data-to="i" data-order="9" />
 </g>
 </svg>

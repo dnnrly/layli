@@ -111,12 +111,12 @@ func (l *Layout) ShowGrid(canvas LayoutDrawer, spacing int) {
 }
 
 func (l *Layout) Draw(canvas LayoutDrawer, spacing int) {
-	for _, n := range l.Nodes {
-		n.Draw(canvas, spacing)
+	for i, n := range l.Nodes {
+		n.Draw(canvas, spacing, i)
 	}
 
-	for _, p := range l.Paths {
-		p.Draw(canvas, spacing)
+	for i, p := range l.Paths {
+		p.Draw(canvas, spacing, i)
 	}
 
 }
@@ -251,7 +251,7 @@ func (n *LayoutNode) GetCentre() Point {
 	}
 }
 
-func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
+func (n *LayoutNode) Draw(d LayoutDrawer, spacing, order int) {
 	class := ""
 	if n.class != "" {
 		class = fmt.Sprintf(`class="%s"`, n.class)
@@ -267,6 +267,11 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 		fmt.Sprintf(`id="%s"`, n.Id),
 		class,
 		style,
+		fmt.Sprintf("data-order=\"%d\"", order),
+		fmt.Sprintf("data-pos-x=\"%d\"", n.left),
+		fmt.Sprintf("data-pos-y=\"%d\"", n.top),
+		fmt.Sprintf("data-width=\"%d\"", n.width),
+		fmt.Sprintf("data-height=\"%d\"", n.height),
 	)
 	d.Textspan(
 		n.left*spacing+(((n.width-1)*spacing)/2),
@@ -280,12 +285,14 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing int) {
 
 type LayoutPath struct {
 	ID     string
+	From   string
+	To     string
 	Points Points
 	Class  string
 	Style  string
 }
 
-func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
+func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing, order int) {
 	class := "path-line"
 	if p.Class != "" {
 		class += " " + p.Class
@@ -294,7 +301,16 @@ func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
 	if p.Style != "" {
 		style = "style=\"" + p.Style + "\""
 	}
-	canvas.Path(p.Points.Path(spacing), `id="`+p.ID+`"`, `class="`+class+`"`, style, `marker-end="url(#arrow)"`)
+	canvas.Path(
+		p.Points.Path(spacing),
+		`id="`+p.ID+`"`,
+		`class="`+class+`"`,
+		style,
+		`marker-end="url(#arrow)"`,
+		fmt.Sprintf(`data-from="%s"`, p.From),
+		fmt.Sprintf(`data-to="%s"`, p.To),
+		fmt.Sprintf(`data-order="%d"`, order),
+	)
 }
 
 func (paths *LayoutPath) Length() float64 {
@@ -316,8 +332,8 @@ func (paths *LayoutPath) Length() float64 {
 type LayoutPaths []LayoutPath
 
 func (paths *LayoutPaths) Draw(canvas LayoutDrawer, spacing int) {
-	for _, p := range *paths {
-		p.Draw(canvas, spacing)
+	for i, p := range *paths {
+		p.Draw(canvas, spacing, i)
 	}
 }
 

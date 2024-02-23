@@ -324,3 +324,10 @@ func (c *testContext) inTheSVGFileElementHasStyle(id, style string) error {
 
 	return c.err
 }
+
+func (c *testContext) inTheSVGFileElementHasAttrWithVal(id, attr, val string) error {
+	elem := xmlquery.FindOne(c.svgOutput.doc, "//*[@id='"+id+"']")
+	assert.Equal(c, val, elem.SelectAttr(attr))
+
+	return c.err
+}

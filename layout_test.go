@@ -99,11 +99,13 @@ func TestLayoutNode_DrawNode(t *testing.T) {
 		height: 3,
 	}
 
-	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", "").Once()
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", "",
+		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
-	n.Draw(drawer, 40)
+	n.Draw(drawer, 40, 3)
 
 	drawer.AssertExpectations(t)
 }
@@ -124,11 +126,13 @@ func TestLayoutNode_DrawNodeWithClass(t *testing.T) {
 		class: "some class",
 	}
 
-	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, `class="some class"`, "").Once()
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, `class="some class"`, "",
+		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
-	n.Draw(drawer, 40)
+	n.Draw(drawer, 40, 3)
 
 	drawer.AssertExpectations(t)
 }
@@ -149,11 +153,13 @@ func TestLayoutNode_DrawNodeWithStyle(t *testing.T) {
 		style: "some style",
 	}
 
-	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", `style="some style"`).Once()
+	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", `style="some style"`,
+		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
 
-	n.Draw(drawer, 40)
+	n.Draw(drawer, 40, 3)
 
 	drawer.AssertExpectations(t)
 }
@@ -330,7 +336,9 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPath{
-		ID: "id",
+		ID:   "id",
+		From: "a",
+		To:   "b",
 		Points: Points{
 			Point{X: 5.5, Y: 4.5},
 			Point{X: 8, Y: 4},
@@ -348,9 +356,12 @@ func TestLayoutPath_Draw(t *testing.T) {
 		`class="path-line"`,
 		"",
 		`marker-end="url(#arrow)"`,
+		`data-from="a"`,
+		`data-to="b"`,
+		`data-order="8"`,
 	).Once()
 
-	p.Draw(drawer, 10)
+	p.Draw(drawer, 10, 8)
 
 	drawer.AssertExpectations(t)
 }
@@ -369,14 +380,14 @@ func TestLayoutPaths_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPaths{
-		LayoutPath{ID: "1", Class: "some-class", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
-		LayoutPath{ID: "2", Style: "a-style", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
-		LayoutPath{ID: "3", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "1", Class: "some-class", From: "a", To: "b", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "2", Style: "a-style", From: "a", To: "c", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "3", From: "c", To: "b", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
 	}
 
-	drawer.On("Path", mock.Anything, `id="1"`, `class="path-line some-class"`, "", `marker-end="url(#arrow)"`)
-	drawer.On("Path", mock.Anything, `id="2"`, `class="path-line"`, `style="a-style"`, `marker-end="url(#arrow)"`)
-	drawer.On("Path", mock.Anything, `id="3"`, `class="path-line"`, "", `marker-end="url(#arrow)"`)
+	drawer.On("Path", mock.Anything, `id="1"`, `class="path-line some-class"`, "", `marker-end="url(#arrow)"`, `data-from="a"`, `data-to="b"`, `data-order="0"`)
+	drawer.On("Path", mock.Anything, `id="2"`, `class="path-line"`, `style="a-style"`, `marker-end="url(#arrow)"`, `data-from="a"`, `data-to="c"`, `data-order="1"`)
+	drawer.On("Path", mock.Anything, `id="3"`, `class="path-line"`, "", `marker-end="url(#arrow)"`, `data-from="c"`, `data-to="b"`, `data-order="2"`)
 
 	p.Draw(drawer, 10)
 

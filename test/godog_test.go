@@ -63,4 +63,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^in the SVG file, style class "([^"]*)" exists$`, tc.inTheSVGFileStyleClassExists)
 	ctx.Step(`^in the SVG file, element "([^"]*)" has class "([^"]*)"$`, tc.inTheSVGFileElementHasClass)
 	ctx.Step(`^in the SVG file, element "([^"]*)" has style "([^"]*)"$`, tc.inTheSVGFileElementHasStyle)
+	ctx.Step(`^in the SVG file, element "([^"]*)" has attribute "([^"]*)" with value "([^"]*)"$`, tc.inTheSVGFileElementHasAttrWithVal)
 }

@@ -223,6 +223,8 @@ func Test_findPathsInOrder_addsIdCorrectly(t *testing.T) {
 	assert.Len(t, paths, 4)
 	assert.Equal(t, "1", paths[0].ID)
 	assert.Equal(t, "a class", paths[0].Class)
+	assert.Equal(t, "a", paths[0].From)
+	assert.Equal(t, "b", paths[0].To)
 	assert.Empty(t, paths[0].Style)
 
 	assert.Equal(t, "2", paths[1].ID)
@@ -232,6 +234,8 @@ func Test_findPathsInOrder_addsIdCorrectly(t *testing.T) {
 	assert.Equal(t, "3", paths[2].ID)
 	assert.Empty(t, paths[2].Class)
 	assert.Empty(t, paths[2].Style)
+	assert.Equal(t, "2", paths[2].From)
+	assert.Equal(t, "3", paths[2].To)
 }
 
 func Test_findPathsInOrder_passesErrorThrough(t *testing.T) {
