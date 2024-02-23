@@ -121,6 +121,6 @@ Feature: Layout behaviour
         And in the SVG file, element "a" has attribute "data-width" with value "7"
         And in the SVG file, element "a" has attribute "data-height" with value "4"
         And in the SVG file, element "g" has attribute "data-order" with value "6"
-        And in the SVG file, element "edge-2" has attribute "data-order" with value "2"
+        And in the SVG file, element "edge-2" has attribute "data-order" with value "1"
         And in the SVG file, element "edge-2" has attribute "data-from" with value "b"
         And in the SVG file, element "edge-2" has attribute "data-to" with value "c"

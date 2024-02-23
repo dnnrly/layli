@@ -115,8 +115,8 @@ func (l *Layout) Draw(canvas LayoutDrawer, spacing int) {
 		n.Draw(canvas, spacing, i)
 	}
 
-	for _, p := range l.Paths {
-		p.Draw(canvas, spacing)
+	for i, p := range l.Paths {
+		p.Draw(canvas, spacing, i)
 	}
 
 }
@@ -285,12 +285,14 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing, order int) {
 
 type LayoutPath struct {
 	ID     string
+	From   string
+	To     string
 	Points Points
 	Class  string
 	Style  string
 }
 
-func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
+func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing, order int) {
 	class := "path-line"
 	if p.Class != "" {
 		class += " " + p.Class
@@ -299,7 +301,16 @@ func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing int) {
 	if p.Style != "" {
 		style = "style=\"" + p.Style + "\""
 	}
-	canvas.Path(p.Points.Path(spacing), `id="`+p.ID+`"`, `class="`+class+`"`, style, `marker-end="url(#arrow)"`)
+	canvas.Path(
+		p.Points.Path(spacing),
+		`id="`+p.ID+`"`,
+		`class="`+class+`"`,
+		style,
+		`marker-end="url(#arrow)"`,
+		fmt.Sprintf(`data-from="%s"`, p.From),
+		fmt.Sprintf(`data-to="%s"`, p.To),
+		fmt.Sprintf(`data-order="%d"`, order),
+	)
 }
 
 func (paths *LayoutPath) Length() float64 {
@@ -321,8 +332,8 @@ func (paths *LayoutPath) Length() float64 {
 type LayoutPaths []LayoutPath
 
 func (paths *LayoutPaths) Draw(canvas LayoutDrawer, spacing int) {
-	for _, p := range *paths {
-		p.Draw(canvas, spacing)
+	for i, p := range *paths {
+		p.Draw(canvas, spacing, i)
 	}
 }
 

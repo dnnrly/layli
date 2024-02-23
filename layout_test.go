@@ -336,7 +336,9 @@ func TestLayoutPath_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPath{
-		ID: "id",
+		ID:   "id",
+		From: "a",
+		To:   "b",
 		Points: Points{
 			Point{X: 5.5, Y: 4.5},
 			Point{X: 8, Y: 4},
@@ -354,9 +356,12 @@ func TestLayoutPath_Draw(t *testing.T) {
 		`class="path-line"`,
 		"",
 		`marker-end="url(#arrow)"`,
+		`data-from="a"`,
+		`data-to="b"`,
+		`data-order="8"`,
 	).Once()
 
-	p.Draw(drawer, 10)
+	p.Draw(drawer, 10, 8)
 
 	drawer.AssertExpectations(t)
 }
@@ -375,14 +380,14 @@ func TestLayoutPaths_Draw(t *testing.T) {
 	drawer := mocks.NewLayoutDrawer(t)
 
 	p := LayoutPaths{
-		LayoutPath{ID: "1", Class: "some-class", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
-		LayoutPath{ID: "2", Style: "a-style", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
-		LayoutPath{ID: "3", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "1", Class: "some-class", From: "a", To: "b", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 4}, Point{X: 12, Y: 4}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "2", Style: "a-style", From: "a", To: "c", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
+		LayoutPath{ID: "3", From: "c", To: "b", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
 	}
 
-	drawer.On("Path", mock.Anything, `id="1"`, `class="path-line some-class"`, "", `marker-end="url(#arrow)"`)
-	drawer.On("Path", mock.Anything, `id="2"`, `class="path-line"`, `style="a-style"`, `marker-end="url(#arrow)"`)
-	drawer.On("Path", mock.Anything, `id="3"`, `class="path-line"`, "", `marker-end="url(#arrow)"`)
+	drawer.On("Path", mock.Anything, `id="1"`, `class="path-line some-class"`, "", `marker-end="url(#arrow)"`, `data-from="a"`, `data-to="b"`, `data-order="0"`)
+	drawer.On("Path", mock.Anything, `id="2"`, `class="path-line"`, `style="a-style"`, `marker-end="url(#arrow)"`, `data-from="a"`, `data-to="c"`, `data-order="1"`)
+	drawer.On("Path", mock.Anything, `id="3"`, `class="path-line"`, "", `marker-end="url(#arrow)"`, `data-from="c"`, `data-to="b"`, `data-order="2"`)
 
 	p.Draw(drawer, 10)
 
