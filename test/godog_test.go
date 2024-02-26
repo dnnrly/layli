@@ -50,6 +50,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^the app output contains "(.*)"$`, tc.theAppOutputContains)
 	ctx.Step(`^the app output does not contain "(.*)"$`, tc.theAppOutputDoesNotContain)
 	ctx.Step(`^a file "([^"]*)" exists$`, tc.aFileExists)
+	ctx.Step(`^a layli file "([^"]*)" exists$`, tc.aLayliFileExists)
 	ctx.Step(`^in the SVG file, all node text fits inside the node boundaries$`, tc.inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries)
 	ctx.Step(`^the number of nodes is (\d+)$`, tc.theNumberOfNodesIs)
 	ctx.Step(`^the number of paths is (\d+)$`, tc.theNumberOfPathsIs)
@@ -64,4 +65,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^in the SVG file, element "([^"]*)" has class "([^"]*)"$`, tc.inTheSVGFileElementHasClass)
 	ctx.Step(`^in the SVG file, element "([^"]*)" has style "([^"]*)"$`, tc.inTheSVGFileElementHasStyle)
 	ctx.Step(`^in the SVG file, element "([^"]*)" has attribute "([^"]*)" with value "([^"]*)"$`, tc.inTheSVGFileElementHasAttrWithVal)
+	ctx.Step(`^the layli file contains the following nodes:$`, tc.theLayliFileContainsTheFollowingNodes)
 }

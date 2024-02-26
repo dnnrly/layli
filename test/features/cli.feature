@@ -21,7 +21,6 @@ Feature: Validate CLI configuration
         Then the app exits without error
         And a file "tmp/another-file.svg" exists
 
-    
     @Acceptance
     Scenario: Non-existent file returns error
         When the app runs with parameters "non-existant.layli"
