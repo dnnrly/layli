@@ -392,20 +392,26 @@ func (c *testContext) inTheSVGFileElementHasAttrWithVal(id, attr, val string) er
 }
 
 func (c *testContext) theLayliFileContainsTheFollowingNodes(table *godog.Table) error {
+	table.Rows = table.Rows[1:]
 	for _, row := range table.Rows {
 		id := row.Cells[0].GetValue()
 		x := row.Cells[1].GetValue()
 		y := row.Cells[2].GetValue()
 
+		found := false
+
 		for _, n := range c.layliFileOutput.dom.Nodes {
 			if n.Id == id {
+				found = true
 				assert.Equal(c, x, n.Position.X)
 				assert.Equal(c, y, n.Position.Y)
 				break
 			}
 		}
 
-		return errors.New(fmt.Sprintf("Node %s not found", id))
+		if !found {
+			return errors.New(fmt.Sprintf("Node %s not found", id))
+		}
 	}
 
 	return nil

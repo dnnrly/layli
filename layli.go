@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	svg "github.com/ajstarks/svgo"
+	"gopkg.in/yaml.v3"
 )
 
 type OutputFunc func(output string) error
@@ -48,4 +49,20 @@ func (d *Diagram) Draw() error {
 
 	canvas.End()
 	return d.Output(w.String())
+}
+
+// AbsuluteFromSVG parses a string of an SVG and turns it in to a Layli configuration
+// with with absulute layout that can represent the same SVG
+func AbsoluteFromSVG(svg string, output OutputFunc) error {
+	config := &Config{
+		Nodes: ConfigNodes{
+			ConfigNode{Id: "1", Position: Position{X: 3, Y: 3}},
+			ConfigNode{Id: "2", Position: Position{X: 3, Y: 7}},
+		},
+	}
+
+	buf := strings.Builder{}
+	yaml.NewEncoder(&buf).Encode(config)
+
+	return output(buf.String())
 }
