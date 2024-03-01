@@ -267,7 +267,6 @@ func (n *LayoutNode) Draw(d LayoutDrawer, spacing, order int) {
 		fmt.Sprintf(`id="%s"`, n.Id),
 		class,
 		style,
-		fmt.Sprintf("data-order=\"%d\"", order),
 		fmt.Sprintf("data-pos-x=\"%d\"", n.left),
 		fmt.Sprintf("data-pos-y=\"%d\"", n.top),
 		fmt.Sprintf("data-width=\"%d\"", n.width),
@@ -309,7 +308,6 @@ func (p *LayoutPath) Draw(canvas LayoutDrawer, spacing, order int) {
 		`marker-end="url(#arrow)"`,
 		fmt.Sprintf(`data-from="%s"`, p.From),
 		fmt.Sprintf(`data-to="%s"`, p.To),
-		fmt.Sprintf(`data-order="%d"`, order),
 	)
 }
 
