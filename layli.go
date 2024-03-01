@@ -61,6 +61,8 @@ func AbsoluteFromSVG(svg string, output OutputFunc) error {
 		return fmt.Errorf("parsing svg: %w", err)
 	}
 
+	fmt.Println(svg)
+
 	config := &Config{
 		Nodes: ConfigNodes{},
 	}
@@ -99,17 +101,19 @@ func AbsoluteFromSVG(svg string, output OutputFunc) error {
 	}
 
 	config.Styles = ConfigStyles{}
-	styleData := xmlquery.FindOne(dom, "//style").InnerText()
-	for _, line := range strings.Split(styleData, "\n") {
-		if line == "" {
-			continue
-		}
+	styleData := xmlquery.FindOne(dom, "//style")
+	if styleData != nil {
+		for _, line := range strings.Split(styleData.InnerText(), "\n") {
+			if line == "" {
+				continue
+			}
 
-		key, style, found := strings.Cut(strings.Trim(line, ""), " {")
-		if !found {
-			return fmt.Errorf("cannot parse style line: %s", line)
+			key, style, found := strings.Cut(strings.Trim(line, ""), " {")
+			if !found {
+				return fmt.Errorf("cannot parse style line: %s", line)
+			}
+			config.Styles[key] = "{" + style
 		}
-		config.Styles[key] = "{" + style
 	}
 
 	return output(config.String())
