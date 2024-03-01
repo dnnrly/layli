@@ -197,17 +197,17 @@ func TestAbsoluteFromSvg(t *testing.T) {
 <path d="M 0 0 L 10 5 L 0 10 z" />
 </marker>
 </defs>
-<rect x="60" y="60" width="80" height="40" rx="3" ry="3" id="a"  style="fill:cyan; stroke:red;" data-order="0" data-pos-x="3" data-pos-y="3" data-width="5" data-height="3" />
+<rect x="60" y="60" width="80" height="40" rx="3" ry="3" id="a"  style="fill:cyan; stroke:red;" data-pos-x="3" data-pos-y="3" data-width="5" data-height="3" />
 <text x="100" y="80" id="a-text" style="font-size:10px" >Node 1</text>
-<rect x="240" y="60" width="80" height="40" rx="3" ry="3" id="b" class="class-2"  data-order="1" data-pos-x="12" data-pos-y="3" data-width="5" data-height="3" />
+<rect x="240" y="60" width="80" height="40" rx="3" ry="3" id="b" class="class-2" data-pos-x="12" data-pos-y="3" data-width="5" data-height="3" />
 <text x="280" y="80" id="b-text" style="font-size:10px" >Node 2</text>
-<rect x="60" y="200" width="80" height="40" rx="3" ry="3" id="c" class="class-1" style="fill:cyan; stroke:red;" data-order="2" data-pos-x="3" data-pos-y="10" data-width="5" data-height="3" />
+<rect x="60" y="200" width="80" height="40" rx="3" ry="3" id="c" class="class-1" style="fill:cyan; stroke:red;" data-pos-x="3" data-pos-y="10" data-width="5" data-height="3" />
 <text x="100" y="220" id="c-text" style="font-size:10px" >Node 3</text>
-<rect x="240" y="200" width="80" height="40" rx="3" ry="3" id="d"   data-order="3" data-pos-x="12" data-pos-y="10" data-width="5" data-height="3" />
+<rect x="240" y="200" width="80" height="40" rx="3" ry="3" id="d" data-pos-x="12" data-pos-y="10" data-width="5" data-height="3" />
 <text x="280" y="220" id="d-text" style="font-size:10px" >Node 4</text>
-<path d="M 140 80 L 240 80" id="edge-1" class="path-line class-1"  marker-end="url(#arrow)" data-from="a" data-to="b" data-order="0" />
-<path d="M 260 100 L 260 120 L 220 120 L 220 220 L 140 220" id="edge-2" class="path-line class-1" style="stroke:green;" marker-end="url(#arrow)" data-from="b" data-to="c" data-order="1" />
-<path d="M 120 240 L 120 260 L 260 260 L 260 240" id="edge-3" class="path-line"  marker-end="url(#arrow)" data-from="c" data-to="d" data-order="2" />
+<path d="M 140 80 L 240 80" id="edge-1" class="path-line class-1"  marker-end="url(#arrow)" data-from="a" data-to="b" />
+<path d="M 260 100 L 260 120 L 220 120 L 220 220 L 140 220" id="edge-2" class="path-line class-1" style="stroke:green;" marker-end="url(#arrow)" data-from="b" data-to="c" />
+<path d="M 120 240 L 120 260 L 260 260 L 260 240" id="edge-3" class="path-line"  marker-end="url(#arrow)" data-from="c" data-to="d" />
 </g>
 </svg>
 `, Config{
