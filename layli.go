@@ -85,13 +85,16 @@ func AbsoluteFromSVG(svg string, output OutputFunc) error {
 			Id:       id,
 			Contents: text.InnerText(),
 			Position: Position{X: x, Y: y},
+			Class:    n.SelectAttr("class"),
+			Style:    n.SelectAttr("style"),
 		})
 	}
 
 	for _, e := range xmlquery.Find(dom, "//g/path") {
 		config.Edges = append(config.Edges, ConfigEdge{
-			From: e.SelectAttr("data-from"),
-			To:   e.SelectAttr("data-to"),
+			From:  e.SelectAttr("data-from"),
+			To:    e.SelectAttr("data-to"),
+			Class: strings.Trim(strings.ReplaceAll(e.SelectAttr("class"), "path-line", ""), " "),
 		})
 	}
 

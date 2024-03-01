@@ -206,20 +206,20 @@ func TestAbsoluteFromSvg(t *testing.T) {
 <rect x="240" y="200" width="80" height="40" rx="3" ry="3" id="d"   data-order="3" data-pos-x="12" data-pos-y="10" data-width="5" data-height="3" />
 <text x="280" y="220" id="d-text" style="font-size:10px" >Node 4</text>
 <path d="M 140 80 L 240 80" id="edge-1" class="path-line class-1"  marker-end="url(#arrow)" data-from="a" data-to="b" data-order="0" />
-<path d="M 260 100 L 260 120 L 220 120 L 220 220 L 140 220" id="edge-2" class="path-line" style="stroke:green;" marker-end="url(#arrow)" data-from="b" data-to="c" data-order="1" />
+<path d="M 260 100 L 260 120 L 220 120 L 220 220 L 140 220" id="edge-2" class="path-line class-1" style="stroke:green;" marker-end="url(#arrow)" data-from="b" data-to="c" data-order="1" />
 <path d="M 120 240 L 120 260 L 260 260 L 260 240" id="edge-3" class="path-line"  marker-end="url(#arrow)" data-from="c" data-to="d" data-order="2" />
 </g>
 </svg>
 `, Config{
 			Nodes: ConfigNodes{
-				ConfigNode{Id: "a", Contents: "Node 1", Position: Position{X: 3, Y: 3}},
-				ConfigNode{Id: "b", Contents: "Node 2", Position: Position{X: 12, Y: 3}},
-				ConfigNode{Id: "c", Contents: "Node 3", Position: Position{X: 3, Y: 10}},
+				ConfigNode{Id: "a", Contents: "Node 1", Style: "fill:cyan; stroke:red;", Position: Position{X: 3, Y: 3}},
+				ConfigNode{Id: "b", Contents: "Node 2", Class: "class-2", Position: Position{X: 12, Y: 3}},
+				ConfigNode{Id: "c", Contents: "Node 3", Class: "class-1", Style: "fill:cyan; stroke:red;", Position: Position{X: 3, Y: 10}},
 				ConfigNode{Id: "d", Contents: "Node 4", Position: Position{X: 12, Y: 10}},
 			},
 			Edges: ConfigEdges{
-				ConfigEdge{From: "a", To: "b"},
-				ConfigEdge{From: "b", To: "c"},
+				ConfigEdge{From: "a", To: "b", Class: "class-1"},
+				ConfigEdge{From: "b", To: "c", Class: "class-1"},
 				ConfigEdge{From: "c", To: "d"},
 			},
 			Styles: ConfigStyles{
