@@ -11,9 +11,9 @@ import (
 )
 
 type ConfigPath struct {
-	Attempts int    `yaml:"attempts"`
-	Strategy string `yaml:"strategy"`
-	Class    string `yaml:"class"`
+	Attempts int    `yaml:"attempts,omitempty"`
+	Strategy string `yaml:"strategy,omitempty"`
+	Class    string `yaml:"class,omitempty"`
 }
 
 type ConfigStyles map[string]string
@@ -36,9 +36,9 @@ func (styles ConfigStyles) toCSS() string {
 }
 
 type Config struct {
-	Layout         string      `yaml:"layout"`
-	LayoutAttempts int         `yaml:"layout-attempts"`
-	Path           ConfigPath  `yaml:"path"`
+	Layout         string      `yaml:"layout,omitempty"`
+	LayoutAttempts int         `yaml:"layout-attempts,omitempty"`
+	Path           ConfigPath  `yaml:"path,omitempty"`
 	Nodes          ConfigNodes `yaml:"nodes"`
 	Edges          ConfigEdges `yaml:"edges"`
 	Spacing        int         `yaml:"-"`
@@ -48,7 +48,12 @@ type Config struct {
 	Border     int `yaml:"border"`
 	Margin     int `yaml:"margin"`
 
-	Styles ConfigStyles `yaml:"styles"`
+	Styles ConfigStyles `yaml:"styles,omitempty"`
+}
+
+func (config Config) String() string {
+	str, _ := yaml.Marshal(config)
+	return string(str)
 }
 
 type Position struct {
@@ -59,9 +64,9 @@ type Position struct {
 type ConfigNode struct {
 	Id       string   `yaml:"id"`
 	Contents string   `yaml:"contents"`
-	Position Position `yaml:"position"`
-	Class    string   `yaml:"class"`
-	Style    string   `yaml:"style"`
+	Position Position `yaml:"position,omitempty"`
+	Class    string   `yaml:"class,omitempty"`
+	Style    string   `yaml:"style,omitempty"`
 }
 
 type ConfigNodes []ConfigNode
@@ -76,11 +81,11 @@ func (nodes ConfigNodes) ByID(id string) *ConfigNode {
 }
 
 type ConfigEdge struct {
-	ID    string `yaml:"id"`
+	ID    string `yaml:"id,omitempty"`
 	From  string `yaml:"from"`
 	To    string `yaml:"to"`
-	Class string `yaml:"class"`
-	Style string `yaml:"style"`
+	Class string `yaml:"class,omitempty"`
+	Style string `yaml:"style,omitempty"`
 }
 
 type ConfigEdges []ConfigEdge

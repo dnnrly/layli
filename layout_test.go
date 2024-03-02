@@ -100,7 +100,7 @@ func TestLayoutNode_DrawNode(t *testing.T) {
 	}
 
 	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", "",
-		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-pos-x=\"4\"", "data-pos-y=\"5\"",
 		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
@@ -127,7 +127,7 @@ func TestLayoutNode_DrawNodeWithClass(t *testing.T) {
 	}
 
 	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, `class="some class"`, "",
-		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-pos-x=\"4\"", "data-pos-y=\"5\"",
 		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
@@ -154,7 +154,7 @@ func TestLayoutNode_DrawNodeWithStyle(t *testing.T) {
 	}
 
 	drawer.On("Roundrect", 160, 200, 80, 80, 3, 3, `id="nodeA"`, "", `style="some style"`,
-		"data-order=\"3\"", "data-pos-x=\"4\"", "data-pos-y=\"5\"",
+		"data-pos-x=\"4\"", "data-pos-y=\"5\"",
 		"data-width=\"3\"", "data-height=\"3\"").Once()
 	drawer.On("Textspan", 200, 240, "some contents", `id="nodeA-text"`, "font-size:10px").Once()
 	drawer.On("TextEnd").Once()
@@ -358,7 +358,6 @@ func TestLayoutPath_Draw(t *testing.T) {
 		`marker-end="url(#arrow)"`,
 		`data-from="a"`,
 		`data-to="b"`,
-		`data-order="8"`,
 	).Once()
 
 	p.Draw(drawer, 10, 8)
@@ -385,9 +384,9 @@ func TestLayoutPaths_Draw(t *testing.T) {
 		LayoutPath{ID: "3", From: "c", To: "b", Points: Points{Point{X: 5.5, Y: 4.5}, Point{X: 8, Y: 5}, Point{X: 12, Y: 5}, Point{X: 14.5, Y: 4.5}}},
 	}
 
-	drawer.On("Path", mock.Anything, `id="1"`, `class="path-line some-class"`, "", `marker-end="url(#arrow)"`, `data-from="a"`, `data-to="b"`, `data-order="0"`)
-	drawer.On("Path", mock.Anything, `id="2"`, `class="path-line"`, `style="a-style"`, `marker-end="url(#arrow)"`, `data-from="a"`, `data-to="c"`, `data-order="1"`)
-	drawer.On("Path", mock.Anything, `id="3"`, `class="path-line"`, "", `marker-end="url(#arrow)"`, `data-from="c"`, `data-to="b"`, `data-order="2"`)
+	drawer.On("Path", mock.Anything, `id="1"`, `class="path-line some-class"`, "", `marker-end="url(#arrow)"`, `data-from="a"`, `data-to="b"`)
+	drawer.On("Path", mock.Anything, `id="2"`, `class="path-line"`, `style="a-style"`, `marker-end="url(#arrow)"`, `data-from="a"`, `data-to="c"`)
+	drawer.On("Path", mock.Anything, `id="3"`, `class="path-line"`, "", `marker-end="url(#arrow)"`, `data-from="c"`, `data-to="b"`)
 
 	p.Draw(drawer, 10)
 

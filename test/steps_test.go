@@ -4,6 +4,7 @@ package test_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -12,9 +13,11 @@ import (
 	"strings"
 
 	"github.com/antchfx/xmlquery"
+	"github.com/cucumber/godog"
 	"github.com/dnnrly/layli/test"
 	"github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
 
 // nolint: unused
@@ -31,6 +34,42 @@ type testContext struct {
 		name     string
 		contents []byte
 		doc      *xmlquery.Node
+	}
+	layliFileOutput struct {
+		name     string
+		contents []byte
+		dom      struct {
+			Nodes []struct {
+				Id       string `yaml:"id"`
+				Contents string `yaml:"contents"`
+				Position struct {
+					X int `yaml:"x"`
+					Y int `yaml:"y"`
+				} `yaml:"position"`
+				Class string `yaml:"class"`
+				Style string `yaml:"style"`
+			}
+			Edges []struct {
+				ID    string `yaml:"id"`
+				From  string `yaml:"from"`
+				To    string `yaml:"to"`
+				Class string `yaml:"class"`
+				Style string `yaml:"style"`
+			}
+			Layout         string `yaml:"layout"`
+			LayoutAttempts int    `yaml:"layout-attempts"`
+			Path           struct {
+				Attempts int    `yaml:"attempts"`
+				Strategy string `yaml:"strategy"`
+				Class    string `yaml:"class"`
+			} `yaml:"path"`
+			Spacing    int               `yaml:"-"`
+			NodeWidth  int               `yaml:"width"`
+			NodeHeight int               `yaml:"height"`
+			Border     int               `yaml:"border"`
+			Margin     int               `yaml:"margin"`
+			Styles     map[string]string `yaml:"styles"`
+		}
 	}
 }
 
@@ -116,6 +155,26 @@ func (c *testContext) aFileExists(file string) error {
 	}
 
 	return nil
+}
+
+func (c *testContext) aLayliFileExists(file string) error {
+	c.layliFileOutput.name = file
+	f, err := os.Open(file)
+	if err != nil {
+		assert.NoError(c, err)
+		return c.err
+	}
+	c.layliFileOutput.contents, err = io.ReadAll(f)
+	if err != nil {
+		assert.NoError(c, err)
+		return c.err
+	}
+
+	buf := bytes.NewBuffer(c.layliFileOutput.contents)
+	err = yaml.NewDecoder(buf).
+		Decode(&c.layliFileOutput.dom)
+
+	return err
 }
 
 func (c *testContext) inTheSVGFileAllNodeTextFitsInsideTheNodeBoundaries() error {
@@ -330,4 +389,30 @@ func (c *testContext) inTheSVGFileElementHasAttrWithVal(id, attr, val string) er
 	assert.Equal(c, val, elem.SelectAttr(attr))
 
 	return c.err
+}
+
+func (c *testContext) theLayliFileContainsTheFollowingNodes(table *godog.Table) error {
+	table.Rows = table.Rows[1:]
+	for _, row := range table.Rows {
+		id := row.Cells[0].GetValue()
+		x := row.Cells[1].GetValue()
+		y := row.Cells[2].GetValue()
+
+		found := false
+
+		for _, n := range c.layliFileOutput.dom.Nodes {
+			if n.Id == id {
+				found = true
+				assert.Equal(c, x, n.Position.X)
+				assert.Equal(c, y, n.Position.Y)
+				break
+			}
+		}
+
+		if !found {
+			return errors.New(fmt.Sprintf("Node %s not found", id))
+		}
+	}
+
+	return nil
 }

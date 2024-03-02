@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
@@ -76,6 +77,34 @@ func Execute() error {
 	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", "", "output file or directory/")
 	rootCmd.PersistentFlags().StringVarP(&layout, "layout", "l", "flow-square", "the layout algorithm")
 	rootCmd.PersistentFlags().BoolVar(&showGrid, "show-grid", false, "show the path grid dots (great for debugging)")
+
+	rootCmd.AddCommand(
+		&cobra.Command{
+			Use:   "to-absolute [flags] [layout file]",
+			Short: "convert a Layli generated SVG into a layli file that can regenerate it",
+			Long:  ``,
+			Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+			RunE: func(cmd *cobra.Command, args []string) error {
+				f, err := os.Open(args[0])
+				if err != nil {
+					return fmt.Errorf("opening input: %w", err)
+				}
+
+				svg, err := io.ReadAll(f)
+				if err != nil {
+					return fmt.Errorf("reading input: %w", err)
+				}
+
+				err = layli.AbsoluteFromSVG(string(svg), func(data string) error {
+					return os.WriteFile(output, []byte(data), 0644)
+				})
+				if err != nil {
+					return fmt.Errorf("generating layli file %s: %w", output, err)
+				}
+
+				return nil
+			},
+		})
 
 	return rootCmd.Execute()
 }
