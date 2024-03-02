@@ -68,7 +68,8 @@ func AbsoluteFromSVG(svg string, output OutputFunc) error {
 	fmt.Println(svg)
 
 	config := &Config{
-		Nodes: ConfigNodes{},
+		Layout: "absolute",
+		Nodes:  ConfigNodes{},
 	}
 
 	blankParse := func(s string) (int, error) {

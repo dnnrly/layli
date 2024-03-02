@@ -241,6 +241,7 @@ func TestAbsoluteFromSvg(t *testing.T) {
 </g>
 </svg>
 `, Config{
+			Layout: "absolute",
 			Nodes: ConfigNodes{
 				ConfigNode{Id: "a", Contents: "Node 1", Style: "fill:cyan; stroke:red;", Position: Position{X: 3, Y: 3}},
 				ConfigNode{Id: "b", Contents: "Node 2", Class: "class-2", Position: Position{X: 12, Y: 3}},
@@ -286,6 +287,7 @@ func TestAbsoluteFromSvg(t *testing.T) {
 </g>
 </svg>
 `, Config{
+			Layout: "absolute",
 			Nodes: ConfigNodes{
 				ConfigNode{Id: "a", Contents: "Node 1", Style: "fill:cyan; stroke:red;", Position: Position{X: 3, Y: 3}},
 				ConfigNode{Id: "b", Contents: "Node 2", Class: "class-2", Position: Position{X: 12, Y: 3}},
@@ -329,6 +331,7 @@ func TestAbsoluteFromSvg(t *testing.T) {
 </g>
 </svg>
 `, Config{
+			Layout: "absolute",
 			Nodes: ConfigNodes{
 				ConfigNode{Id: "a", Contents: "First", Position: Position{X: 12, Y: 12}},
 				ConfigNode{Id: "b", Contents: "Second", Position: Position{X: 36, Y: 12}},
