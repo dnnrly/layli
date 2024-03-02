@@ -67,6 +67,33 @@ func AbsoluteFromSVG(svg string, output OutputFunc) error {
 		Nodes: ConfigNodes{},
 	}
 
+	blankParse := func(s string) (int, error) {
+		if s == "" {
+			return 0, nil
+		}
+
+		return strconv.Atoi(s)
+	}
+
+	root := xmlquery.FindOne(dom, "//svg")
+
+	config.NodeWidth, err = blankParse(root.SelectAttr("data-node-width"))
+	if err != nil {
+		return fmt.Errorf("parsing node width: %w", err)
+	}
+	config.NodeHeight, err = blankParse(root.SelectAttr("data-node-height"))
+	if err != nil {
+		return fmt.Errorf("parsing node height: %w", err)
+	}
+	config.Border, err = blankParse(root.SelectAttr("data-border"))
+	if err != nil {
+		return fmt.Errorf("parsing border: %w", err)
+	}
+	config.Margin, err = blankParse(root.SelectAttr("data-margin"))
+	if err != nil {
+		return fmt.Errorf("parsing margin: %w", err)
+	}
+
 	for _, n := range xmlquery.Find(dom, "//rect") {
 		id := n.SelectAttr("id")
 		x, err := strconv.Atoi(n.SelectAttr("data-pos-x"))
