@@ -358,7 +358,9 @@ func TestAbsoluteFromSvg_Errors(t *testing.T) {
 		})
 	}
 
-	check(t, "Invalid XML", `<?xml version="1.0"?><not valid`)
+	check(t, "empty XML", ``)
+	check(t, "not an SVG", strings.ReplaceAll(validSVG, "svg", "not-an-svg"))
+	check(t, "invalid XML", `<?xml version="1.0"?><not valid`)
 	check(t, "data-node-width is invalid", strings.Replace(validSVG, "data-node-width=\"4\"", "data-node-width=\"a\"", 1))
 	check(t, "data-node-height is invalid", strings.Replace(validSVG, "data-node-height=\"2\"", "data-node-height=\"a\"", 1))
 	check(t, "data-border is invalid", strings.Replace(validSVG, "data-border=\"3\"", "data-border=\"a\"", 1))

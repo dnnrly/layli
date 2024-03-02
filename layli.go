@@ -60,9 +60,17 @@ func (d *Diagram) Draw() error {
 // AbsuluteFromSVG parses a string of an SVG and turns it in to a Layli configuration
 // with with absulute layout that can represent the same SVG
 func AbsoluteFromSVG(svg string, output OutputFunc) error {
+	if svg == "" {
+		return fmt.Errorf("svg cannot be empty")
+	}
+
 	dom, err := xmlquery.Parse(strings.NewReader(svg))
 	if err != nil {
 		return fmt.Errorf("parsing svg: %w", err)
+	}
+
+	if svg[0] != '<' || dom == nil || xmlquery.FindOne(dom, "/svg") == nil {
+		return fmt.Errorf("error parsing svg: %s", dom.Data)
 	}
 
 	config := &Config{

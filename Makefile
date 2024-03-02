@@ -68,7 +68,9 @@ test: ## run unit tests
 
 .PHONY: fuzz
 fuzz: ## run fuzz tests
-	go test -tags fuzz -fuzz=FuzzDrawing
+	go test -tags fuzz -fuzz=FuzzDrawing -fuzztime=2m
+	go test -tags fuzz -fuzz=FuzzConfig -fuzztime=2m
+	go test -tags fuzz -fuzz=FuzzToAbsolute -fuzztime=2m
 
 .PHONY: ci-test
 ci-test: ## ci target - run tests to generate coverage data
