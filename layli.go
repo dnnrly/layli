@@ -65,8 +65,6 @@ func AbsoluteFromSVG(svg string, output OutputFunc) error {
 		return fmt.Errorf("parsing svg: %w", err)
 	}
 
-	fmt.Println(svg)
-
 	config := &Config{
 		Layout: "absolute",
 		Nodes:  ConfigNodes{},
