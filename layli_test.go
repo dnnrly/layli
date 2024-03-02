@@ -4,11 +4,41 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/antchfx/xmlquery"
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
+
+func TestDiagram_EmbedsRootConfigValues(t *testing.T) {
+	svg := ""
+	d := Diagram{
+		Output: func(data string) error { svg = data; return nil },
+		Config: Config{
+			Margin:     7,
+			Border:     5,
+			NodeWidth:  3,
+			NodeHeight: 6,
+		},
+		Layout:   &Layout{},
+		ShowGrid: false,
+	}
+
+	err := d.Draw()
+	assert.NoError(t, err)
+
+	dom, err := xmlquery.Parse(strings.NewReader(svg))
+	require.NoError(t, err)
+
+	root := xmlquery.FindOne(dom, "//svg")
+	require.NotNil(t, root)
+
+	assert.Equal(t, "7", root.SelectAttr("data-margin"))
+	assert.Equal(t, "5", root.SelectAttr("data-border"))
+	assert.Equal(t, "3", root.SelectAttr("data-node-width"))
+	assert.Equal(t, "6", root.SelectAttr("data-node-height"))
+}
 
 func TestDiagram_DrawWithStyleClass(t *testing.T) {
 	output := ""

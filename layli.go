@@ -27,6 +27,10 @@ func (d *Diagram) Draw() error {
 		(d.Layout.LayoutWidth()-1)*d.Config.Spacing,
 		(d.Layout.LayoutHeight()-1)*d.Config.Spacing,
 		"style=\"background-color: white;\"",
+		fmt.Sprintf(`data-margin="%d"`, d.Config.Margin),
+		fmt.Sprintf(`data-border="%d"`, d.Config.Border),
+		fmt.Sprintf(`data-node-width="%d"`, d.Config.NodeWidth),
+		fmt.Sprintf(`data-node-height="%d"`, d.Config.NodeHeight),
 	)
 	if len(d.Config.Styles) != 0 {
 		canvas.Style("text/css", d.Config.Styles.toCSS())
