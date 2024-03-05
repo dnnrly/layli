@@ -146,11 +146,11 @@ func AbsoluteFromSVG(svg string, output OutputFunc) error {
 				continue
 			}
 
-			key, style, found := strings.Cut(strings.Trim(line, ""), " {")
+			key, style, found := strings.Cut(strings.Trim(line, " }"), " { ")
 			if !found {
 				return fmt.Errorf("cannot parse style line: %s", line)
 			}
-			config.Styles[key] = "{" + style
+			config.Styles[key] = style
 		}
 	}
 
