@@ -218,7 +218,7 @@ func TestAbsoluteFromSvg(t *testing.T) {
 <style type="text/css">
 <![CDATA[
 .class-1 { stroke-width:3; }
-.class-2 { stroke:green; }
+.class-2 { stroke:green; stroke-width:5; }
 ]]>
 </style>
 <g style="text-anchor:middle;font-family:sans;fill:none;stroke:black">
@@ -254,8 +254,8 @@ func TestAbsoluteFromSvg(t *testing.T) {
 				ConfigEdge{From: "c", To: "d"},
 			},
 			Styles: ConfigStyles{
-				".class-1": "{ stroke-width:3; }",
-				".class-2": "{ stroke:green; }",
+				".class-1": "stroke-width:3;",
+				".class-2": "stroke:green; stroke-width:5;",
 			},
 		})
 	})
