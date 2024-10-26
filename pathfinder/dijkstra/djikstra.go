@@ -4,6 +4,8 @@ import (
 	"container/heap"
 	"errors"
 	"math"
+
+	"github.com/elliotchance/orderedmap/v2"
 )
 
 var (
@@ -12,8 +14,36 @@ var (
 
 type CostFunction func(from, to Point) int64
 
+type costMapping *orderedmap.OrderedMap[Point, int64]
+
+func newCostMapping() costMapping {
+	return orderedmap.NewOrderedMap[Point, int64]()
+}
+
+func get[K comparable, V any](m *orderedmap.OrderedMap[K, V], k K) V {
+	var none V
+
+	if m == nil {
+		return none
+	}
+
+	v, ok := (*m).Get(k)
+	if !ok {
+		return none
+	}
+
+	return v
+}
+
+func set[K comparable, V any](m *orderedmap.OrderedMap[K, V], k K, v V) {
+	if m == nil {
+		return
+	}
+	(*m).Set(k, v)
+}
+
 type PathFinder struct {
-	nodes map[Point]map[Point]int64
+	nodes *orderedmap.OrderedMap[Point, costMapping]
 	start Point
 	end   Point
 }
@@ -44,20 +74,21 @@ func (pq *PriorityQueue) Pop() interface{} {
 
 func NewPathFinder(start, end Point) *PathFinder {
 	return &PathFinder{
-		nodes: make(map[Point]map[Point]int64),
+		nodes: orderedmap.NewOrderedMap[Point, costMapping](),
 		start: start,
 		end:   end,
 	}
 }
 
 func (pf *PathFinder) AddConnection(from Point, cost CostFunction, to ...Point) {
-	if pf.nodes[from] == nil {
-		pf.nodes[from] = make(map[Point]int64)
+	if get(pf.nodes, from) == nil {
+		set(pf.nodes, from, costMapping(orderedmap.NewOrderedMap[Point, int64]()))
 	}
 	for _, dest := range to {
-		pf.nodes[from][dest] = cost(from, dest)
-		if pf.nodes[dest] == nil {
-			pf.nodes[dest] = make(map[Point]int64)
+		fromMapping := get(pf.nodes, from)
+		set(fromMapping, dest, cost(from, dest))
+		if get(pf.nodes, dest) == nil {
+			set(pf.nodes, dest, newCostMapping())
 		}
 	}
 }
@@ -67,7 +98,7 @@ func (pf *PathFinder) BestPath() ([]Point, error) {
 	previous := make(map[Point]Point)
 	pq := make(PriorityQueue, 0)
 
-	for node := range pf.nodes {
+	for _, node := range pf.nodes.Keys() {
 		distance[node] = math.MaxInt64
 	}
 	distance[pf.start] = 0
@@ -81,13 +112,14 @@ func (pf *PathFinder) BestPath() ([]Point, error) {
 			return pf.reconstructPath(previous), nil
 		}
 
-		for neighbor := range pf.nodes[current] {
-			cost := distance[current] + pf.nodes[current][neighbor]
+		for _, neighborPoint := range (*get(pf.nodes, current)).Keys() {
+			destMapping := get(pf.nodes, current)
+			cost := distance[current] + get(destMapping, neighborPoint)
 
-			if cost < distance[neighbor] {
-				distance[neighbor] = cost
-				previous[neighbor] = current
-				heap.Push(&pq, &PriorityQueueItem{point: neighbor, cost: cost})
+			if cost < distance[neighborPoint] {
+				distance[neighborPoint] = cost
+				previous[neighborPoint] = current
+				heap.Push(&pq, &PriorityQueueItem{point: neighborPoint, cost: cost})
 			}
 		}
 	}
