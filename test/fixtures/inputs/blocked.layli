@@ -1,5 +1,6 @@
 path:
   strategy: random
+  attempts: 200
 
 nodes:
   - id: node1
