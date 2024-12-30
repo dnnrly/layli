@@ -7,7 +7,7 @@ require (
 	github.com/antchfx/xmlquery v1.4.2
 	github.com/barkimedes/go-deepcopy v0.0.0-20220514131651-17c30cfc62df
 	github.com/cucumber/godog v0.11.0
-	github.com/elliotchance/orderedmap/v2 v2.4.0
+	github.com/elliotchance/orderedmap/v2 v2.6.1
 	github.com/otiai10/copy v1.14.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
