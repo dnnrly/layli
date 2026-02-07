@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/dnnrly/layli"
-	"github.com/dnnrly/layli/pathfinder/dijkstra"
+	"github.com/dnnrly/layli/internal/composition"
 	"github.com/spf13/cobra"
 )
 
@@ -17,10 +17,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-}
-
-var newPathFinder = func(start, end dijkstra.Point) layli.PathFinder {
-	return dijkstra.NewPathFinder(start, end)
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -36,40 +32,15 @@ func Execute() error {
 		Long:  ``,
 		Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			f, err := os.Open(args[0])
-			if err != nil {
-				return fmt.Errorf("opening input: %w", err)
-			}
-
 			if output == "" {
 				output = strings.ReplaceAll(args[0], ".layli", "")
 				output = fmt.Sprintf("%s.svg", output)
 			}
 
-			config, err := layli.NewConfigFromFile(f)
-			if err != nil {
-				return fmt.Errorf("creating config: %w", err)
+			app := composition.NewGenerateDiagram(showGrid)
+			if err := app.Execute(args[0], output); err != nil {
+				return mapError(err)
 			}
-
-			layout, err := layli.NewLayoutFromConfig(newPathFinder, config)
-			if err != nil {
-				return fmt.Errorf("creating layout: %w", err)
-			}
-
-			d := layli.Diagram{
-				Output: func(data string) error {
-					return os.WriteFile(output, []byte(data), 0644)
-				},
-				ShowGrid: showGrid,
-				Config:   *config,
-				Layout:   layout,
-			}
-
-			err = d.Draw()
-			if err != nil {
-				return fmt.Errorf("drawing diagram: %w", err)
-			}
-
 			return nil
 		},
 	}
@@ -107,4 +78,18 @@ func Execute() error {
 		})
 
 	return rootCmd.Execute()
+}
+
+func mapError(err error) error {
+	msg := err.Error()
+	switch {
+	case strings.HasPrefix(msg, "parse config: reading config file: open "):
+		return fmt.Errorf("opening input: %s", strings.TrimPrefix(msg, "parse config: reading config file: "))
+	case strings.HasPrefix(msg, "parse config:"):
+		return fmt.Errorf("creating config: %s", strings.TrimPrefix(msg, "parse config: "))
+	case strings.HasPrefix(msg, "render diagram:"):
+		return fmt.Errorf("drawing diagram: %s", strings.TrimPrefix(msg, "render diagram: "))
+	default:
+		return err
+	}
 }

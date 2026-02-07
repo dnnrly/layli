@@ -1,0 +1,27 @@
+# Refactoring Commit Template
+# 
+# Usage: git commit -t docs/refactoring/commit_template.txt
+#
+# Format:
+# <type>(<scope>): <subject>
+#
+# <optional body>
+#
+# Tests: <test results>
+
+# --- COMMIT MESSAGE STARTS BELOW THIS LINE ---
+
+
+# Tests: 
+
+# --- Template Guide ---
+# Type: refactor, test, docs, feat, fix
+# Scope: domain, usecases, adapters, test, cli, config
+#
+# Example:
+# refactor(domain): extract Diagram entity
+#
+# Move Diagram struct from config.go to internal/domain/diagram.go.
+# Add validation methods and comprehensive documentation.
+#
+# Tests: All acceptance tests passing (45/45)

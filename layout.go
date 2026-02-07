@@ -342,3 +342,28 @@ func (paths LayoutPaths) Length() float64 {
 	}
 	return totalLength
 }
+
+// NewLayout creates a Layout with the given configuration parameters.
+func NewLayout(nodes LayoutNodes, paths LayoutPaths, nodeWidth, nodeHeight, nodeMargin, layoutBorder, pathSpacing int) *Layout {
+	return &Layout{
+		Nodes:        nodes,
+		Paths:        paths,
+		nodeWidth:    nodeWidth,
+		nodeHeight:   nodeHeight,
+		nodeMargin:   nodeMargin,
+		layoutBorder: layoutBorder,
+		pathSpacing:  pathSpacing,
+	}
+}
+
+// Left returns the left position of the node in grid units.
+func (n *LayoutNode) Left() int { return n.left }
+
+// Top returns the top position of the node in grid units.
+func (n *LayoutNode) Top() int { return n.top }
+
+// Width returns the width of the node in grid units.
+func (n *LayoutNode) Width() int { return n.width }
+
+// Height returns the height of the node in grid units.
+func (n *LayoutNode) Height() int { return n.height }
