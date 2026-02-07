@@ -1,4 +1,4 @@
-package layli
+package layout
 
 import (
 	"fmt"
@@ -57,8 +57,8 @@ func (d *Diagram) Draw() error {
 	return d.Output(w.String())
 }
 
-// AbsuluteFromSVG parses a string of an SVG and turns it in to a Layli configuration
-// with with absulute layout that can represent the same SVG
+// AbsoluteFromSVG parses a string of an SVG and turns it in to a Layli configuration
+// with with absolute layout that can represent the same SVG
 func AbsoluteFromSVG(svg string, output OutputFunc) error {
 	if svg == "" {
 		return fmt.Errorf("svg cannot be empty")

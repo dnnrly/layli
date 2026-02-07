@@ -3,8 +3,8 @@ package pathfinding
 import (
 	"fmt"
 
-	"github.com/dnnrly/layli"
 	"github.com/dnnrly/layli/internal/domain"
+	layoutpkg "github.com/dnnrly/layli/internal/layout"
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
 
@@ -17,11 +17,11 @@ func NewDijkstraPathfinder() *DijkstraPathfinder {
 func (p *DijkstraPathfinder) FindPaths(diagram *domain.Diagram) error {
 	cfg := toRootConfig(diagram)
 
-	finder := func(start, end dijkstra.Point) layli.PathFinder {
+	finder := func(start, end dijkstra.Point) layoutpkg.PathFinder {
 		return dijkstra.NewPathFinder(start, end)
 	}
 
-	layout, err := layli.NewLayoutFromConfig(finder, &cfg)
+	layout, err := layoutpkg.NewLayoutFromConfig(finder, &cfg)
 	if err != nil {
 		return fmt.Errorf("finding paths: %w", err)
 	}
@@ -42,7 +42,7 @@ func (p *DijkstraPathfinder) FindPaths(diagram *domain.Diagram) error {
 	return nil
 }
 
-func findMatchingPath(paths layli.LayoutPaths, edge domain.Edge) *layli.LayoutPath {
+func findMatchingPath(paths layoutpkg.LayoutPaths, edge domain.Edge) *layoutpkg.LayoutPath {
 	for _, lp := range paths {
 		if lp.From == edge.From && lp.To == edge.To {
 			return &lp
@@ -51,13 +51,13 @@ func findMatchingPath(paths layli.LayoutPaths, edge domain.Edge) *layli.LayoutPa
 	return nil
 }
 
-func toRootConfig(d *domain.Diagram) layli.Config {
-	nodes := make(layli.ConfigNodes, len(d.Nodes))
+func toRootConfig(d *domain.Diagram) layoutpkg.Config {
+	nodes := make(layoutpkg.ConfigNodes, len(d.Nodes))
 	for i, n := range d.Nodes {
-		nodes[i] = layli.ConfigNode{
+		nodes[i] = layoutpkg.ConfigNode{
 			Id:       n.ID,
 			Contents: n.Contents,
-			Position: layli.Position{
+			Position: layoutpkg.Position{
 				X: n.Position.X,
 				Y: n.Position.Y,
 			},
@@ -66,9 +66,9 @@ func toRootConfig(d *domain.Diagram) layli.Config {
 		}
 	}
 
-	edges := make(layli.ConfigEdges, len(d.Edges))
+	edges := make(layoutpkg.ConfigEdges, len(d.Edges))
 	for i, e := range d.Edges {
-		edges[i] = layli.ConfigEdge{
+		edges[i] = layoutpkg.ConfigEdge{
 			ID:    e.ID,
 			From:  e.From,
 			To:    e.To,
@@ -77,10 +77,10 @@ func toRootConfig(d *domain.Diagram) layli.Config {
 		}
 	}
 
-	return layli.Config{
+	return layoutpkg.Config{
 		Layout:         "absolute",
 		LayoutAttempts: d.Config.LayoutAttempts,
-		Path: layli.ConfigPath{
+		Path: layoutpkg.ConfigPath{
 			Strategy: d.Config.PathStrategy,
 			Attempts: d.Config.PathAttempts,
 		},

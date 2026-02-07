@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dnnrly/layli"
 	"github.com/dnnrly/layli/internal/composition"
+	layoutpkg "github.com/dnnrly/layli/internal/layout"
 	"github.com/spf13/cobra"
 )
 
@@ -66,7 +66,7 @@ func Execute() error {
 					return fmt.Errorf("reading input: %w", err)
 				}
 
-				err = layli.AbsoluteFromSVG(string(svg), func(data string) error {
+				err = layoutpkg.AbsoluteFromSVG(string(svg), func(data string) error {
 					return os.WriteFile(output, []byte(data), 0644)
 				})
 				if err != nil {
