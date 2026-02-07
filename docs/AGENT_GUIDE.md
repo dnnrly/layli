@@ -9,7 +9,7 @@ This guide is specifically for AI coding agents (Amp, Cursor, Windsurf, Claude C
 Read these in order:
 1. Feature files (what the system does): `cat test/features/*.feature`
 2. Architecture overview: `cat docs/architecture/OVERVIEW.md`
-3. Current state: `cat docs/CURRENT_STATE.md`
+3. Current state: `cat docs/FEATURE_MAP.md`
 
 ### 2. Set Up Your Environment
 
@@ -137,7 +137,7 @@ Tests
 
 ### Refactoring Workflow
 
-When refactoring without adding features:
+When improving existing code:
 
 1. Ensure tests are green: `make acceptance-test`
 2. Make ONE small change
@@ -429,7 +429,7 @@ func TestArrange(t *testing.T) {
 
 For agents working on large changes:
 
-1. **Read the CHEAT_SHEET first** - Quick overview of all phases
+1. **Read this guide first** - Quick overview of development workflow
 2. **Keep tests running** - Don't go long without `make acceptance-test`
 3. **Commit small changes** - Easier to debug if something breaks
 4. **Use interfaces early** - Saves refactoring later
@@ -442,7 +442,7 @@ For agents working on large changes:
 - `docs/architecture/DECISIONS.md` - Why we made choices
 - `docs/architecture/DIAGRAMS.md` - Visual representations
 - `docs/ADDING_FEATURES.md` - Step-by-step feature guides
-- `docs/refactoring/CHEAT_SHEET.md` - Quick reference
+- `docs/FEATURE_MAP.md` - Maps features to code components
 
 ### External
 - [Clean Architecture (Martin)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)

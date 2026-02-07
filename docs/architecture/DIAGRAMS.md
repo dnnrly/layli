@@ -291,4 +291,4 @@ Future optimization opportunities:
 - Concurrent edge rendering
 - Streaming SVG generation for large diagrams
 
-(Kept simple to avoid complexity during refactoring)
+(Kept simple for maintainability)

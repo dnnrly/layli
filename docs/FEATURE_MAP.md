@@ -21,10 +21,10 @@
 
 **Current Flow:**
 ```
-CLI args → Cobra command handler → config.Parse() → layli.CreateDiagram() → error handling
+CLI args → Cobra command handler → GenerateDiagram use case → adapters → output
 ```
 
-**Refactoring Target:**
+**Implementation:**
 - Domain: `internal/domain/config.go` (Config validation rules)
 - Use Case: `internal/usecases/generate_diagram.go` (Orchestration)
 - Adapter: `internal/adapters/config/yaml_parser.go` (YAML parsing)
@@ -80,7 +80,7 @@ Parsed config → ApplyLayout(strategy)
   → SVG rendering
 ```
 
-**Refactoring Target:**
+**Implementation:**
 - Domain: 
   - `internal/domain/diagram.go` - Diagram entity
   - `internal/domain/node.go` - Node entity with position
@@ -119,7 +119,7 @@ Parsed config → ApplyLayout(strategy)
   - Exit code checking (0 for success, non-zero for errors)
 - Error patterns: "no path found", "margins overlap", "creating config:"
 
-**Refactoring Target:**
+**Implementation:**
 - Domain: `internal/domain/errors.go` - Domain-specific error types
 - Use Cases: Validation at use case boundaries
 - Adapters: Parse errors, file I/O errors
@@ -146,7 +146,7 @@ Parsed config → ApplyLayout(strategy)
   - YAML parsing validation
 - Key operation: SVG element extraction → Node position mapping
 
-**Refactoring Target:**
+**Implementation:**
 - Use Case: `internal/usecases/reverse_svg_to_config.go`
 - Adapter: `internal/adapters/svg/parser.go` - SVG parsing
 - Adapter: `internal/adapters/config/writer.go` - YAML writing
@@ -165,7 +165,7 @@ Parsed config → ApplyLayout(strategy)
 | `layli.go` | Main orchestration & SVG rendering | Use Case + Adapter | Use Case: `internal/usecases/generate_diagram.go` + Adapter: `internal/adapters/rendering/svg.go` |
 | `cmd/layli/main.go` | CLI handler | Adapter | `internal/adapters/cli/` |
 | `vertext_map.go` | Grid vertex management | Adapter | `internal/adapters/pathfinding/vertex_map.go` |
-| Test files | BDD steps | Test Layer (unchanged) | `test/` (refactored steps reference domain+usecases) |
+| Test files | BDD steps | Test Layer | `test/` (steps reference domain+usecases) |
 
 ---
 
@@ -178,4 +178,4 @@ Parsed config → ApplyLayout(strategy)
 
 **Total: 141 steps in `test/steps_test.go`**
 
-The acceptance tests are **feature-centric**, not code-centric. They test end-to-end behavior, which means they'll continue to work as long as the business logic behaves identically post-refactoring.
+The acceptance tests are **feature-centric**, not code-centric. They test end-to-end behavior, which means they work regardless of the internal implementation.

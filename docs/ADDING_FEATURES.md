@@ -507,7 +507,7 @@ make acceptance-test
 # Tests pass (green)
 ```
 
-### 3. Refactor Phase
+### 3. Improve Code Quality
 ```bash
 # Improve code quality
 make acceptance-test
