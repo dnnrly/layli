@@ -49,4 +49,4 @@ jobs:
       with:
         distribution: goreleaser
         version: latest
-        args: build --clean --skip-validate --snapshot
+        args: build --clean --skip=validate --snapshot
