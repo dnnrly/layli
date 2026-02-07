@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"math/rand"
 
 	"github.com/barkimedes/go-deepcopy"
 	"github.com/dnnrly/layli/algorithms/tarjan"
 	"github.com/dnnrly/layli/algorithms/topological"
+	"github.com/dnnrly/layli/internal/common"
 )
 
 // LayoutArrangementFunc returns a slice of nodes arranged according to the algorithm implemented
@@ -161,7 +161,7 @@ func shuffleNodes(config *Config, arrange LayoutArrangementFunc) (LayoutNodes, e
 	shortestDist := math.MaxFloat64
 
 	for i := 0; i < config.LayoutAttempts; i++ {
-		rand.Shuffle(len(c.Nodes), func(i, j int) { c.Nodes[i], c.Nodes[j] = c.Nodes[j], c.Nodes[i] })
+		common.Shuffle(len(c.Nodes), func(i, j int) { c.Nodes[i], c.Nodes[j] = c.Nodes[j], c.Nodes[i] })
 		nodes, _ := arrange(c)
 		dist, _ := nodes.ConnectionDistances(c.Edges)
 		if dist < shortestDist {

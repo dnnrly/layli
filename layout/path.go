@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"math/rand"
 
+	"github.com/dnnrly/layli/internal/common"
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
 
@@ -152,7 +152,7 @@ func findPathsRandomly(subStrategy PathStrategy) PathStrategy {
 		gotPath := false
 
 		for count := 0; count < config.Path.Attempts; count++ {
-			rand.Shuffle(len(config.Edges), func(i, j int) { config.Edges[i], config.Edges[j] = config.Edges[j], config.Edges[i] })
+			common.Shuffle(len(config.Edges), func(i, j int) { config.Edges[i], config.Edges[j] = config.Edges[j], config.Edges[i] })
 			err := subStrategy(config, paths, find)
 
 			if err == nil {

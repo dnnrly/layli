@@ -12,6 +12,9 @@ import (
 )
 
 func main() {
+	// The random seeding is now handled by the pkg/random service
+	// which respects the LAYLI_TEST_SEED environment variable
+
 	err := Execute()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())

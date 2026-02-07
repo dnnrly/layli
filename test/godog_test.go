@@ -25,7 +25,10 @@ func TestFeatures(t *testing.T) {
 
 // nolint: unused
 func InitializeTestSuite(ctx *godog.TestSuiteContext) {
-	ctx.BeforeSuite(func() {})
+	ctx.BeforeSuite(func() {
+		// Random seeding is now handled by the pkg/random service
+		// which respects the LAYLI_TEST_SEED environment variable
+	})
 }
 
 // nolint: unused
