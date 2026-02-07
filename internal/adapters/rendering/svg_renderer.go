@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/dnnrly/layli/internal/domain"
-	layoutpkg "github.com/dnnrly/layli/internal/layout"
 	"github.com/dnnrly/layli/internal/usecases"
+	"github.com/dnnrly/layli/layout"
 )
 
 var _ usecases.Renderer = (*SVGRenderer)(nil)
@@ -24,7 +24,7 @@ func (r *SVGRenderer) Render(diagram *domain.Diagram, outputPath string) error {
 	nodes := buildLayoutNodes(diagram)
 	paths := buildLayoutPaths(diagram)
 
-	layout := layoutpkg.NewLayout(
+	layoutObj := layout.NewLayout(
 		nodes, paths,
 		diagram.Config.NodeWidth,
 		diagram.Config.NodeHeight,
@@ -34,13 +34,13 @@ func (r *SVGRenderer) Render(diagram *domain.Diagram, outputPath string) error {
 	)
 
 	var svgOutput string
-	rootDiagram := layoutpkg.Diagram{
+	rootDiagram := layout.Diagram{
 		Output: func(output string) error {
 			svgOutput = output
 			return nil
 		},
 		Config:   cfg,
-		Layout:   layout,
+		Layout:   layoutObj,
 		ShowGrid: r.showGrid,
 	}
 
@@ -51,13 +51,13 @@ func (r *SVGRenderer) Render(diagram *domain.Diagram, outputPath string) error {
 	return r.writer.Write(outputPath, []byte(svgOutput))
 }
 
-func buildConfig(diagram *domain.Diagram) layoutpkg.Config {
-	styles := layoutpkg.ConfigStyles{}
+func buildConfig(diagram *domain.Diagram) layout.Config {
+	styles := layout.ConfigStyles{}
 	for k, v := range diagram.Config.Styles {
 		styles[k] = v
 	}
 
-	return layoutpkg.Config{
+	return layout.Config{
 		Layout:     string(diagram.Config.LayoutType),
 		NodeWidth:  diagram.Config.NodeWidth,
 		NodeHeight: diagram.Config.NodeHeight,
@@ -68,8 +68,8 @@ func buildConfig(diagram *domain.Diagram) layoutpkg.Config {
 	}
 }
 
-func buildLayoutNodes(diagram *domain.Diagram) layoutpkg.LayoutNodes {
-	nodes := make(layoutpkg.LayoutNodes, len(diagram.Nodes))
+func buildLayoutNodes(diagram *domain.Diagram) layout.LayoutNodes {
+	nodes := make(layout.LayoutNodes, len(diagram.Nodes))
 	for i, n := range diagram.Nodes {
 		width := n.Width
 		if width == 0 {
@@ -79,7 +79,7 @@ func buildLayoutNodes(diagram *domain.Diagram) layoutpkg.LayoutNodes {
 		if height == 0 {
 			height = diagram.Config.NodeHeight
 		}
-		nodes[i] = layoutpkg.NewLayoutNode(
+		nodes[i] = layout.NewLayoutNode(
 			n.ID, n.Contents,
 			n.Position.X, n.Position.Y,
 			width, height,
@@ -89,17 +89,17 @@ func buildLayoutNodes(diagram *domain.Diagram) layoutpkg.LayoutNodes {
 	return nodes
 }
 
-func buildLayoutPaths(diagram *domain.Diagram) layoutpkg.LayoutPaths {
-	var paths layoutpkg.LayoutPaths
+func buildLayoutPaths(diagram *domain.Diagram) layout.LayoutPaths {
+	var paths layout.LayoutPaths
 	for _, e := range diagram.Edges {
 		if e.Path == nil {
 			continue
 		}
-		points := make(layoutpkg.Points, len(e.Path.Points))
+		points := make(layout.Points, len(e.Path.Points))
 		for j, p := range e.Path.Points {
-			points[j] = layoutpkg.Point{X: float64(p.X), Y: float64(p.Y)}
+			points[j] = layout.Point{X: float64(p.X), Y: float64(p.Y)}
 		}
-		paths = append(paths, layoutpkg.LayoutPath{
+		paths = append(paths, layout.LayoutPath{
 			ID:     e.ID,
 			From:   e.From,
 			To:     e.To,

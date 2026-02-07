@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dnnrly/layli/internal/domain"
-	layoutpkg "github.com/dnnrly/layli/internal/layout"
+	"github.com/dnnrly/layli/layout"
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
 
@@ -17,17 +17,17 @@ func NewDijkstraPathfinder() *DijkstraPathfinder {
 func (p *DijkstraPathfinder) FindPaths(diagram *domain.Diagram) error {
 	cfg := toRootConfig(diagram)
 
-	finder := func(start, end dijkstra.Point) layoutpkg.PathFinder {
+	finder := func(start, end dijkstra.Point) layout.PathFinder {
 		return dijkstra.NewPathFinder(start, end)
 	}
 
-	layout, err := layoutpkg.NewLayoutFromConfig(finder, &cfg)
+	layoutObj, err := layout.NewLayoutFromConfig(finder, &cfg)
 	if err != nil {
 		return fmt.Errorf("finding paths: %w", err)
 	}
 
 	for i := range diagram.Edges {
-		lp := findMatchingPath(layout.Paths, diagram.Edges[i])
+		lp := findMatchingPath(layoutObj.Paths, diagram.Edges[i])
 		if lp == nil {
 			continue
 		}
@@ -42,7 +42,7 @@ func (p *DijkstraPathfinder) FindPaths(diagram *domain.Diagram) error {
 	return nil
 }
 
-func findMatchingPath(paths layoutpkg.LayoutPaths, edge domain.Edge) *layoutpkg.LayoutPath {
+func findMatchingPath(paths layout.LayoutPaths, edge domain.Edge) *layout.LayoutPath {
 	for _, lp := range paths {
 		if lp.From == edge.From && lp.To == edge.To {
 			return &lp
@@ -51,13 +51,13 @@ func findMatchingPath(paths layoutpkg.LayoutPaths, edge domain.Edge) *layoutpkg.
 	return nil
 }
 
-func toRootConfig(d *domain.Diagram) layoutpkg.Config {
-	nodes := make(layoutpkg.ConfigNodes, len(d.Nodes))
+func toRootConfig(d *domain.Diagram) layout.Config {
+	nodes := make(layout.ConfigNodes, len(d.Nodes))
 	for i, n := range d.Nodes {
-		nodes[i] = layoutpkg.ConfigNode{
+		nodes[i] = layout.ConfigNode{
 			Id:       n.ID,
 			Contents: n.Contents,
-			Position: layoutpkg.Position{
+			Position: layout.Position{
 				X: n.Position.X,
 				Y: n.Position.Y,
 			},
@@ -66,9 +66,9 @@ func toRootConfig(d *domain.Diagram) layoutpkg.Config {
 		}
 	}
 
-	edges := make(layoutpkg.ConfigEdges, len(d.Edges))
+	edges := make(layout.ConfigEdges, len(d.Edges))
 	for i, e := range d.Edges {
-		edges[i] = layoutpkg.ConfigEdge{
+		edges[i] = layout.ConfigEdge{
 			ID:    e.ID,
 			From:  e.From,
 			To:    e.To,
@@ -77,10 +77,10 @@ func toRootConfig(d *domain.Diagram) layoutpkg.Config {
 		}
 	}
 
-	return layoutpkg.Config{
+	return layout.Config{
 		Layout:         "absolute",
 		LayoutAttempts: d.Config.LayoutAttempts,
-		Path: layoutpkg.ConfigPath{
+		Path: layout.ConfigPath{
 			Strategy: d.Config.PathStrategy,
 			Attempts: d.Config.PathAttempts,
 		},

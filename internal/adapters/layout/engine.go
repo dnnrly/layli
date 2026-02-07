@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dnnrly/layli/internal/domain"
-	layoutpkg "github.com/dnnrly/layli/internal/layout"
+	"github.com/dnnrly/layli/layout"
 )
 
 type LayoutAdapter struct{}
@@ -40,13 +40,13 @@ func (a *LayoutAdapter) Arrange(diagram *domain.Diagram) error {
 	return nil
 }
 
-func toRootConfig(d *domain.Diagram) layoutpkg.Config {
-	nodes := make(layoutpkg.ConfigNodes, len(d.Nodes))
+func toRootConfig(d *domain.Diagram) layout.Config {
+	nodes := make(layout.ConfigNodes, len(d.Nodes))
 	for i, n := range d.Nodes {
-		nodes[i] = layoutpkg.ConfigNode{
+		nodes[i] = layout.ConfigNode{
 			Id:       n.ID,
 			Contents: n.Contents,
-			Position: layoutpkg.Position{
+			Position: layout.Position{
 				X: n.Position.X,
 				Y: n.Position.Y,
 			},
@@ -55,9 +55,9 @@ func toRootConfig(d *domain.Diagram) layoutpkg.Config {
 		}
 	}
 
-	edges := make(layoutpkg.ConfigEdges, len(d.Edges))
+	edges := make(layout.ConfigEdges, len(d.Edges))
 	for i, e := range d.Edges {
-		edges[i] = layoutpkg.ConfigEdge{
+		edges[i] = layout.ConfigEdge{
 			ID:    e.ID,
 			From:  e.From,
 			To:    e.To,
@@ -66,7 +66,7 @@ func toRootConfig(d *domain.Diagram) layoutpkg.Config {
 		}
 	}
 
-	return layoutpkg.Config{
+	return layout.Config{
 		Layout:         string(d.Config.LayoutType),
 		LayoutAttempts: d.Config.LayoutAttempts,
 		NodeWidth:      d.Config.NodeWidth,
@@ -79,18 +79,18 @@ func toRootConfig(d *domain.Diagram) layoutpkg.Config {
 	}
 }
 
-func selectArranger(lt domain.LayoutType) (layoutpkg.LayoutArrangementFunc, error) {
+func selectArranger(lt domain.LayoutType) (layout.LayoutArrangementFunc, error) {
 	switch lt {
 	case "", domain.LayoutFlowSquare:
-		return layoutpkg.LayoutFlowSquare, nil
+		return layout.LayoutFlowSquare, nil
 	case domain.LayoutTopoSort:
-		return layoutpkg.LayoutTopologicalSort, nil
+		return layout.LayoutTopologicalSort, nil
 	case domain.LayoutTarjan:
-		return layoutpkg.LayoutTarjan, nil
+		return layout.LayoutTarjan, nil
 	case domain.LayoutRandomShortest:
-		return layoutpkg.LayoutRandomShortestSquare, nil
+		return layout.LayoutRandomShortestSquare, nil
 	case domain.LayoutAbsolute:
-		return layoutpkg.LayoutAbsolute, nil
+		return layout.LayoutAbsolute, nil
 	default:
 		return nil, fmt.Errorf("unknown layout type: %s", lt)
 	}
