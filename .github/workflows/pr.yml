@@ -17,8 +17,8 @@ jobs:
 
       - uses: actions/setup-go@v4
         with:
-          go-version: '1.21'
-          cache: false
+          go-version: '1.21.6'
+          cache: true
 
       - name: Install dependencies
         run: make deps
@@ -43,7 +43,8 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-go@v4
       with:
-        go-version: '1.21'
+        go-version: '1.21.6'
+        cache: true
     - name: Check release build
       uses: goreleaser/goreleaser-action@v6
       with:

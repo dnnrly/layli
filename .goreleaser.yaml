@@ -43,6 +43,22 @@ changelog:
       - '^docs:'
       - '^test:'
 
+release:
+  github:
+    owner: dnnrly
+    name: layli
+  draft: false
+  prerelease: auto
+  name_template: '{{.ProjectName}} v{{.Version}}'
+  header: |
+    ## {{.ProjectName}} v{{.Version}}
+    
+    Welcome to this new release!
+  footer: |
+    ## Installation
+    
+    Download the appropriate binary for your platform from the assets below.
+
 # The lines beneath this are called `modelines`. See `:help modeline`
 # Feel free to remove those if you don't want/use them.
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
