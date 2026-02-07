@@ -1,0 +1,32 @@
+layout: absolute
+
+path:
+  algorithm: bidirectional
+
+margin: 1
+border: 1
+width: 5
+height: 3
+
+nodes:
+  - id: a
+    contents: "Node A"
+    position:
+      x: 3
+      y: 3
+  - id: b
+    contents: "Node B"
+    position:
+      x: 15
+      y: 3
+  - id: c
+    contents: "Node C"
+    position:
+      x: 9
+      y: 15
+
+edges:
+  - from: a
+    to: c
+  - from: b
+    to: c

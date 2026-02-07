@@ -121,3 +121,43 @@ Feature: Layout behaviour
         And in the SVG file, element "a" has attribute "data-height" with value "4"
         And in the SVG file, element "edge-2" has attribute "data-from" with value "b"
         And in the SVG file, element "edge-2" has attribute "data-to" with value "c"
+
+    @pathfinding
+    Scenario: Uses A* pathfinding algorithm with Euclidean heuristic
+        When the app runs with parameters "tmp/fixtures/inputs/astar-euclidean.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/astar-euclidean.svg" exists
+        And the number of nodes is 3
+        And the number of paths is 2
+        And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap
+
+    @pathfinding
+    Scenario: Uses A* pathfinding algorithm with Manhattan heuristic
+        When the app runs with parameters "tmp/fixtures/inputs/astar-manhattan.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/astar-manhattan.svg" exists
+        And the number of nodes is 3
+        And the number of paths is 2
+        And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap
+
+    @pathfinding
+    Scenario: Uses bidirectional Dijkstra pathfinding algorithm
+        When the app runs with parameters "tmp/fixtures/inputs/bidirectional.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/bidirectional.svg" exists
+        And the number of nodes is 3
+        And the number of paths is 2
+        And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap
+
+    @pathfinding
+    Scenario: Defaults to Dijkstra when no algorithm specified
+        When the app runs with parameters "tmp/fixtures/inputs/default-dijkstra.layli"
+        Then the app exits without error
+        And a file "tmp/fixtures/inputs/default-dijkstra.svg" exists
+        And the number of nodes is 3
+        And the number of paths is 2
+        And in the SVG file, all node text fits inside the node boundaries
+        And in the SVG file, nodes do not overlap

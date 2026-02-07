@@ -16,10 +16,10 @@ func NewDijkstraPathfinder() *DijkstraPathfinder {
 }
 
 func (p *DijkstraPathfinder) FindPaths(diagram *domain.Diagram) error {
-	cfg := toLayoutConfigWithPath(diagram)
+	cfg := adapters.ToLayoutConfigWithFullPaths(diagram)
 
 	finder := func(start, end dijkstra.Point) layout.PathFinder {
-		return dijkstra.NewPathFinder(start, end)
+		return createPathfinder(start, end, cfg.Path)
 	}
 
 	layoutObj, err := layout.NewLayoutFromConfig(finder, &cfg)
@@ -43,6 +43,31 @@ func (p *DijkstraPathfinder) FindPaths(diagram *domain.Diagram) error {
 	return nil
 }
 
+// createPathfinder creates the appropriate pathfinding algorithm based on configuration
+func createPathfinder(start, end dijkstra.Point, pathConfig layout.ConfigPath) layout.PathFinder {
+	switch pathConfig.Algorithm {
+	case "astar":
+		heuristic := getHeuristic(pathConfig.Heuristic)
+		return dijkstra.NewAStarPathFinder(start, end, heuristic)
+	case "bidirectional":
+		return dijkstra.NewBidirectionalPathFinder(start, end)
+	default:
+		// Default to Dijkstra for backward compatibility
+		return dijkstra.NewPathFinder(start, end)
+	}
+}
+
+// getHeuristic returns the appropriate heuristic function for A*
+func getHeuristic(heuristicName string) dijkstra.HeuristicFunction {
+	switch heuristicName {
+	case "manhattan":
+		return dijkstra.ManhattanDistance
+	default:
+		// Default to Euclidean distance
+		return dijkstra.EuclideanDistance
+	}
+}
+
 func findMatchingPath(paths layout.LayoutPaths, edge domain.Edge) *layout.LayoutPath {
 	for _, lp := range paths {
 		if lp.From == edge.From && lp.To == edge.To {
@@ -52,9 +77,3 @@ func findMatchingPath(paths layout.LayoutPaths, edge domain.Edge) *layout.Layout
 	return nil
 }
 
-func toLayoutConfigWithPath(d *domain.Diagram) layout.Config {
-	cfg := adapters.ToLayoutConfigWithPath(d)
-	// Pathfinding requires absolute layout positioning (nodes must already be positioned)
-	cfg.Layout = "absolute"
-	return cfg
-}

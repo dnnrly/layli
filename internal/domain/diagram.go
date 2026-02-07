@@ -12,25 +12,50 @@ import "fmt"
 type LayoutType string
 
 const (
-	LayoutFlowSquare       LayoutType = "flow-square"
-	LayoutTopoSort         LayoutType = "topo-sort"
-	LayoutTarjan           LayoutType = "tarjan"
-	LayoutAbsolute         LayoutType = "absolute"
-	LayoutRandomShortest   LayoutType = "random-shortest-square"
+	LayoutFlowSquare     LayoutType = "flow-square"
+	LayoutTopoSort       LayoutType = "topo-sort"
+	LayoutTarjan         LayoutType = "tarjan"
+	LayoutAbsolute       LayoutType = "absolute"
+	LayoutRandomShortest LayoutType = "random-shortest-square"
+)
+
+// PathfindingAlgorithm enumerates available pathfinding algorithms.
+// When adding a new pathfinding algorithm, add the constant here.
+type PathfindingAlgorithm string
+
+const (
+	PathfindingDijkstra      PathfindingAlgorithm = "dijkstra"
+	PathfindingAStar         PathfindingAlgorithm = "astar"
+	PathfindingBidirectional PathfindingAlgorithm = "bidirectional"
+)
+
+// PathfindingHeuristic enumerates available heuristic functions for A*.
+type PathfindingHeuristic string
+
+const (
+	HeuristicEuclidean PathfindingHeuristic = "euclidean"
+	HeuristicManhattan PathfindingHeuristic = "manhattan"
 )
 
 // DiagramConfig holds diagram-level settings.
 type DiagramConfig struct {
-	LayoutType      LayoutType
-	LayoutAttempts  int
-	NodeWidth       int
-	NodeHeight      int
-	Border          int
-	Margin          int
-	Spacing         int
-	PathAttempts    int
-	PathStrategy    string
-	Styles          map[string]string
+	LayoutType     LayoutType
+	LayoutAttempts int
+	NodeWidth      int
+	NodeHeight     int
+	Border         int
+	Margin         int
+	Spacing        int
+	PathAttempts   int
+	PathStrategy   string
+	Pathfinding    PathfindingConfig
+	Styles         map[string]string
+}
+
+// PathfindingConfig holds pathfinding algorithm settings.
+type PathfindingConfig struct {
+	Algorithm PathfindingAlgorithm
+	Heuristic PathfindingHeuristic
 }
 
 // Diagram represents the complete diagram specification.

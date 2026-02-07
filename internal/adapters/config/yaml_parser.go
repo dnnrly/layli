@@ -9,9 +9,11 @@ import (
 )
 
 type configPath struct {
-	Attempts int    `yaml:"attempts,omitempty"`
-	Strategy string `yaml:"strategy,omitempty"`
-	Class    string `yaml:"class,omitempty"`
+	Attempts  int    `yaml:"attempts,omitempty"`
+	Strategy  string `yaml:"strategy,omitempty"`
+	Algorithm string `yaml:"algorithm,omitempty"`
+	Heuristic string `yaml:"heuristic,omitempty"`
+	Class     string `yaml:"class,omitempty"`
 }
 
 type configPosition struct {
@@ -80,6 +82,12 @@ func applyDefaults(cfg *configFile) {
 	if cfg.Path.Attempts == 0 {
 		cfg.Path.Attempts = 20
 	}
+	if cfg.Path.Algorithm == "" {
+		cfg.Path.Algorithm = "dijkstra" // Default to Dijkstra
+	}
+	if cfg.Path.Heuristic == "" {
+		cfg.Path.Heuristic = "euclidean" // Default heuristic for A*
+	}
 	if cfg.NodeWidth == 0 {
 		cfg.NodeWidth = 5
 	}
@@ -107,6 +115,26 @@ func validate(cfg *configFile) error {
 	if cfg.Path.Attempts > 10000 {
 		return fmt.Errorf("cannot specify more that 10000 path attempts")
 	}
+
+	// Validate pathfinding algorithm
+	validAlgorithms := map[string]bool{
+		"dijkstra":      true,
+		"astar":         true,
+		"bidirectional": true,
+	}
+	if cfg.Path.Algorithm != "" && !validAlgorithms[cfg.Path.Algorithm] {
+		return fmt.Errorf("invalid pathfinding algorithm: %s. Valid options: dijkstra, astar, bidirectional", cfg.Path.Algorithm)
+	}
+
+	// Validate heuristic (only relevant for A*)
+	validHeuristics := map[string]bool{
+		"euclidean": true,
+		"manhattan": true,
+	}
+	if cfg.Path.Heuristic != "" && !validHeuristics[cfg.Path.Heuristic] {
+		return fmt.Errorf("invalid heuristic: %s. Valid options: euclidean, manhattan", cfg.Path.Heuristic)
+	}
+
 	if cfg.Margin > 10 {
 		return fmt.Errorf("margin cannot be larger than 10")
 	}
@@ -189,7 +217,11 @@ func toDomain(cfg *configFile) *domain.Diagram {
 			Spacing:        20,
 			PathAttempts:   cfg.Path.Attempts,
 			PathStrategy:   cfg.Path.Strategy,
-			Styles:         styles,
+			Pathfinding: domain.PathfindingConfig{
+				Algorithm: domain.PathfindingAlgorithm(cfg.Path.Algorithm),
+				Heuristic: domain.PathfindingHeuristic(cfg.Path.Heuristic),
+			},
+			Styles: styles,
 		},
 	}
 }

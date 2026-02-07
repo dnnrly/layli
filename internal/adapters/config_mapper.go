@@ -56,3 +56,15 @@ func ToLayoutConfigWithPath(d *domain.Diagram) layout.Config {
 	}
 	return cfg
 }
+
+// ToLayoutConfigWithFullPaths is like ToLayoutConfigWithPath but includes pathfinding algorithm settings.
+func ToLayoutConfigWithFullPaths(d *domain.Diagram) layout.Config {
+	cfg := ToLayoutConfig(d)
+	cfg.Path = layout.ConfigPath{
+		Strategy:  d.Config.PathStrategy,
+		Attempts:  d.Config.PathAttempts,
+		Algorithm: string(d.Config.Pathfinding.Algorithm),
+		Heuristic: string(d.Config.Pathfinding.Heuristic),
+	}
+	return cfg
+}

@@ -11,9 +11,11 @@ import (
 )
 
 type ConfigPath struct {
-	Attempts int    `yaml:"attempts,omitempty"`
-	Strategy string `yaml:"strategy,omitempty"`
-	Class    string `yaml:"class,omitempty"`
+	Attempts  int    `yaml:"attempts,omitempty"`
+	Strategy  string `yaml:"strategy,omitempty"`
+	Algorithm string `yaml:"algorithm,omitempty"`
+	Heuristic string `yaml:"heuristic,omitempty"`
+	Class     string `yaml:"class,omitempty"`
 }
 
 type ConfigStyles map[string]string
