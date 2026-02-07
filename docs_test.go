@@ -1,6 +1,6 @@
 //go:build docs
 
-package layli_test
+package main_test
 
 import (
 	"os"

@@ -55,7 +55,7 @@ mocks: ## generate mocks for interfaces
 
 .PHONY: build
 build: ## build the application
-	go build -o layli ./cmd/layli
+	go build -o layli .
 
 .PHONY: lint
 lint: ## run linting
@@ -85,7 +85,7 @@ check-docs: build ## make sure that the documentation is up to date
 .PHONY: acceptance-test
 acceptance-test: build ## run acceptance tests
 	rm -rf ./test/tmp
-	go build -cover -o layli ./cmd/layli
+	go build -cover -o layli .
 	mkdir -p ./test/tmp/coverage
 	cd test && GOCOVERDIR=tmp/coverage go test -timeout 20s -tags acceptance
 	

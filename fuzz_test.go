@@ -1,6 +1,6 @@
 //go:build fuzz
 
-package layli
+package main_test
 
 import (
 	"os"
@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/antchfx/xmlquery"
+	"github.com/dnnrly/layli/layout"
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
 
@@ -24,7 +25,7 @@ func FuzzConfig(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, orig string) {
-		_, _ = NewConfigFromFile(strings.NewReader(orig))
+		_, _ = layout.NewConfigFromFile(strings.NewReader(orig))
 	})
 }
 
@@ -41,12 +42,12 @@ func FuzzDrawing(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, orig string) {
-		config, err := NewConfigFromFile(strings.NewReader(orig))
+		config, err := layout.NewConfigFromFile(strings.NewReader(orig))
 		if err != nil || config.Layout == "tarjan" {
 			t.Skip()
 		}
 
-		layout, err := NewLayoutFromConfig(func(start, end dijkstra.Point) PathFinder {
+		l, err := layout.NewLayoutFromConfig(func(start, end dijkstra.Point) layout.PathFinder {
 			return dijkstra.NewPathFinder(start, end)
 		}, config)
 
@@ -54,11 +55,11 @@ func FuzzDrawing(f *testing.F) {
 			t.Skip()
 		}
 
-		d := Diagram{
+		d := layout.Diagram{
 			Output:   func(data string) error { return nil },
 			ShowGrid: false,
 			Config:   *config,
-			Layout:   layout,
+			Layout:   l,
 		}
 
 		_ = d.Draw()
@@ -82,6 +83,6 @@ func FuzzToAbsolute(f *testing.F) {
 		if err != nil {
 			t.Skip()
 		}
-		_ = AbsoluteFromSVG(orig, func(string) error { return nil })
+		_ = layout.AbsoluteFromSVG(orig, func(string) error { return nil })
 	})
 }

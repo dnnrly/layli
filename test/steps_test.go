@@ -106,6 +106,10 @@ func (c *testContext) theAppRunsWithParameters(args string) error {
 	c.cmdInput.parameters = args
 	cmdArgs := strings.Split(args, " ")
 	cmd := exec.Command("../layli", cmdArgs...)
+
+	// Set environment variable for deterministic random behavior in tests
+	cmd.Env = append(os.Environ(), "LAYLI_TEST_SEED=1")
+
 	output, err := cmd.CombinedOutput()
 	c.cmdResult.Output = string(output)
 	c.cmdResult.Err = err
