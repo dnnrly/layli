@@ -35,6 +35,13 @@ func (styles ConfigStyles) toCSS() string {
 	return strings.Join(css, "\n")
 }
 
+// Config holds the layout configuration for a diagram.
+//
+// Note: LayoutAttempts is overloaded and has different meanings depending on
+// the layout algorithm:
+// - For LayoutRandomShortestSquare: the number of random permutations to try
+// - For other algorithms: available for custom use (e.g., grid columns)
+// See CONTRIBUTING_LAYOUTS.md for details on using this field in new layouts.
 type Config struct {
 	Layout         string      `yaml:"layout,omitempty"`
 	LayoutAttempts int         `yaml:"layout-attempts,omitempty"`

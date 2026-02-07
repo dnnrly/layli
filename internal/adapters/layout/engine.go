@@ -41,6 +41,18 @@ func (a *LayoutAdapter) Arrange(diagram *domain.Diagram) error {
 	return nil
 }
 
+// selectArranger maps domain layout types to their layout package implementations.
+// This is the adapter layer that bridges the domain (domain/diagram.go) with the
+// layout implementation (layout/arrangements.go).
+//
+// When adding a new layout algorithm:
+// 1. Add LayoutXxx constant to internal/domain/diagram.go
+// 2. Implement LayoutXxx() function in layout/arrangements.go
+// 3. Register in selectArrangement() in layout/arrangements.go
+// 4. Add case here mapping domain.LayoutXxx to layout.LayoutXxx
+// 5. Add tests to layout/arrangements_test.go
+//
+// See CONTRIBUTING_LAYOUTS.md for the complete guide.
 func selectArranger(lt domain.LayoutType) (layout.LayoutArrangementFunc, error) {
 	switch lt {
 	case "", domain.LayoutFlowSquare:

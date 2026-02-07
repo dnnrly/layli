@@ -14,6 +14,11 @@ import (
 // LayoutArrangementFunc returns a slice of nodes arranged according to the algorithm implemented
 type LayoutArrangementFunc func(c *Config) (LayoutNodes, error)
 
+// selectArrangement maps layout type strings to their implementation functions.
+// When adding a new layout algorithm, add a case here and implement the corresponding
+// LayoutXxx function. Also add the type to internal/domain/diagram.go and register it
+// in the adapter at internal/adapters/layout/engine.go.
+// See CONTRIBUTING_LAYOUTS.md for the complete checklist.
 func selectArrangement(c *Config) (LayoutArrangementFunc, error) {
 	switch c.Layout {
 	case "":

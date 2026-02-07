@@ -187,6 +187,8 @@ $ make acceptance-test
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
+To contribute a new layout algorithm, see [CONTRIBUTING_LAYOUTS.md](CONTRIBUTING_LAYOUTS.md) for step-by-step instructions.
+
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/dnnrly/layli/tags). 

@@ -3,6 +3,12 @@ package domain
 import "fmt"
 
 // LayoutType enumerates available layout algorithms.
+// When adding a new layout algorithm, add the constant here, then:
+// 1. Implement LayoutXxx function in layout/arrangements.go
+// 2. Register in selectArrangement() in layout/arrangements.go
+// 3. Register in selectArranger() in internal/adapters/layout/engine.go
+// 4. Add tests to layout/arrangements_test.go
+// See CONTRIBUTING_LAYOUTS.md for detailed instructions.
 type LayoutType string
 
 const (
