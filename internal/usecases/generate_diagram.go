@@ -1,10 +1,6 @@
 package usecases
 
-import (
-	"fmt"
-
-	"github.com/dnnrly/layli/internal/domain"
-)
+import "fmt"
 
 // GenerateDiagram orchestrates the complete diagram generation workflow.
 // Maps to a complete Gherkin scenario: Given → When → Then
