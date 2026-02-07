@@ -92,6 +92,8 @@ func buildLayoutNodes(diagram *domain.Diagram) layout.LayoutNodes {
 func buildLayoutPaths(diagram *domain.Diagram) layout.LayoutPaths {
 	var paths layout.LayoutPaths
 	for _, e := range diagram.Edges {
+		// Skip edges without calculated paths.
+		// All edges should have paths after pathfinding, so this shouldn't happen in normal operation.
 		if e.Path == nil {
 			continue
 		}

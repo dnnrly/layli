@@ -3,6 +3,7 @@ package pathfinding
 import (
 	"fmt"
 
+	"github.com/dnnrly/layli/internal/adapters"
 	"github.com/dnnrly/layli/internal/domain"
 	"github.com/dnnrly/layli/layout"
 	"github.com/dnnrly/layli/pathfinder/dijkstra"
@@ -15,7 +16,7 @@ func NewDijkstraPathfinder() *DijkstraPathfinder {
 }
 
 func (p *DijkstraPathfinder) FindPaths(diagram *domain.Diagram) error {
-	cfg := toRootConfig(diagram)
+	cfg := toLayoutConfigWithPath(diagram)
 
 	finder := func(start, end dijkstra.Point) layout.PathFinder {
 		return dijkstra.NewPathFinder(start, end)
@@ -29,7 +30,7 @@ func (p *DijkstraPathfinder) FindPaths(diagram *domain.Diagram) error {
 	for i := range diagram.Edges {
 		lp := findMatchingPath(layoutObj.Paths, diagram.Edges[i])
 		if lp == nil {
-			continue
+			return fmt.Errorf("pathfinder could not calculate path for edge: %s -> %s", diagram.Edges[i].From, diagram.Edges[i].To)
 		}
 
 		points := make([]domain.Position, len(lp.Points))
@@ -51,45 +52,9 @@ func findMatchingPath(paths layout.LayoutPaths, edge domain.Edge) *layout.Layout
 	return nil
 }
 
-func toRootConfig(d *domain.Diagram) layout.Config {
-	nodes := make(layout.ConfigNodes, len(d.Nodes))
-	for i, n := range d.Nodes {
-		nodes[i] = layout.ConfigNode{
-			Id:       n.ID,
-			Contents: n.Contents,
-			Position: layout.Position{
-				X: n.Position.X,
-				Y: n.Position.Y,
-			},
-			Class: n.Class,
-			Style: n.Style,
-		}
-	}
-
-	edges := make(layout.ConfigEdges, len(d.Edges))
-	for i, e := range d.Edges {
-		edges[i] = layout.ConfigEdge{
-			ID:    e.ID,
-			From:  e.From,
-			To:    e.To,
-			Class: e.Class,
-			Style: e.Style,
-		}
-	}
-
-	return layout.Config{
-		Layout:         "absolute",
-		LayoutAttempts: d.Config.LayoutAttempts,
-		Path: layout.ConfigPath{
-			Strategy: d.Config.PathStrategy,
-			Attempts: d.Config.PathAttempts,
-		},
-		NodeWidth:  d.Config.NodeWidth,
-		NodeHeight: d.Config.NodeHeight,
-		Border:     d.Config.Border,
-		Margin:     d.Config.Margin,
-		Spacing:    d.Config.Spacing,
-		Nodes:      nodes,
-		Edges:      edges,
-	}
+func toLayoutConfigWithPath(d *domain.Diagram) layout.Config {
+	cfg := adapters.ToLayoutConfigWithPath(d)
+	// Pathfinding requires absolute layout positioning (nodes must already be positioned)
+	cfg.Layout = "absolute"
+	return cfg
 }
