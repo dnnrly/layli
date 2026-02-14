@@ -36,6 +36,32 @@ node: "Hello World"
 $ layli hello-world.layli
 ```
 
+### Discovering Available Options
+
+To see all available layout algorithms, pathfinding algorithms, and heuristics:
+
+```bash
+$ layli config
+```
+
+Output:
+```json
+{
+  "algorithms": ["dijkstra", "astar", "bidirectional"],
+  "heuristics": ["euclidean", "manhattan"],
+  "layouts": ["flow-square", "topo-sort", "tarjan", "absolute", "random-shortest-square"]
+}
+```
+
+Programmatic access (Go):
+```go
+import "github.com/dnnrly/layli/layout"
+
+layouts := layout.GetLayoutOptions()
+algorithms := layout.GetPathfindingAlgorithms()
+heuristics := layout.GetHeuristics()
+```
+
 ## layli principles
 
 layli aims to let you specify nodes and edges (boxes and lines) and looks after arranging them in a pleasing way. If you've ever used [plantuml](https://plantuml.com) you'll be familiar with describing the diagrams in a simple to understand text file to generate a pretty diagram. Well, perhaps not as pretty as you would hope. This tool aims to solve this.

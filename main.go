@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -76,6 +77,26 @@ func Execute() error {
 					return fmt.Errorf("generating layli file %s: %w", output, err)
 				}
 
+				return nil
+			},
+		})
+
+	rootCmd.AddCommand(
+		&cobra.Command{
+			Use:   "config",
+			Short: "output available configuration options as JSON",
+			Long:  `Print all available configuration option values as JSON. Useful for UI clients to populate dropdowns.`,
+			RunE: func(cmd *cobra.Command, args []string) error {
+				options := map[string]interface{}{
+					"layouts":    layout.GetLayoutOptions(),
+					"algorithms": layout.GetPathfindingAlgorithms(),
+					"heuristics": layout.GetHeuristics(),
+				}
+				data, err := json.MarshalIndent(options, "", "  ")
+				if err != nil {
+					return fmt.Errorf("marshaling config: %w", err)
+				}
+				fmt.Println(string(data))
 				return nil
 			},
 		})

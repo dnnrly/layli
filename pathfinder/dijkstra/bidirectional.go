@@ -184,11 +184,7 @@ func (pf *BidirectionalPathFinder) stepSearch(
 			active.distance[neighbor] = newDistance
 			active.previous[neighbor] = current
 
-			// Update or add to priority queue
-			if active.frontier[neighbor] {
-				// Update existing item (simplified - in practice we'd need a more sophisticated approach)
-				// For now, we'll just add a new entry and handle duplicates in the loop
-			}
+			// Add to priority queue (may result in duplicate entries, which are skipped when popped)
 			heap.Push(&active.pq, &PriorityQueueItem{point: neighbor, cost: newDistance})
 			active.frontier[neighbor] = true
 		}
