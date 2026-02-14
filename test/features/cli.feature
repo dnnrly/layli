@@ -32,3 +32,12 @@ Feature: Validate CLI configuration
         When the app runs with parameters "--output / tmp/fixtures/inputs/2-nodes.layli"
         Then the app exits with an error
         And the app output contains "drawing diagram"
+
+    @Acceptance
+    Scenario: Outputs available configuration options
+        When the app runs with parameters "config"
+        Then the app exits without error
+        And the app output contains "layouts"
+        And the app output contains "algorithms"
+        And the app output contains "flow-square"
+        And the app output contains "dijkstra"

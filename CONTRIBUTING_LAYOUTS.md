@@ -99,7 +99,30 @@ func selectArranger(lt domain.LayoutType) (layout.LayoutArrangementFunc, error) 
 
 This bridges domain types with layout implementation.
 
-### Step 5: Add Tests
+### Step 5: Register for Discovery
+
+Add the constant to `layout/options.go` so it's discoverable via the public API:
+
+```go
+// GetLayoutOptions returns all available layout algorithm names
+func GetLayoutOptions() []string {
+	return []string{
+		string(domain.LayoutFlowSquare),
+		string(domain.LayoutTopoSort),
+		string(domain.LayoutTarjan),
+		string(domain.LayoutAbsolute),
+		string(domain.LayoutRandomShortest),
+		string(domain.LayoutMyNewLayout),  // Add here
+	}
+}
+```
+
+This ensures the new layout appears in:
+- `layli config` CLI output
+- `layout.GetLayoutOptions()` programmatic API
+- Any UI that uses these functions to populate dropdowns
+
+### Step 6: Add Tests
 
 Create tests in `layout/arrangements_test.go`:
 
@@ -137,7 +160,7 @@ func TestLayoutMyNewLayout(t *testing.T) {
 
 Also add your layout to the `TestSelectArrangement` and `TestArrangementsPassClassAndStyle` tests.
 
-### Step 6: Test It
+### Step 7: Test It
 
 ```bash
 # Run layout-specific tests
@@ -149,6 +172,9 @@ go test ./layout
 # Build and test with a real file
 make build
 ./layli my-diagram.layli --output output.svg
+
+# Verify it appears in config discovery
+./layli config | grep my-new-layout
 ```
 
 ## Common Patterns
@@ -185,10 +211,12 @@ Useful assertion functions already exist:
 - [ ] Implemented `LayoutMyNewLayout()` function in `layout/arrangements.go`
 - [ ] Added case in `selectArrangement()` in `layout/arrangements.go`
 - [ ] Added case in `selectArranger()` in `internal/adapters/layout/engine.go`
+- [ ] **Added constant to `layout/options.go`** ← Makes it discoverable
 - [ ] Added tests in `layout/arrangements_test.go`
 - [ ] Updated `TestSelectArrangement` to include new layout
 - [ ] Updated `TestArrangementsPassClassAndStyle` to include new layout
 - [ ] Verified all tests pass: `go test ./...`
+- [ ] Verified option appears in `layli config` output
 - [ ] Tested with a real `.layli` file
 - [ ] Preserved node class and style attributes
 
