@@ -57,6 +57,21 @@ mocks: ## generate mocks for interfaces
 build: ## build the application
 	go build -o layli .
 
+.PHONY: examples
+examples: build ## generate SVG files for all examples
+	@echo "Generating example diagrams..."
+	@for layli_file in examples/*.layli; do \
+		svg_file="$${layli_file%.layli}.svg"; \
+		filename=$$(basename "$$layli_file"); \
+		if [[ "$$filename" == "random-paths.layli" ]] || [[ "$$filename" == "random-shortest-square.layli" ]] || [[ "$$filename" == "tarjan.layli" ]] || [[ "$$filename" == "topological-sort.layli" ]]; then \
+			echo "Skipping $$svg_file (unstable examples)"; \
+			continue; \
+		fi; \
+		echo "Generating $$svg_file"; \
+		./layli "$$layli_file" -o "$$svg_file" || exit 1; \
+	done
+	@echo "All examples generated successfully"
+
 .PHONY: lint
 lint: ## run linting
 	golangci-lint run
