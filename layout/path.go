@@ -64,9 +64,14 @@ func (l *Layout) FindPath(from, to string) (*LayoutPath, error) {
 
 	vm := BuildVertexMap(l)
 
+	costFunc := l.CostFunc
+	if costFunc == nil {
+		costFunc = PythagoreanDistance
+	}
+
 	arcs := vm.GetArcs()
 	for _, a := range arcs {
-		finder.AddConnection(a.From, PythagoreanDistance, a.To)
+		finder.AddConnection(a.From, costFunc, a.To)
 	}
 
 	{
@@ -74,7 +79,7 @@ func (l *Layout) FindPath(from, to string) (*LayoutPath, error) {
 		centre := nFrom.GetCentre()
 		ports := nFrom.GetPorts()
 		for _, to := range ports {
-			finder.AddConnection(centre, PythagoreanDistance, to)
+			finder.AddConnection(centre, costFunc, to)
 		}
 	}
 
@@ -85,7 +90,7 @@ func (l *Layout) FindPath(from, to string) (*LayoutPath, error) {
 		for _, from := range ports {
 			finder.AddConnection(
 				from,
-				PythagoreanDistance,
+				costFunc,
 				centre,
 			)
 		}
@@ -106,6 +111,18 @@ func (l *Layout) FindPath(from, to string) (*LayoutPath, error) {
 }
 
 type PathStrategy func(config Config, paths *LayoutPaths, find func(from, to string) (*LayoutPath, error)) error
+
+func selectCostFunction(costFuncName string) dijkstra.CostFunction {
+	switch costFuncName {
+	case "horizontal-vertical":
+		return HorizontalVerticalDistance
+	case "corner-count":
+		return CornerCount
+	default:
+		// Default to Pythagorean distance
+		return PythagoreanDistance
+	}
+}
 
 func selectPathStrategy(c *Config) (PathStrategy, error) {
 	switch c.Path.Strategy {

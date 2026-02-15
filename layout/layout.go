@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/dnnrly/layli/pathfinder/dijkstra"
 )
 
 type LayoutDrawer interface {
@@ -18,6 +20,7 @@ type Layout struct {
 	Nodes        LayoutNodes
 	Paths        LayoutPaths
 	CreateFinder CreateFinder
+	CostFunc     dijkstra.CostFunction // Cost function for pathfinding
 
 	nodeHeight   int // Height of a node in path unites
 	nodeWidth    int // Width of a node in path units
@@ -46,6 +49,7 @@ func NewLayoutFromConfig(finder CreateFinder, c *Config) (*Layout, error) {
 	l := &Layout{
 		Nodes:        nodes,
 		CreateFinder: finder,
+		CostFunc:     selectCostFunction(c.Path.CostFunc),
 
 		nodeWidth:    c.NodeWidth,
 		nodeHeight:   c.NodeHeight,

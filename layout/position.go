@@ -22,6 +22,29 @@ func PythagoreanDistance(from, to dijkstra.Point) int64 {
 	return int64(math.Sqrt(a*a+b*b) * 100)
 }
 
+// HorizontalVerticalDistance costs 1 for moves in the same direction (horizontal or vertical)
+// and 2 for direction changes (diagonal moves), preferring straight lines with fewer corners
+func HorizontalVerticalDistance(from, to dijkstra.Point) int64 {
+	x1, y1 := from.Coordinates()
+	x2, y2 := to.Coordinates()
+
+	// Same vertical line (same X)
+	if x1 == x2 {
+		return 1
+	}
+	// Same horizontal line (same Y)
+	if y1 == y2 {
+		return 1
+	}
+	// Diagonal move (corner) - higher cost to discourage direction changes
+	return 2
+}
+
+// CornerCount returns 1 to prefer paths with fewer direction changes
+func CornerCount(from, to dijkstra.Point) int64 {
+	return 1
+}
+
 func (p Point) Distance(to Point) float64 {
 	a := (p.X - to.X)
 	b := (p.Y - to.Y)

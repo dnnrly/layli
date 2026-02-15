@@ -15,6 +15,7 @@ type ConfigPath struct {
 	Strategy  string `yaml:"strategy,omitempty"`
 	Algorithm string `yaml:"algorithm,omitempty"`
 	Heuristic string `yaml:"heuristic,omitempty"`
+	CostFunc  string `yaml:"cost-function,omitempty"`
 	Class     string `yaml:"class,omitempty"`
 }
 
