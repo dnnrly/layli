@@ -4,31 +4,55 @@ path:
   algorithm: dijkstra
   cost-function: pythagorean-distance
 
+margin: 1
+border: 1
+width: 8
+height: 6
+
 nodes:
-  - id: node1
+  - id: start
     contents: "Start"
-    position: {x: 2, y: 5}
-  - id: node2
-    contents: "Top Right"
+    position: {x: 5, y: 9}
+  - id: top-left
+    contents: "Top Left"
     position: {x: 15, y: 2}
-  - id: node3
+  - id: mid-left
+    contents: "Mid Left"
+    position: {x: 15, y: 9}
+  - id: bottom-left
+    contents: "Bottom Left"
+    position: {x: 15, y: 16}
+  - id: top-right
+    contents: "Top Right"
+    position: {x: 25, y: 2}
+  - id: mid-right
+    contents: "Mid Right"
+    position: {x: 25, y: 9}
+  - id: bottom-right
     contents: "Bottom Right"
-    position: {x: 15, y: 10}
-  - id: node4
-    contents: "Center"
-    position: {x: 8, y: 6}
+    position: {x: 25, y: 16}
+  - id: end
+    contents: "End"
+    position: {x: 35, y: 9}
 
 edges:
-  - from: node1
-    to: node2
-  - from: node1
-    to: node3
-  - from: node2
-    to: node4
-  - from: node3
-    to: node4
-
-width: 4
-height: 4
-border: 1
-margin: 1
+  - from: start
+    to: end
+  - from: start
+    to: top-left
+  - from: start
+    to: mid-left
+  - from: start
+    to: bottom-left
+  - from: top-left
+    to: top-right
+  - from: mid-left
+    to: mid-right
+  - from: bottom-left
+    to: bottom-right
+  - from: top-right
+    to: end
+  - from: mid-right
+    to: end
+  - from: bottom-right
+    to: end
