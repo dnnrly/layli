@@ -1,16 +1,12 @@
-# Layli examples
+# Layli Examples
 
-Here are some examples of how to use Layli.
+Here are examples of how to use Layli, organized from simple to advanced.
 
-## Layouts
+## Getting Started
 
-Sometimes referred to as arrangement, this controls where nodes are positioned in the image.
+### Minimal Example
 
-### Flow Squares
-
-The Flow Square layout arranges the nodes in a square grid, in the order that they were specified in the definition file. This is the default layout. This is the default arrangement if you don't specify anything.
-
-<img src="/examples/simple-flow-square.svg" alt="Simple Flow Square example image" />
+The simplest possible Layli diagram with nodes and a single edge:
 
 <details>
 <summary>Simple flow-square example</summary>
@@ -61,178 +57,37 @@ edges:
 width: 7
 height: 4
 ```
+
+**Output:**
+<img src="/examples/simple-flow-square.svg" alt="Simple Flow Square example image" />
 </details>
 
-### Topological Sort
+---
 
-This layout uses an algorithm to analyse the edges in the graph to arrange the nodes in a single, in the order in which they are connected together. This order takes in to account the order that the paths are specified in.
+## Layouts
 
-<img src="/examples/topological-sort.svg" alt="Topological sort example image" />
+The layout algorithm controls where nodes are positioned on the diagram. Layli supports several layouts:
 
-<details>
-<summary>Topological sort example</summary>
+### 1. Flow Square (Default)
 
-```yaml
-layout: topo-sort
+The Flow Square layout arranges nodes in a grid, filling rows and columns in the order you specify them. This is the default layout.
 
-nodes:
-  - id: node1
-    contents: "First Node"
-  - id: node2
-    contents: "Second Node"
-  - id: node3
-    contents: "Third Node"
-  - id: node4
-    contents: "Forth Node"
-  - id: node5
-    contents: "Fifth Node"
+**File:** `simple-flow-square.layli`
 
-edges:
-  - from: node1
-    to: node2
-  - from: node3
-    to: node2
-  - from: node3
-    to: node4
-  - from: node5
-    to: node3
-  - from: node2
-    to: node5
+<img src="/examples/simple-flow-square.svg" alt="Flow Square example image" />
 
-```
-</details>
+**When to use:** When you want a simple grid arrangement of nodes.
 
-### Tarjan's Algorithm
+### 2. Absolute
 
-This is an implementation of the [Tarjan's algorithm](https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm), arranging the nodes in a way that tries to be 'appealing'. This arrangement can sometimes take a long time to process.
+Specify exactly where each node should appear on the diagram. You provide x,y coordinates for each node.
 
-
-<img src="/examples/tarjan.svg" alt="Tarjan's algorithm example image" />
-
-<details>
-<summary>Tarjan's algorithm example</summary>
-
-```yaml
-layout: tarjan
-
-nodes:
-    - id: a
-      contents: Node 1
-    - id: b
-      contents: Node 2
-    - id: c
-      contents: Node 3
-    - id: d
-      contents: Node 4
-    - id: e
-      contents: Node 5
-    - id: f
-      contents: Node 6
-    - id: g
-      contents: Node 7
-    - id: h
-      contents: Node 8
-    - id: i
-      contents: Node 9
-
-edges:
-    - from: a
-      to: b
-    - from: b
-      to: c
-    - from: c
-      to: d
-    - from: d
-      to: e
-    - from: c
-      to: e
-    - from: e
-      to: d
-    - from: g
-      to: e
-    - from: d
-      to: f
-    - from: f
-      to: g
-    - from: f
-      to: h
-
-```
-</details>
-
-### Random Shortest Square
-
-This algorithm attempts to arrange the nodes in a square grid, but it does this by randomly selecting the nodes to place many times over. It selects the arrangement with the shortest total distance of all of the specified edges. This distance is just the distance directly between the centre of the 2 nodes on an edge. You can set the number of attempts to find an arrangement with the `layout-attempts` parameter.
-
-<img src="/examples/random-shortest-square.svg" alt="Random Shortest Square example image" />
-
-<details>
-<summary>Random Shortest Square example</summary>
-
-```yaml
-layout: random-shortest-square
-layout-attempts: 1000
-
-nodes:
-  - id: node1
-    contents: "Node 1"
-  - id: node2
-    contents: "Node 2"
-  - id: node3
-    contents: "Node 3"
-  - id: node4
-    contents: "Node 4"
-  - id: node5
-    contents: "Node 5"
-  - id: node6
-    contents: "Node 6"
-  - id: node7
-    contents: "Node 7"
-  - id: node8
-    contents: "Node 8"
-  - id: node9
-    contents: "Node 9"
-  - id: node10
-    contents: "Node 10"
-  - id: node11
-    contents: "Node 11"
-  - id: node12
-    contents: "Node 12"
-  - id: node13
-    contents: "Node 13"
-  - id: node14
-    contents: "Node 14"
-
-edges:
-  - from: node1
-    to: node2
-  - from: node2
-    to: node3
-  - from: node3
-    to: node7
-  - from: node7
-    to: node11
-  - from: node11
-    to: node10
-  - from: node10
-    to: node9
-  - from: node9
-    to: node5
-  - from: node5
-    to: node1
-  - from: node6
-    to: node12
-```
-</details>
-
-### Absolute
-
-This is a fairly straight forward layout, you specify where you would like the nodes to appear on the image and layli will look after the paths. Watch out though, you layli will fail if nodes are too close to the border or each other.
+**File:** `absolute.layli`
 
 <img src="/examples/absolute.svg" alt="Absolute example image" />
 
 <details>
-<summary>Absolute example</summary>
+<summary>Absolute layout example</summary>
 
 ```yaml
 nodes:
@@ -293,23 +148,117 @@ height: 4
 ```
 </details>
 
-## Paths
+**When to use:** When you have a specific diagram layout in mind and want precise control.
 
-Paths are defined by selecting a `from` node an a `to` node in the `edges` configuration. To generate the path, `layli` uses [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) to find the shortest path across a grid of points that are not covered by a node. You can see this grid by using the `--show-grid` option when you run the command.
+### 3. Topological Sort
 
-Paths connect to nodes on a 'port', which is any grid point that sits on the border of the node but is not a corner.
+Arranges nodes in a single row, ordered by their connections in the graph.
+
+**File:** `topological-sort.layli`
+
+<img src="/examples/topological-sort.svg" alt="Topological sort example image" />
+
+<details>
+<summary>Topological sort example</summary>
+
+```yaml
+layout: topo-sort
+
+nodes:
+  - id: node1
+    contents: "First Node"
+  - id: node2
+    contents: "Second Node"
+  - id: node3
+    contents: "Third Node"
+  - id: node4
+    contents: "Forth Node"
+  - id: node5
+    contents: "Fifth Node"
+
+edges:
+  - from: node1
+    to: node2
+  - from: node3
+    to: node2
+  - from: node3
+    to: node4
+  - from: node5
+    to: node3
+  - from: node2
+    to: node5
+```
+</details>
+
+**When to use:** When you want nodes arranged in dependency order.
+
+### 4. Tarjan's Algorithm
+
+Uses Tarjan's strongly connected components algorithm to arrange nodes in an appealing, layered way.
+
+**File:** `tarjan.layli` (unstable - regenerated manually)
+
+<img src="/examples/tarjan.svg" alt="Tarjan's algorithm example image" />
+
+**When to use:** When you want an automatic, aesthetically pleasing layout.
+
+### 5. Random Shortest Square
+
+Tries many random arrangements and selects the one with the shortest total edge length.
+
+**File:** `random-shortest-square.layli` (unstable - regenerated manually)
+
+<img src="/examples/random-shortest-square.svg" alt="Random Shortest Square example image" />
+
+<details>
+<summary>Random Shortest Square example</summary>
+
+```yaml
+layout: random-shortest-square
+layout-attempts: 1000
+
+nodes:
+  - id: node1
+    contents: "Node 1"
+  # ... more nodes ...
+
+edges:
+  - from: node1
+    to: node2
+  # ... more edges ...
+```
+</details>
+
+**When to use:** When you want automatic layout with optimization for short edges.
+
+---
+
+## Paths & Routing
+
+Paths are the connections between nodes. This section covers how paths work and how to customize them.
+
+### Path Grid
+
+Layli routes paths across a grid of points that don't overlap with nodes. You can visualize this grid with the `--show-grid` flag.
 
 ### Cost Functions
 
-The pathfinding algorithm can use different cost functions to determine what constitutes a "short" path. The default is `pythagorean-distance`, which minimizes the Euclidean distance between points. You can also use `horizontal-vertical` to prefer paths with fewer direction changes.
+The pathfinding algorithm uses a cost function to determine what constitutes a "short" path. Different cost functions produce different routing styles.
 
-**Available cost functions:**
-- `pythagorean-distance` (default) - Optimizes for shortest Euclidean distance, may result in more corners
-- `horizontal-vertical` - Costs 1 for horizontal/vertical moves, 2 for diagonal moves, resulting in paths with fewer direction changes
+#### 1. Pythagorean Distance (Default)
 
-#### Horizontal-Vertical Cost Function
+Optimizes for shortest Euclidean distance. May result in paths with more corners.
 
-To prefer paths with fewer direction changes, use the `horizontal-vertical` cost function. This cost function charges 1 for each horizontal or vertical move and 2 for diagonal moves (direction changes), resulting in paths that try to follow straight lines with fewer corners.
+```yaml
+path:
+  cost-function: pythagorean-distance  # or omit for default
+```
+
+#### 2. Horizontal-Vertical
+
+Costs 1 for horizontal/vertical moves and 2 for diagonal moves. Results in paths that follow straight lines with fewer direction changes.
+
+**File:** `horizontal-vertical.layli`
 
 <img src="/examples/horizontal-vertical.svg" alt="Horizontal-vertical cost function example image" />
 
@@ -371,15 +320,24 @@ margin: 2
 ```
 </details>
 
-### Avoiding crossed paths
+### Path Strategies
 
-Layli does **not** allow paths to cross. If one is detected then layli will exit with an error. To avoid this situation, it's possible to select a different path strategy.
+Layli enforces that paths cannot cross. If crossings occur, you can use a path strategy to find a non-crossing arrangement.
 
-#### Random path strategy
+#### In-Order Strategy (Default)
 
-You can specify a strategy that will randomly shuffle the order of the paths a number of times and select the one with the shortest total path length. This should hopefully find an arrangement where paths do not cross. It's also possible to specify the number of attempts to find paths that do not cross.
+Paths are drawn in the order you specify them.
 
-Notice that in this example, the layout can be specified too.
+```yaml
+path:
+  strategy: in-order
+```
+
+#### Random Strategy
+
+Tries multiple random orderings and selects the arrangement with the shortest total path length.
+
+**File:** `random-paths.layli` (unstable - regenerated manually)
 
 <img src="/examples/random-paths.svg" alt="Random paths example image" />
 
@@ -397,59 +355,26 @@ layout-attempts: 100
 nodes:
   - id: node1
     contents: "Node 1"
-  - id: node2
-    contents: "Node 2"
-  - id: node3
-    contents: "Node 3"
-  - id: node4
-    contents: "Node 4"
-  - id: node5
-    contents: "Node 5"
-  - id: node6
-    contents: "Node 6"
-  - id: node7
-    contents: "Node 7"
-  - id: node8
-    contents: "Node 8"
-  - id: node9
-    contents: "Node 9"
-  - id: node10
-    contents: "Node 10"
-  - id: node11
-    contents: "Node 11"
-  - id: node12
-    contents: "Node 12"
-  - id: node13
-    contents: "Node 13"
-  - id: node14
-    contents: "Node 14"
+  # ... more nodes ...
 
 edges:
   - from: node1
     to: node2
-  - from: node2
-    to: node3
-  - from: node3
-    to: node7
-  - from: node7
-    to: node11
-  - from: node11
-    to: node10
-  - from: node10
-    to: node9
-  - from: node9
-    to: node5
-  - from: node5
-    to: node1
-  - from: node6
-    to: node12
-
+  # ... more edges ...
 ```
 </details>
 
-## Size and spacing
+**When to use:** When in-order routing causes path crossings.
 
-It is possible to specify the size of nodes and the spacing between them. It's also possible to specify a margin around the edge of the image where no paths will be drawn.
+---
+
+## Customization
+
+### Size and Spacing
+
+Control node dimensions and spacing.
+
+**File:** `size-and-spacing.layli`
 
 <img src="/examples/size-and-spacing.svg" alt="Size and spacing example image" />
 
@@ -457,9 +382,15 @@ It is possible to specify the size of nodes and the spacing between them. It's a
 <summary>Size and spacing example</summary>
 
 ```yaml
+# Node dimensions (in grid units)
 width: 7
 height: 4
+
+# Space between nodes (in grid units)
 margin: 3
+
+# Border around entire diagram (in grid units)
+border: 1
 
 nodes:
     - id: a
@@ -481,16 +412,13 @@ edges:
 ```
 </details>
 
-## Adding styles
+### Styling
 
-It is possible to add style details to edges and nodes. You an do this in 2 ways:
+Apply CSS styles to nodes and edges.
 
-1. Using the `style` property on the node or edge
-2. CSS styles using ID and class that you can speficy on the node or edge
+**File:** `style.layli`
 
-You may also specify a CSS style sheet that will be embedded in the SVG file. You an use elements, classes and IDs in the same way as you would in HTML. Remember to add `;` to the end of each style parameter!
-
-<img src="/examples/style.svg" alt="Stylr" />
+<img src="/examples/style.svg" alt="Style example image" />
 
 <details>
 <summary>Adding style</summary>
@@ -531,3 +459,31 @@ styles:
     .class-2: stroke:green
 ```
 </details>
+
+---
+
+## Example Files by Feature
+
+| File | Feature | Status |
+|------|---------|--------|
+| `simple-flow-square.layli` | Basic layout | ✅ Stable |
+| `absolute.layli` | Explicit positioning | ✅ Stable |
+| `horizontal-vertical.layli` | Cost function | ✅ Stable |
+| `size-and-spacing.layli` | Dimensions | ✅ Stable |
+| `style.layli` | Styling | ✅ Stable |
+| `topological-sort.layli` | Topo-sort layout | ⚠️ Occasionally fails |
+| `tarjan.layli` | Tarjan layout | ⚠️ Occasionally fails |
+| `random-shortest-square.layli` | Random layout | ⚠️ Nondeterministic |
+| `random-paths.layli` | Random path strategy | ⚠️ Nondeterministic |
+
+**Note:** The "occasionally fails" examples are due to complexity in the algorithms. The "nondeterministic" examples use randomization. Run `make examples` to regenerate stable examples only.
+
+---
+
+## Next Steps
+
+1. Start with `simple-flow-square.layli` to understand basic structure
+2. Try different layouts with the same nodes and edges
+3. Experiment with cost functions and path strategies
+4. Customize sizing, spacing, and styles
+5. Check out the [main README](../README.md) for more information
