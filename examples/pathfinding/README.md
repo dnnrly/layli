@@ -76,6 +76,46 @@ path:
 
 ---
 
+## Visual Comparisons
+
+To understand how different algorithms and cost functions affect path routing, here are examples using the same node layout with different configurations.
+
+### Cost Function Comparison
+
+**Same algorithm (Dijkstra), different cost functions:**
+
+#### Dijkstra + Pythagorean Distance
+
+Minimizes Euclidean distance, resulting in shorter diagonal paths with more corners.
+
+<img src="comparison-dijkstra-pythagorean.svg" alt="Dijkstra with Pythagorean distance" />
+
+#### Dijkstra + Horizontal-Vertical
+
+Prefers paths with fewer direction changes, resulting in more rectilinear routing.
+
+<img src="comparison-dijkstra-horizontal-vertical.svg" alt="Dijkstra with horizontal-vertical cost function" />
+
+### Algorithm Comparison
+
+**Same cost function (Pythagorean distance), different algorithms:**
+
+#### A* + Pythagorean Distance
+
+Uses heuristic guidance to find paths more efficiently.
+
+<img src="comparison-astar-pythagorean.svg" alt="A* with Pythagorean distance" />
+
+### Combined Comparison
+
+#### A* + Horizontal-Vertical
+
+Combines efficient search with preference for straight paths.
+
+<img src="comparison-astar-horizontal-vertical.svg" alt="A* with horizontal-vertical cost function" />
+
+---
+
 ## Cost Functions
 
 Cost functions work alongside pathfinding algorithms to define how "distance" or "cost" is calculated between points. They influence what the algorithm considers a "short" path.
