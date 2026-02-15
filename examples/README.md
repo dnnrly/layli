@@ -480,10 +480,23 @@ styles:
 
 ---
 
+## Pathfinding Algorithms
+
+For advanced control over how paths are routed, see the [pathfinding examples](pathfinding/) which demonstrate:
+- Dijkstra (default)
+- A* with Euclidean heuristic
+- A* with Manhattan heuristic
+- Bidirectional Dijkstra
+
+Each uses the same diagram but with different pathfinding algorithms.
+
+---
+
 ## Next Steps
 
 1. Start with `simple-flow-square.layli` to understand basic structure
 2. Try different layouts with the same nodes and edges
 3. Experiment with cost functions and path strategies
 4. Customize sizing, spacing, and styles
-5. Check out the [main README](../README.md) for more information
+5. Explore different pathfinding algorithms in [pathfinding/](pathfinding/)
+6. Check out the [main README](../README.md) for more information
