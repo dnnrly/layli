@@ -59,7 +59,7 @@ height: 4
 ```
 
 **Output:**
-<img src="/examples/simple-flow-square.svg" alt="Simple Flow Square example image" />
+<img src="simple-flow-square.svg" alt="Simple Flow Square example image" />
 </details>
 
 ---
@@ -74,7 +74,7 @@ The Flow Square layout arranges nodes in a grid, filling rows and columns in the
 
 **File:** `simple-flow-square.layli`
 
-<img src="/examples/simple-flow-square.svg" alt="Flow Square example image" />
+<img src="simple-flow-square.svg" alt="Flow Square example image" />
 
 **When to use:** When you want a simple grid arrangement of nodes.
 
@@ -84,7 +84,7 @@ Specify exactly where each node should appear on the diagram. You provide x,y co
 
 **File:** `absolute.layli`
 
-<img src="/examples/absolute.svg" alt="Absolute example image" />
+<img src="absolute.svg" alt="Absolute example image" />
 
 <details>
 <summary>Absolute layout example</summary>
@@ -156,7 +156,7 @@ Arranges nodes in a single row, ordered by their connections in the graph.
 
 **File:** `topological-sort.layli`
 
-<img src="/examples/topological-sort.svg" alt="Topological sort example image" />
+<img src="topological-sort.svg" alt="Topological sort example image" />
 
 <details>
 <summary>Topological sort example</summary>
@@ -198,7 +198,7 @@ Uses Tarjan's strongly connected components algorithm to arrange nodes in an app
 
 **File:** `tarjan.layli` (unstable - regenerated manually)
 
-<img src="/examples/tarjan.svg" alt="Tarjan's algorithm example image" />
+<img src="tarjan.svg" alt="Tarjan's algorithm example image" />
 
 **When to use:** When you want an automatic, aesthetically pleasing layout.
 
@@ -208,7 +208,7 @@ Tries many random arrangements and selects the one with the shortest total edge 
 
 **File:** `random-shortest-square.layli` (unstable - regenerated manually)
 
-<img src="/examples/random-shortest-square.svg" alt="Random Shortest Square example image" />
+<img src="random-shortest-square.svg" alt="Random Shortest Square example image" />
 
 <details>
 <summary>Random Shortest Square example</summary>
@@ -260,7 +260,7 @@ Costs 1 for horizontal/vertical moves and 2 for diagonal moves. Results in paths
 
 **File:** `horizontal-vertical.layli`
 
-<img src="/examples/horizontal-vertical.svg" alt="Horizontal-vertical cost function example image" />
+<img src="horizontal-vertical.svg" alt="Horizontal-vertical cost function example image" />
 
 <details>
 <summary>Horizontal-vertical cost function example</summary>
@@ -339,7 +339,7 @@ Tries multiple random orderings and selects the arrangement with the shortest to
 
 **File:** `random-paths.layli` (unstable - regenerated manually)
 
-<img src="/examples/random-paths.svg" alt="Random paths example image" />
+<img src="random-paths.svg" alt="Random paths example image" />
 
 <details>
 <summary>Random paths example</summary>
@@ -376,7 +376,7 @@ Control node dimensions and spacing.
 
 **File:** `size-and-spacing.layli`
 
-<img src="/examples/size-and-spacing.svg" alt="Size and spacing example image" />
+<img src="size-and-spacing.svg" alt="Size and spacing example image" />
 
 <details>
 <summary>Size and spacing example</summary>
@@ -418,7 +418,7 @@ Apply CSS styles to nodes and edges.
 
 **File:** `style.layli`
 
-<img src="/examples/style.svg" alt="Style example image" />
+<img src="style.svg" alt="Style example image" />
 
 <details>
 <summary>Adding style</summary>
