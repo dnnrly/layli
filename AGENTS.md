@@ -101,6 +101,19 @@ func (m *MyLayout) Arrange(diagram *domain.Diagram) error {
 
 ## Git Commits
 
+Commits are the story of how we got to where we are. Each commit should be a logical change that can be understood by a human. We must commit when there is a natural break in the work, or when we have completed a feature. They provide a convenient point at which to review ongoing work, and to revert to a previous state if necessary.
+
+**Steps for making changes:**
+1. Create a new branch if we are on `main`
+2. Make changes
+3. Commit when a natural break in the work is reached or when a feature is completed
+4. Go back to step 2 if the feature isn't finished yet
+5. Push to the feature branch
+
+**Rule**: All work must be done in feature branches. We use PRs to review changes before they are merged.
+
+**Rule**: AI agents should not force-push, this must be done by a human. If this is necessary then you must ask the human to do it, and wait for their response before proceeding. You may provide the command that you think the human should run.
+
 **When to commit:**
 - After each working feature
 - When tests pass: `make acceptance-test`

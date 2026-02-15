@@ -1,0 +1,50 @@
+layout: flow-square
+nodes:
+    - id: a
+      contents: Node A
+    - id: b
+      contents: Node B
+    - id: c
+      contents: Node C
+    - id: d
+      contents: Node D
+    - id: e
+      contents: Node E
+    - id: f
+      contents: Node F
+    - id: g
+      contents: Node G
+    - id: h
+      contents: Node H
+    - id: i
+      contents: Node J
+
+edges:
+    - from: a
+      to: b
+    - from: b
+      to: c
+    - from: c
+      to: d
+    - from: d
+      to: e
+    - from: c
+      to: e
+    - from: e
+      to: d
+    - from: d
+      to: f
+    - from: f
+      to: g
+    - from: f
+      to: h
+    - from: g
+      to: i
+
+width: 7
+height: 4
+border: 2
+margin: 2
+
+path:
+  cost-function: horizontal-vertical

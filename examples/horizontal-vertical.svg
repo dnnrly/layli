@@ -31,7 +31,7 @@
 <rect x="300" y="400" width="120" height="60" rx="3" ry="3" id="h"   data-pos-x="15" data-pos-y="20" data-width="7" data-height="4" />
 <text x="360" y="430" id="h-text" style="font-size:10px" >Node H</text>
 <rect x="520" y="400" width="120" height="60" rx="3" ry="3" id="i"   data-pos-x="26" data-pos-y="20" data-width="7" data-height="4" />
-<text x="580" y="430" id="i-text" style="font-size:10px" >Node J</text>
+<text x="580" y="430" id="i-text" style="font-size:10px" >Node I</text>
 <path d="M 200 120 L 300 120" id="edge-1" class="path-line"  marker-end="url(#arrow)" data-from="a" data-to="b" />
 <path d="M 420 120 L 520 120" id="edge-2" class="path-line"  marker-end="url(#arrow)" data-from="b" data-to="c" />
 <path d="M 540 140 L 540 160 L 180 160 L 180 240" id="edge-3" class="path-line"  marker-end="url(#arrow)" data-from="c" data-to="d" />

@@ -38,7 +38,7 @@ $ layli hello-world.layli
 
 ### Discovering Available Options
 
-To see all available layout algorithms, pathfinding algorithms, and heuristics:
+To see all available layout algorithms, pathfinding algorithms, heuristics, and cost functions:
 
 ```bash
 $ layli config
@@ -49,7 +49,8 @@ Output:
 {
   "algorithms": ["dijkstra", "astar", "bidirectional"],
   "heuristics": ["euclidean", "manhattan"],
-  "layouts": ["flow-square", "topo-sort", "tarjan", "absolute", "random-shortest-square"]
+  "layouts": ["flow-square", "topo-sort", "tarjan", "absolute", "random-shortest-square"],
+  "cost-functions": ["pythagorean-distance", "horizontal-vertical"]
 }
 ```
 
@@ -77,7 +78,7 @@ Here are some principles that hope to tackle this problem head on:
 7. Nodes must be seperated by at least 1 space on the "path grid"
 8.  Edges must must not cross!
 9.  Edges must follow a grid path (ie. not curved or diagonal)
-10. Edges must be as short as possible
+10. Edges must be as short as possible (using the configured cost function)
 11. Edges must have as few corners as possible
 12. Edge paths may sit on top of each other at the beginning or at the end
 

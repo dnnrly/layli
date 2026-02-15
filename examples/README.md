@@ -295,9 +295,81 @@ height: 4
 
 ## Paths
 
-Paths are defined by selecting a `from` node an a `to` node in the `edges` configuration. To generate the path, `layli` uses [Dijkstr's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) to find the shortest path across a grid of points that are not covered by a node. You can see this grid by using the `--show-grid` option when you run the command.
+Paths are defined by selecting a `from` node an a `to` node in the `edges` configuration. To generate the path, `layli` uses [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) to find the shortest path across a grid of points that are not covered by a node. You can see this grid by using the `--show-grid` option when you run the command.
 
 Paths connect to nodes on a 'port', which is any grid point that sits on the border of the node but is not a corner.
+
+### Cost Functions
+
+The pathfinding algorithm can use different cost functions to determine what constitutes a "short" path. The default is `pythagorean-distance`, which minimizes the Euclidean distance between points. You can also use `horizontal-vertical` to prefer paths with fewer direction changes.
+
+**Available cost functions:**
+- `pythagorean-distance` (default) - Optimizes for shortest Euclidean distance, may result in more corners
+- `horizontal-vertical` - Costs 1 for horizontal/vertical moves, 2 for diagonal moves, resulting in paths with fewer direction changes
+
+#### Horizontal-Vertical Cost Function
+
+To prefer paths with fewer direction changes, use the `horizontal-vertical` cost function. This cost function charges 1 for each horizontal or vertical move and 2 for diagonal moves (direction changes), resulting in paths that try to follow straight lines with fewer corners.
+
+<img src="/examples/horizontal-vertical.svg" alt="Horizontal-vertical cost function example image" />
+
+<details>
+<summary>Horizontal-vertical cost function example</summary>
+
+```yaml
+path:
+  cost-function: horizontal-vertical
+
+layout: flow-square
+
+nodes:
+  - id: a
+    contents: Node A
+  - id: b
+    contents: Node B
+  - id: c
+    contents: Node C
+  - id: d
+    contents: Node D
+  - id: e
+    contents: Node E
+  - id: f
+    contents: Node F
+  - id: g
+    contents: Node G
+  - id: h
+    contents: Node H
+  - id: i
+    contents: Node I
+
+edges:
+  - from: a
+    to: b
+  - from: b
+    to: c
+  - from: c
+    to: d
+  - from: d
+    to: e
+  - from: c
+    to: e
+  - from: e
+    to: d
+  - from: d
+    to: f
+  - from: f
+    to: g
+  - from: f
+    to: h
+  - from: g
+    to: i
+
+width: 7
+height: 4
+border: 2
+margin: 2
+```
+</details>
 
 ### Avoiding crossed paths
 
