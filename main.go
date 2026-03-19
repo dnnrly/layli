@@ -9,6 +9,7 @@ import (
 
 	"github.com/dnnrly/layli/internal/composition"
 	"github.com/dnnrly/layli/layout"
+	"github.com/dnnrly/layli/internal/converter"
 	"github.com/spf13/cobra"
 )
 
@@ -100,6 +101,32 @@ func Execute() error {
 				return nil
 			},
 		})
+
+	rootCmd.AddCommand(
+	&cobra.Command{
+		Use:   "to-png [flags] [svg file]",
+		Short: "convert an SVG file to a PNG file",
+		Long:  `Convert an SVG file into a PNG file`,
+
+		Args: cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			
+			// defualt option in case output is not specified by --output
+			if output == "" {
+				output = strings.TrimSuffix(args[0], ".svg")
+				output = output + ".png"
+			}
+
+			//calls convertor to convert from SVG to PNG
+			err := converter.SVGToPNG(args[0], output)
+			if err != nil {
+				return fmt.Errorf("converting to PNG: %w", err)
+			}			
+
+			fmt.Printf("Successfully converted " + args[0] + " to " + output)
+			return nil
+		},
+	})
 
 	return rootCmd.Execute()
 }
